@@ -1,0 +1,3 @@
+http://www.odoo.yenthevg.com/installing-odoo-10-ubuntu-16-04/
+vcs-extend-develop = git+https://github.com/archetipo/anybox.recipe.odoo@fix_for_odoo10#egg=a.r.odoo
+

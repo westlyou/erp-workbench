@@ -1,0 +1,12 @@
+script to select all ids for which an email was not send:
+---------------------------------------------------------
+  select email_to from mail_mail mm where mm.id in (select mail_mail_id from mail_mail_statistics s  where s.mass_mailing_id = 26 and s.scheduled is not null AND s.sent is null);
+
+erase from email_list
+---------------------
+
+  delete from mail_mass_mailing_contact where email not in
+    (select email_to from mail_mail mm where mm.id in (select mail_mail_id from mail_mail_statistics s  where
+      s.mass_mailing_id = 27 
+      and s.scheduled is not null AND s.sent is null))
+    and list_id = 6;

@@ -1,0 +1,14 @@
+http://xubi.me/blog/how-to-2/post/odoo-report-qweb-part-1-5
+http://xubi.me/blog/how-to-2/post/odoo-qweb-report-part-2-6
+
+http://elico-corp.com.sg/2015/09/16/how-to-customize-your-printout-of-your-invoice-odoo-qweb-101/
+
+
+snippet
+-------
+https://www.odoo.com/documentation/10.0/howtos/themes.html
+
+
+v10:
+----
+http://bloopark.de/en_US/page/odoo-10

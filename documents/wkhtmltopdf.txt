@@ -1,0 +1,13 @@
+I've been using wkhtmltopdf 12.4 using this install method:
+
+cd ~
+
+#Install wkhtmltopdf dependencies:
+sudo apt-get install openssl build-essential xorg libssl-dev libxrender-dev git-core
+
+#Install wkhtmltopdf
+wget https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+ln -s wkhtmltox/bin/wkhtmlto* /usr/bin/
+
+You could try and give us your feedback.

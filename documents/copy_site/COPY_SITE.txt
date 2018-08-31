@@ -1,0 +1,50 @@
+COPY_SITE.xtx
+-------------
+general settings:
+-----------------
+# flag if we should handle membership
+COPY_MEMBERSHIP = False/True
+
+
+languages:
+---------
+start with selecting languages needed
+remove unwanted ones
+
+logo:
+-----
+Check Logo is set correctly
+
+start with:
+-----------
+set correct Language
+firname lastname
+
+
+users:
+------
+check list of users
+security (setting/company)
+
+mailing:
+--------
+Systemparameter mail.catchall.domain
+
+massmailing:
+------------
+remove unwanted entries
+
+membership produkte:
+--------------------
+dauer
+preis
+
+
+bank:
+-----
+company should have a default debit account
+richtige bank auswählen
+
+favicon:
+-------
+set the correct favicon (website-admin)

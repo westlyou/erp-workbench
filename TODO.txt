@@ -1,0 +1,15 @@
+TODOO.txt
+---------
+
+- remove all references to subversion
+- instead use github/gitlab to manage
+  Distinguish between elements that are managed
+    - on a public server like github
+    - as private repository like repository on gitlab
+    - as secret like the passwords
+- change alias.py to be only run from scripts and not from the projects
+  calculate alias accross all sites.
+  add command to list odoo aliases
+- cleanup documents explaining things.
+  make SERVER_COOKBOOK.txt with server recipes.
+  Probably the same for docker and postgres..

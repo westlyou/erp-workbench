@@ -1,0 +1,3 @@
+odoo bedhind proxy
+-----------------
+http://antiun.github.io/odoo-reverse-proxy-howto

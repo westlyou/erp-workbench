@@ -1,0 +1,12 @@
+https://www.odoo.com/documentation/10.0/setup/deploy.html
+https://www.odoo.com/de_DE/slides/slide/performance-tips-tricks-399
+
+# domains
+http://stackoverflow.com/questions/29442993/available-domain-operator-in-openerp-odoo
+
+# apache config
+http://odoo.wermescher.com/2016/03/14/odoo-ueber-apache-auf-port-80-und-ueber-ssl/
+
+# list of tuples to use in a m2m situation
+https://doc.odoo.com/v6.0/developer/2_5_Objects_Fields_Methods/methods.html
+https://www.odoo.com/documentation/10.0/reference/orm.html

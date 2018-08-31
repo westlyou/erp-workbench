@@ -1,0 +1,89 @@
+HANDLINGSERVER.txt
+------------------
+Info on how to handle server
+
+initialize new docker with data from remote server:
+---------------------------------------------------
+    prerequisite:
+    -------------
+        container 'db' must be up and running
+        dbdumper image is created
+
+    create file structure
+    ---------------------
+        bin/c.sh -D -n SITENAME  # SITENAME must exist in sites.py
+
+    get remote data
+    ---------------
+        # update local data from remote, but do not refresh the local database
+        bin/c.sh -u -n SITENAME -nupdb
+
+    create docker
+    -------------
+        `bin/c.sh -C -n SITENAME` # mind the backticks!!
+
+    update docker database from dump fetched from remote
+    ----------------------------------------------------
+        bin/c.sh -u -d -n SITENAME -N -v
+
+    add this docker to apache
+    -------------------------
+        bin/c.sh -n SITENAME --add-apache
+
+
+DOCKER
+------
+create postgres container named db
+----------------------------------
+    # docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo --name db postgres:10
+    # docker run -d -e POSTGRES_USER=flectra -e POSTGRES_PASSWORD=flectra --name db postgres:9.4
+    docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo \
+    -v /root/db_data:/var/lib/postgresql/data --name db postgres:10 
+
+
+delete container:
+-----------------
+    docker rm -v SITENAME
+
+create dbdumper image:
+----------------------
+    cd dumper
+    # make sure that the ubuntu version used in the dockerfile
+    # employs the same postgres version, as the one running in the container named 'db'
+    docker build  -t dbdumper . # this creates the image
+test it:
+    docker run -v /root/odoo_instances:/mnt/sites --rm=true --link db:db -it dbdumper -h
+
+
+RESTORE from odoo backup
+------------------------
+    Odoo stores three elements in its backup zip archive:
+    1. manifest.json
+    2. dump.sql
+    3. filestore
+
+    restore process:
+    ----------------
+    all steps in odoo_instances
+    1. create empty database
+        dropdb SITENAME
+        createdb SITENAME
+    2. import old database
+        unzip BACKUP.zip 'dump.sql'
+        To be able to access the database within a docker container there are two methods:
+          - create a dumper-container to use to access the database:
+            docker run -v /root/odoo_instances:/mnt/sites --rm=true --link db:db -it dbdumper -s
+            in this container we can access the database using the host alias db
+          - check what ip address the db container has with docker inspect db
+        import dump.sql into the database:
+          psql -h HOST -U odoo -d SITENAME -f dump.sql
+    3. extract the filestore
+      in odoo_instances extract the zip:
+        unzip BACKUP7.zip 'filestore/*' -d SITENAME/filestore/
+      rename the filestore/filestore folder:
+        mv SITENAME/filestore/filestore SITENAME/filestore/SITENAME
+
+        eg:
+          psql -W -h 172.17.0.1 -U odoo -d breitschtraef9 -f dump.sql
+
+    4. you are all set ..

@@ -1,0 +1,7 @@
+http://aliceinfo.cern.ch/Offline/node/2912/
+
+# check out pull request locally:
+---------------------------------
+git pull origin pull/XXX/head
+weher XXX is the pull request tag
+

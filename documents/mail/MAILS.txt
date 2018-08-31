@@ -1,0 +1,34 @@
+TLS.txt
+-------
+
+a MX toobox:
+    https://mxtoolbox.com/domain/redo2oo.ch/
+
+mx explanation:
+  https://www.mailcleaner.net/wp-content/uploads/Linux-Intern-Praxis1.pdf
+
+
+mail and lets encrypt:
+----------------------
+https://www.linuxbabe.com/security/letsencrypt-webroot-tls-certificate
+explanation of protocoll:
+https://www.cryptologie.net/article/274/lets-encrypt-overview/
+
+froxlor api:
+------------
+http://www.mario-franze.de/meine-kleine-froxlor-api/
+
+modoboa:
+-------
+http://modoboa.readthedocs.io/en/latest/installation.html
+https://www.someguyandhismac.com/2016/06/25/installing-modoboa-lets-encrypt-ubuntu-16-04/
+
+
+smtp test tools:
+----------------
+http://www.jetmore.org/john/code/swaks/
+
+
+haraka
+-------
+a mail client in node.js

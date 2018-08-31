@@ -1,0 +1,210 @@
+Return-Path: <sahilnavadiya005@gmail.com>
+Delivered-To: robert@redo2oo.ch
+Received: by susanne.redcor.ch (Postfix, from userid 10002)
+	id 2F640A0AE4; Wed, 19 Jul 2017 06:20:13 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on susanne.redcor.ch
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,HTML_MESSAGE,RCVD_IN_DNSWL_NONE,
+	RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.1
+Received-SPF: Pass (sender SPF authorized) identity=mailfrom; client-ip=74.125.82.43; helo=mail-wm0-f43.google.com; envelope-from=sahilnavadiya005@gmail.com; receiver=robert@redo2oo.ch 
+Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com [74.125.82.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by susanne.redcor.ch (Postfix) with ESMTPS id E7E77A06CA
+	for <robert@redo2oo.ch>; Wed, 19 Jul 2017 06:20:10 +0200 (CEST)
+Received: by mail-wm0-f43.google.com with SMTP id t70so29948627wmt.1
+        for <robert@redo2oo.ch>; Tue, 18 Jul 2017 21:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=PPoInmmCd3CEe8txTUB9YQHmQVoFXHtHmH1bMneKrmY=;
+        b=oD8xwXYeCth7H3m1ikLuT6K/Wto+dy6pi0m/zhke779s5G22ZapCxgAU8mXOBSEVrC
+         EEmcjyu/bKv/AUkQ4CrbeOoDIV9T0ILkSp5p5yv60zpffgP7uhFlUE1vYCCzG7oKelWq
+         5AndzzjtVYDXZJh+UbzxiS0h7ROQEHjVjq/ZiCQXrhwy0GRPM7Cpgv2gkPTdBRYRfGAF
+         SrBshQ4pR44pUdVzxhHx5C5rUVQzA9L31ekOW8a7vXCPgM7gnYNmWKr+GVLK8mQkJfWs
+         VZIfIb+mTZ0qOK5cgWkbLiNZO8NtQlq9Mf+VT3j/5QrHdYVh7s8LfDXhFhAA6vfzjcga
+         bCJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=PPoInmmCd3CEe8txTUB9YQHmQVoFXHtHmH1bMneKrmY=;
+        b=nOoXV9IeqVpAAw29u1OwEsSykt4n1cwiWS1LVBihCKxJIGJBTb93u082qrrhsF+0pv
+         GqnoI18kZLd72eeTy2hkWh5GfO5mHdxZN/NyZ8unH/yV51ABmOBQYSkTBIjsY1AXN70n
+         Ia4M7XyScNYAgYzvnzjuaXv5ebszibeQ4bMNmfEqMO5axQ7PJt/rYdlQ1kxoPJ6wKl3P
+         CBeJqyAv6/gt5WLaZD1q0K6wEJcHXOLO2NUTH0e7Jd+WIRVsdwsxdpeUzXqlSQkiRtpG
+         6gDsqV+0wgJRv3gfbc5PLfOAdJKgXmyUCIg2m8grtNG1b0oZQkj/EF6qfHdIstpN1L9x
+         6Uww==
+X-Gm-Message-State: AIVw1135LrOetwvs56S2eOEZXcfMJIuSMOt/zeawUaEEkQgxI0qEeKvH
+	KsPT/RJUkrCf0SHqwPsvC0Zr3OCLgbXA
+X-Received: by 10.80.175.198 with SMTP id h64mr4334318edd.131.1500438010102;
+ Tue, 18 Jul 2017 21:20:10 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.80.178.162 with HTTP; Tue, 18 Jul 2017 21:20:09 -0700 (PDT)
+Received: by 10.80.178.162 with HTTP; Tue, 18 Jul 2017 21:20:09 -0700 (PDT)
+In-Reply-To: <CADDvHqdpJ3J9fyzCekk26x_qBKqe4Mbanw8fHRUC471MXFndYA@mail.gmail.com>
+References: <CADDvHqcGX2YJrzdVQzhHXceDNPKbc73YauLwerA_j3KOJ5bJvQ@mail.gmail.com>
+ <83c79b5e-436f-10ed-c987-b3351fa9d752@redo2oo.ch> <CADDvHqdpJ3J9fyzCekk26x_qBKqe4Mbanw8fHRUC471MXFndYA@mail.gmail.com>
+From: Sahil Navadiya <sahilnavadiya005@gmail.com>
+Date: Wed, 19 Jul 2017 09:50:09 +0530
+Message-ID: <CADDvHqeHUEhJAuQabv=F47tzixEGd39Ws-S2P=RvVh2xyY6A8g@mail.gmail.com>
+Subject: Re: For android app to send snepshots to odoo
+To: robert@redo2oo.ch
+Content-Type: multipart/alternative; boundary="94eb2c195f58998a1f0554a3f2b9"
+
+--94eb2c195f58998a1f0554a3f2b9
+Content-Type: text/plain; charset="UTF-8"
+
+Ok, thanks for the information.
+
+Here is something about me that i want to tell you.
+
+I am working in odoo since one and half year and implemeted more than 4
+systems for the clients.
+
+I am working as a frintend and backend developer so you can say complete
+package for odoo. I have also developed android and ios apps and used odoo
+as a backend.
+
+For apps i am comfortable for both like hybrid and native, for hybrid i am
+using ionic framework.
+
+Right now i am going to launch my own product in odoo which is connector
+for gitlab and odoo, everything in odoo and gitlab will going to sync with
+real time and my goal for this product is a performance without any delay
+data should be sync.
+
+As a frontend development, i am able to design full website in odoo with
+customizable themes so anyone can update content and layout by himself.
+Currently there is 3 themes in odoo store which is design by me.
+
+Above all things is about odoo, but i am not limited to only odoo i am also
+working in php in php i have total 3 years of experience. Within this 3
+years i got full knowledge about wordpress, magento, zoomla, codeignitor,
+laravel, symfony.
+
+I have one developer who is working for me for the angular projects.
+
+So if you want to test my knowledge than you can assign me trial task, and
+for trial task i will not charge you.
+
+And one thing that i want to tell you is my work amd performance of the
+apps will give you 100% satisfaction and i believe that time is most
+important so i am able to deliver the things on time with 100% satisfaction.
+
+IN FUTURE IF YOU HAVE ANY PROJECT FOR ME YOU CAN CONTACT ME AND I CAN
+DELIVER IT WITH LOWEST COST ON TIME
+
+Regards,
+SAHIL
+
+On Jul 18, 2017 6:17 PM, "robert@redo2oo.ch" <robert@redo2oo.ch> wrote:
+
+> Hi Sahil,
+>
+> thanks for your answer.
+> I have already found a solution.
+> Now if you send me more details about you, I migth have some work for you
+> to do at a later time.
+> regards
+> robert
+>
+> On 18.07.2017 08:30, Sahil Navadiya wrote:
+>
+>> Hi Robert,
+>>
+>> I am Sahil, working in odoo since last one and half year.
+>>
+>> I have seen your post in odoo community that you want android app which
+>> can able to send snapshot to odoo.
+>>
+>> So can we discuss about this app because i have experience in this type
+>> of integration so please if possible can we discuss over skype?
+>>
+>> I can give this within lowest cost and i am damn sure that my code and
+>> app performance will be best as you want.
+>>
+>> Skype : sahil.navadiya
+>>
+>> Awaiting for your reply.
+>>
+>
+>
+>
+
+--94eb2c195f58998a1f0554a3f2b9
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Ok, thanks for the information.<div dir=3D"auto"><br></di=
+v><div dir=3D"auto">Here is something about me that i want to tell you.</di=
+v><div dir=3D"auto"><br></div><div dir=3D"auto">I am working in odoo since =
+one and half year and implemeted more than 4 systems for the clients.</div>=
+<div dir=3D"auto"><br></div><div dir=3D"auto">I am working as a frintend an=
+d backend developer so you can say complete package for odoo. I have also d=
+eveloped android and ios apps and used odoo as a backend.</div><div dir=3D"=
+auto"><br></div><div dir=3D"auto">For apps i am comfortable for both like h=
+ybrid and native, for hybrid i am using ionic framework.</div><div dir=3D"a=
+uto"><br></div><div dir=3D"auto">Right now i am going to launch my own prod=
+uct in odoo which is connector for gitlab and odoo, everything in odoo and =
+gitlab will going to sync with real time and my goal for this product is a =
+performance without any delay data should be sync.</div><div dir=3D"auto"><=
+br></div><div dir=3D"auto">As a frontend development, i am able to design f=
+ull website in odoo with customizable themes so anyone can update content a=
+nd layout by himself. Currently there is 3 themes in odoo store which is de=
+sign by me.</div><div dir=3D"auto"><br></div><div dir=3D"auto">Above all th=
+ings is about odoo, but i am not limited to only odoo i am also working in =
+php in php i have total 3 years of experience. Within this 3 years i got fu=
+ll knowledge about wordpress, magento, zoomla, codeignitor, laravel, symfon=
+y.</div><div dir=3D"auto"><br></div><div dir=3D"auto">I have one developer =
+who is working for me for the angular projects.</div><div dir=3D"auto"><br>=
+</div><div dir=3D"auto">So if you want to test my knowledge than you can as=
+sign me trial task, and for trial task i will not charge you.</div><div dir=
+=3D"auto"><br></div><div dir=3D"auto">And one thing that i want to tell you=
+ is my work amd performance of the apps will give you 100% satisfaction and=
+ i believe that time is most important so i am able to deliver the things o=
+n time with 100% satisfaction.</div><div dir=3D"auto"><br></div><div dir=3D=
+"auto">IN FUTURE IF YOU HAVE ANY PROJECT FOR ME YOU CAN CONTACT ME AND I CA=
+N DELIVER IT WITH LOWEST COST ON TIME</div><div dir=3D"auto"><br></div><div=
+ dir=3D"auto">Regards,</div><div dir=3D"auto">SAHIL</div></div><div class=
+=3D"gmail_extra"><br><div class=3D"gmail_quote">On Jul 18, 2017 6:17 PM, &q=
+uot;<a href=3D"mailto:robert@redo2oo.ch" target=3D"_blank">robert@redo2oo.c=
+h</a>&quot; &lt;<a href=3D"mailto:robert@redo2oo.ch" target=3D"_blank">robe=
+rt@redo2oo.ch</a>&gt; wrote:<br type=3D"attribution"><blockquote class=3D"g=
+mail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-l=
+eft:1ex">Hi Sahil,<br>
+<br>
+thanks for your answer.<br>
+I have already found a solution.<br>
+Now if you send me more details about you, I migth have some work for you t=
+o do at a later time.<br>
+regards<br>
+robert<br>
+<br>
+On 18.07.2017 08:30, Sahil Navadiya wrote:<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">
+Hi Robert,<br>
+<br>
+I am Sahil, working in odoo since last one and half year.<br>
+<br>
+I have seen your post in odoo community that you want android app which can=
+ able to send snapshot to odoo.<br>
+<br>
+So can we discuss about this app because i have experience in this type of =
+integration so please if possible can we discuss over skype?<br>
+<br>
+I can give this within lowest cost and i am damn sure that my code and app =
+performance will be best as you want.<br>
+<br>
+Skype : sahil.navadiya<br>
+<br>
+Awaiting for your reply.<br>
+</blockquote>
+<br>
+<br>
+</blockquote></div></div>
+
+--94eb2c195f58998a1f0554a3f2b9--

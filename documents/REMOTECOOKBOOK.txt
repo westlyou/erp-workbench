@@ -1,0 +1,20 @@
+REMOTECOOKBOOK.txt
+------------------
+Receipes to set up createsites.py running on a remote server
+All receipes assume:
+    - odoo_instances are in ~/odoo_instances and projects are in /projects
+    - the alias ooin exists and brings you to ~/odoo_instances
+    - you have installed all necessary python modules using
+        bin/pip install -r install/requirements.text
+    - you have installed everything like detailed in ~/odoo_instances/install/INSTALL.txt
+
+recipies:
+    - set up remote transfer user odooprojects
+
+set up remote transfer user odooprojects :
+------------------------------------------
+    - create user that will be used to transfer data on the remote server
+        adduser odooprojects
+    - add user to sudoerrs and allow him to execute the transfer scripts with root permission
+      without password
+        visudo

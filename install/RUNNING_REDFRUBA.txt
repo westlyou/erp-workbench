@@ -1,0 +1,39 @@
+rename projects/redhelp/redhelp (if it exists) to a new name
+pull odoo_instances
+the recreate redhelp using:
+bin/c -c redhelp
+this should recreate the redhelp "buidlout" folders, and add a new alias redhelpw (next to the ones existing)
+when building a site usin bin/c -c XXX, a new workon entry is created for XXX, which is activated executin XXXwg
+with the alias d for deactivate you can deactivate an actual virtualenv
+you can try the whole process like this:
+ooin; git pull # to pull the newest stuff
+ooli; git pull # to get the newest site descriptions
+ooin # to get back to odoo_instances
+bin/c -c redfruba # to create redfruba, my demo object not yet fully working
+in a new shell: redfrubaw -> this will activate the redfrubaw virtual env, and change to its project folder
+bin/build_odoo # this will download and create odoo
+bin/dosetup_odoo.py # this will create the config file 
+bin/odoo # this will start odoo and create a the redfruba database
+
+Cybrosys, 8:48 AM
+sure let me try this
+
+8:49 AM
+the thing, that is not yet working as i want, is the automatic creation of a database with demo data
+there are tests in redfrubas testfolder
+to run them, you have to have a database with demo data
+to creat it proceed as follows:
+stop a running redfruba
+dropbd redfruba # if it exists
+redfrubaw # to activate virtualenv
+bin/odoo_bin -c etc/tmp.conf # to start odoo without automatically creating a db
+navigate to localhost:8069 and create a new fruba database with demo data as usal
+stop  odoo
+restart odoo by issuing bin/odoo
+in a new shell execute:
+ooin
+bin/c -I redfruba # this will install a number of odoo modules like hr, crm ..
+bin/c -uo all redfruba # this will install all redfruba modules (1 at the moment)
+to run the tests issue:
+redfrubaw
+bin/odoo --test-enable -i redfruba --stop-after-init

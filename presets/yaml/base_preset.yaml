@@ -1,0 +1,170 @@
+# base_presets list objects that must be set in 
+# every erp site
+company:
+  model: 'res.company'
+  model_help: 'In diesem Abschnitt werden die Firmendaten bereitgestellt'
+  handler: 'read_yaml_company'
+  keys: {'field' : 'id', 'type' : 'int', 'value' : 1, 'needs_exist' : True}
+  keys_help: 'What keys make an object unique'
+
+  name_help: 'Der Name der Firma. Z.B; redO2oo KLG'
+  name: 'My Demo-Company'
+
+  image_help: 'Der Pfad zu einer Bild-Datei mit dem Firmenlogo'
+  image: 'skeleton/images/logo_klg_232.png'
+
+  favicon_help: 'Der Pfad zu einer Bild-Datei mit dem Favicon'
+  favicon: 'skeleton/images/favicon.ico'
+
+  street_help: 'Die erste Adresszeile. Weitere Adressdaten können in der Site gesetzt werden'
+  street: 'Sickingerst 3'
+
+  website_help: 'Die URL zur Firmenwebsite'
+  website: 'https://www.redo2oo.ch'
+
+  phone_help: 'Die Firmen-Telephon Nummer'
+  phone: '+41 31 333 10 20'
+
+  email_help: 'Die Firmen-Email-Addresse'
+  email: 'info@o2oo.ch'
+
+  vat_help: 'Die Mehrwersteuer-Nummer'
+  vat: '123 MWST-NR'
+
+  company_registry_help: 'Die ofizielle Firmenregistrierungs-Nummer'
+  company_registry: '789-Firmenregistrierung'
+
+  report_header_help: 'Die Kopzeile, wie sie auf Ausdrucken erscheint'
+  report_header: 'We are ERP specialists'
+
+  report_footer_help: 'Die Fusszeile, wie sie auf Rechnungen Angeboten usw erscheint'
+  report_footer: 'tel: 123... Bank: 3333'
+
+outgoingmail:
+  model: 'ir.mail_server'
+  model_help: 'Hier werden Werte des zum Versenden von Mails genutzten Mailserves gesetzt'
+  handler: 'read_yaml_outgoingmail'
+
+  name_help: 'Der Name, unter welchem der Server gelistet wird'
+  name: 'mail@redcor.ch'
+
+  type_help: 'Der Typ des Servers. Es git POP, IMAP und Localhost.'
+  type: 'IMAP Server'
+
+  smtp_host_help: 'Der Servername in der form xx.yyyyy.zz'
+  smtp_host: 'mail.redcor.ch'
+
+  port_help: 'Der Port an dem der Server läuft. Er ändert sich je nach Typ und Sicherheitseinstellung'
+  port: '143'
+
+  is_ssl_help: 'Ist die Anmeldung verschlüsselt?'
+  is_ssl: true
+
+  user_help: 'Anmeldenamen beim Mailserver'
+  user: 'mailhandler@o2oo.ch'
+
+  password_help: 'Passwort des Mail-Nutzers'
+  password: 'XXXX'
+
+
+incomingmail:
+  model: 'fetchmail.server'
+  model_help: 'Hier werden Werte des zum Empfangen von Mails genutzten Mailserves gesetzt'
+  handler: 'read_yaml_incommingmail'
+  
+  name_help: ''
+  name: 'mail@redcor.ch'
+
+  server_help: 'Der Servername in der form xx.yyyyy.zz'
+  server: 'mail.redcor.ch'
+
+  smtp_encryption_help: 'Ist die Anmeldung verschlüsselt?'
+  smtp_encryption: 'ssl'
+
+  port_help: 'Der Port an dem der Server läuft. Er ändert sich je nach Sicherheitseinstellung'
+  port: '465'
+
+  is_ssl_help: 'Ist die Anmeldung verschlüsselt?'
+  is_ssl: true
+
+  smtp_user_help: 'Anmeldenamen beim Mailserver'
+  smtp_user: 'mailhandler@o2oo.ch'
+
+  smtp_pass_help: 'Passwort des Mail-Nutzersr'
+  smtp_pass: 'XXXX'
+
+
+bank:
+  model: 'res.bank'
+  model_help: 'Hier werden Daten zur Bank der von der Firma genutzten Banken erfasst'
+  handler: 'read_yaml_bank'
+  
+  banks:
+    bank1:
+      name_help: 'Wähle die Bank aus der Liste der Banken. Diese ist auf banks.redo2oo.ch zu finden'
+      name: 'Valiant Bank'
+      swift: VABECH22XXX
+      swift_help: 'Swift ist ein internationaler Bankencode, sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      bcnr: 6300
+      bcnr_help: 'Bcnr ist der Banken-Identifikations code. Sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      postac: 30-38112-0 
+      postac_help: 'Das ist die Postcheck-Nummer Ihrer Bank. Sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      city: Bern
+      city_help: 'Der Ort an dem Ihre Bank domiliziert ist'
+      street: Breitenrainplatz 33
+      street_help: 'Strasse an der Ihre Bank domiliziert ist'
+      zip: 3000
+      zip_help: 'Postleitzahl ihrer Bank'
+    bank2:
+      name_help: 'Wähle die Bank aus der Liste der Banken. Diese ist auf banks.redo2oo.ch zu finden'
+      name: 'PostFinance'
+      swift: POFICHBEXXX
+      swift_help: 'Swift ist ein internationaler Bankencode, sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      bcnr: 9000
+      bcnr_help: 'Bcnr ist der Banken-Identifikations code. Sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      postac: 
+      postac_help: 'Das ist die Postcheck-Nummer Ihrer Bank. Sie erfahren ihn auf banks.redo2oo.ch oder von Ihrer Bank'
+      city: Bern
+      city_help: 'Der Ort an dem Ihre Bank domiliziert ist'
+      street: Mingerstrasse 20
+      street_help: 'Strasse an der Ihre Bank domiliziert ist'
+      zip: 3030
+      zip_help: 'Postleitzahl ihrer Bank'
+
+
+bankaccount:
+  model: 'res.partner.bank'
+  model_help: 'Angaben zu den Bankkonten'
+  handler: 'read_yaml_bankaccount'
+  depends: 'read_yaml_bank'
+
+  accounts:
+    account1:
+      bank_id_help: 'Wähle eine der oben definierten Banken. Die erste heisst bank1'
+      bank_id: 'bank1'
+
+      bank_name_help: 'Unter diesem Namen erscheint die Bank im Odoo-Backend'
+      bank_name: 'Valiant Bank Breitenrain'
+
+      acc_number_help: 'IBAN Konto-Nummer'
+      acc_number: 'CH36 0000 0000 0000 0000 0'
+
+    account2:
+      bank_id_help: 'Wähle eine der oben definierten Banken. Die zwite heisst bank2'
+      bank_id: 'bank2'
+
+      bank_name_help: 'Unter diesem Namen erscheint die Bank im Odoo-Backend'
+      bank_name: 'Postfinance'
+
+      acc_number_help: 'IBAN Konto-Nummer'
+      acc_number: 'CH26 0000 0000 0000 0000 0'
+
+
+website:
+  model: 'website.config.settings'
+  model_help: 'Angaben zur Firmenwebsite'
+  handler: 'read_yaml_website'
+
+  website_name_help: 'Wähle eine stimmigen Titel der Website'
+  website_name: 'Wir sind ERP Spezialisten'
+

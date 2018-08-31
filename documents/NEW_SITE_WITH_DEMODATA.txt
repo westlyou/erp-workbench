@@ -1,0 +1,30 @@
+
+Hi friends,
+
+here is a series of commands to execute to create a new local
+
+odoo database for redhelp (just replace redhelp for any database)
+
+This new database will have *loading of demodata* activated!
+
+This has to be done only once (it is a bit lengthy) until you really need to start from afresh.
+
+For now it is only tested on odoo 10, but is prepared to work also on odoo 11 and flectra.
+
+robert
+
+# refresh everything
+ooin
+git pull
+ooli git pull
+ooin
+# udate redhelp
+bin/c -c redhelp
+# create new redhelp db
+bin/c -cdb redhelp
+# install all odoo packages
+bin/c -I redhelp
+# install all redhelp modules
+bin/c -uo all redhelp
+
+

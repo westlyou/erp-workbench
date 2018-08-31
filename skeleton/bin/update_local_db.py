@@ -1,0 +1,1 @@
+../scripts/update_local_db.py

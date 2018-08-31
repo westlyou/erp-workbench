@@ -1,0 +1,4 @@
+https://github.com/OCA/OpenUpgrade/blob/10.0/doc/howtos/backend.rst
+https://github.com/odoo/odoo/blob/10.0/odoo/modules/migration.py
+https://github.com/OCA/OpenUpgrade/blob/10.0/addons/account/migrations/10.0.1.1/pre-migration.py
+https://docs.google.com/document/d/1lIGeyyDAKA8xzTegz-GhPgGSjokuLJ9Fsaz8ZjyFrDw/edit

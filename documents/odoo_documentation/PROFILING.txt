@@ -1,0 +1,7 @@
+profiling:
+----------
+https://github.com/vauxoo/odoo-profiler
+
+optimal setting
+---------------
+https://www.rosehosting.com/blog/how-to-speed-up-odoo/

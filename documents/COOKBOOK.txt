@@ -1,0 +1,186 @@
+COOKBOOK.txt
+------------
+Receipes to use createsites.py
+All receipes assume:
+    - odoo_instances are in ~/odoo_instances and projects are in /projects
+    - the alias ooin exists and brings you to ~/odoo_instances
+    - you have installed all necessary python modules using
+        bin/pip install -r install/requirements.text
+    - you have installed everything like detailed in ~/odoo_instances/install/INSTALL.txt
+
+recipies:
+    - How to create the alias ooin
+    - Adding a new local/global site called hugo and building it
+    - List installable sites
+    - List installable odoo modules
+    - Create and add new addon called myHugo to site hugo
+    - Download an addon from OCA and add it to the site hugo
+    - Installing CRM modules into existing site hugo
+    - Defining a new install block using existing site hugo
+    - set system to perform auto pull of sites
+
+How to create the alias ooin:
+-----------------------------
+    the following instructions are for a debian based linux distro (like ubuntu)
+    - open the file ~/.bash_aliases in a text editor
+    - add the following two lines:
+      # odoo
+      alias  ooin="cd $HOME/odoo_instances"
+    - now when you open a new terminal ooin is an alias to change into
+      ~/odoo_instances
+
+    However, when ever you run bin/c with a "create" option like -c, a set of
+    aliases is created for you. ooin and pro among them.
+
+Adding a new local/global site called hugo and building it:
+-----------------------------------------------------------
+    cd ~/odoo_instances
+    bin/c support --add-site-local -n hugo
+    bin/c -c -n hugo # create the site in ~/projects
+    cd ~/projects/hugo/hugo
+        or you can open a new bash shell and execute :
+            hugo
+        this will bring you to hugos buildout directory
+        bin/c has added this alias for you.
+    bin/dosetup.py -f # ignore svn errors
+    bin/buildout
+    - to build a global site (one that is managed in the repository)
+      just start with bin/c --add-site
+
+Create and add new addon called myHugo to site hugo:
+----------------------------------------------------
+    hugo # to change to the hugo buildout folder
+    # bin/c -c has created a folder  hugo_addons andd added it
+    # to hugo's addons path
+    # we can use bin/odoorunner.py to create an addon skeleton there
+    bin/odoorunner.py scaffold hugo_addons/myHugo
+
+Download an addon from OCA and add it to the site hugo:
+-------------------------------------------------------
+    - in sites_local.py replace the addons stanza with the following
+        'addons' : [
+            {
+                'type'      : 'git',
+                'url'       : 'https://github.com/robertrottermann/website.git',
+                'group'     : 'oca_website',
+                'add_path'  : 'oca_website',
+                'name'      : 'website_event_register_free',
+                'branch'    : '9.0',
+            },
+        ],
+    - download the new addon from its repository and add it to hugos addons structure:
+        bin/c -c hugo # downloads addon and recreates the config files for site hugo
+    - rebuild the site hugo and add the new addons to its addons path
+        hugo # this brings you to hugos buildout folder
+    - in hugos buildout folder execute
+        bin/dosetup.py -f   # this updates all config files
+        bin/buildout        # this recreates the site and its addon path. I should be fast
+    - install the addon 'website_event_register_free' into the site hugo
+      the site hugo must be running !!
+        hugo                # to cd into hugos build directory
+        bin/start_openerp   # start the site hugo
+      in a new bash window
+        ooin                # this will bring you to odoo_instances
+        bin/c -io hugo      # this will install all modules listed in hguos addons stanza
+    - update the addon website_event_register_free after an update in its code code
+        bin/c -uo  website_event_register_free hugo
+
+
+List installable sites:
+-----------------------
+  ooin        # should bring you to ~/odoo_instances
+  bin/c -ls
+  - local sites are marked with (local) after the name
+    local sites are defined in sites_local.py
+    They are not managed in the repository
+
+List installable odoo modules:
+------------------------------
+    ooin        # should bring you to ~/odoo_instances
+    bin/c -lm
+
+Installing CRM modules into existing site hugo:
+-----------------------------------------------
+    - open new bash terminal with ALT+CTRL+t
+    ooin        # should bring you to ~/odoo_instances
+    - open sites_local.py in a text editor
+    - locate the list of odoo blocks to install in the site description for hugo
+        it should be something like then following:
+            # odoo_addons allow to install odoo base tools
+            'odoo_addons' : [
+                #'website builder',
+                #'crm',
+            ],
+    - remove the # in front of 'crm'
+    - save the file
+    - open a second bash terminal with ALT+CTRL+t
+    hugo         # should bring you to ~/projects/hugo/hugo
+    bin/start_openerp # start odoo
+    - in the first bash terminal execute the following. replace robert with your name
+    bin/c -i -I -n hugo -p admin -dbu=robert
+
+Defining a new install block using existing site hugo:
+------------------------------------------------------
+    - open new bash terminal with ALT+CTRL+t
+    - make sure the database of the site hugo is empty
+        You have to close all programs accessing the postgres database hugo before
+        you can execute the following (odoo, pg3admin ..)
+    dropdb hugo
+    hugo         # should bring you to ~/projects/hugo/hugo
+    - start hugo, do NOT install anything
+    bin/start_openerp
+    - open a second bash terminal with ALT+CTRL+t
+    ooin        # should bring you to ~/odoo_instances
+    - prepare list of of all installed modules. We nedd this list to create a diff later
+        replace robert with your name
+    bin/c -III -n hugo -p admin -dbu=robert
+    - you can check the result with
+    less .installed
+    - the result should be something like:
+        (204, 'report')
+        (93, 'web_settings_dashboard')
+        (272, 'web_planner')
+        (17, 'web')
+        (22, 'web_tip')
+        (92, 'web_editor')
+        (60, 'web_view_editor')
+        (157, 'auth_crypt')
+        (188, 'web_diagram')
+        (196, 'web_kanban')
+        (261, 'web_calendar')
+        (280, 'web_kanban_gauge')
+        (108, 'base')
+        (39, 'base_import')
+    - in your browser navigate to localhost:8069/web
+        go to apps and install Project
+    - with Project installed, produce a diff to the list of installed products
+        a vanilla odoo provides again, replace robert with your name:
+    bin/c -II -n hugo -p admin -dbu=robert
+    - this is the result you should get:
+        'XXX' : [
+
+            (70, 'fetchmail'),
+            (122, 'resource'),
+            (178, 'mail'),
+            (186, 'im_odoo_support'),
+            (131, 'portal'),
+            (206, 'auth_signup'),
+            (252, 'product'),
+            (24, 'analytic'),
+            (112, 'decimal_precision'),
+            (198, 'project'),
+            (173, 'bus'),
+            (232, 'base_setup'),
+            (278, 'procurement'),
+            (269, 'mail_tip'),
+        ],
+    - add this block to templates/install_blocks.py
+        replace 'XXX' with 'projects' or what ever odoo module you installed.
+        Make sure that the file remains a valid python script.
+    - test your work with:
+    bin/c -lm
+
+
+set system to perform auto pull of sites:
+-----------------------------------------
+ bin/c -set sites_autopull=True

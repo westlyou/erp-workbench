@@ -1,0 +1,11 @@
+read excelfiles into odoo
+-------------------------
+
+The excel files can be prepared with a headerline
+To denote it, it has to start with $header?X: where X how many lines to skip
+before the data starts (1 based).
+
+
+object list:
+------------
+In the main script the is an OBJECT_MAP

@@ -1,0 +1,8 @@
+MONITORING.txt
+--------------
+oliver dony's speach at odoo experience 2016
+https://www.youtube.com/watch?v=A_BWyFeGgVA
+
+profile gevent
+--------------
+https://emptysqua.re/blog/greenletprofiler/

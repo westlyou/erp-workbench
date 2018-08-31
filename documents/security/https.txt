@@ -1,0 +1,3 @@
+https://www.bjornjohansen.no/public-key-pinning
+https://www.bjornjohansen.no/redirect-to-https-with-nginx
+https://www.bjornjohansen.no/dns-privacy

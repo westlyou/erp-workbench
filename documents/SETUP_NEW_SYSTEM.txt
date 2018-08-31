@@ -1,0 +1,11 @@
+user settings:
+--------------
+admin: time zone, language, email
+
+create {SITE_NAME}_resources:
+-----------------------------
+    This should be done automatically
+    The following data should be kept there:
+        - theme data
+        - web_favicon
+        - icon

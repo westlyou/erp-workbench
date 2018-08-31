@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# start odoo_instances as daemon
+if [ $1 ]; then
+   bin/python utilities/run_server.py $1 $2 $3
+else
+   bin/python utilities/run_server.py --help
+fi

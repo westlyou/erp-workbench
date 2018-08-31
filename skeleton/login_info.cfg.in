@@ -1,0 +1,62 @@
+[buildout]
+develop = recipes
+part = login_info
+
+[login_info]
+##---------------------------------
+# recipe is empty
+recipe =
+##---------------------------------
+# odoo version
+odoo_version = %(odoo_version)s
+##---------------------------------
+# odoo minor
+odoo_minor = %(odoo_minor)s
+##---------------------------------
+# odoo nightly
+odoo_nightly = %(odoo_nightly)s
+##---------------------------------
+# should demo data be OMITED when creating the database?
+# this is of interest only when the database is created for the first time
+without_demo = all
+##---------------------------------
+# as what user are we runnin odoo locally (not on the remote server!)
+current_user = %(username)s
+##---------------------------------
+# what is the name of the local database (can be different from the remote database name)
+db_name = %(projectname)s
+##---------------------------------
+# which db's should be filtere
+dbfilter = %(projectname)s
+##---------------------------------
+# on what host is the db running?
+# this is normally localhost (for local computer and remote server)
+# only when using docker this value MUST be set to an ip != localhost
+db_host = %(db_host)s
+##---------------------------------
+# the password to access the local database
+db_password = %(db_password)s
+##---------------------------------
+# odoo's log_db_level
+log_db_level = %(log_db_level)s
+##---------------------------------
+# admin password to access the odoo instance
+admin_passwd = %(admin_passwd)s
+##---------------------------------
+# addons_path defines where addons for this
+addons_path =
+    local %(projectname)s_addons/
+%%(site_addons)s
+##---------------------------------
+# local addons will not be copied to the server
+# they are used to add local developement addons
+#    local ../odoo-dev/my_personal_addons/
+#    local_adons =
+##---------------------------------
+# data_dir is the place on the local box, where the attachements are stored
+# it is relative to the buildout directory.
+data_dir = %(data_dir)s
+##---------------------------------
+# create_database is a flag whether a new local database has to be created
+# it is only taken into consideration when no local database exists
+create_database = %(create_database)s

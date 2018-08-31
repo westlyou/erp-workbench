@@ -1,0 +1,95 @@
+build postgres image
+--------------------
+  - cd ooin/docker/postgres/VERSION
+  - compare Dockerfile with newest on
+    https://github.com/camptocamp/docker-postgres/blob/master/XX/Dockerfile
+  - run . build
+  - tag the image like
+    docker tag 1602722f1ecd robertredcor/postgres:9.6
+  - push the image
+    docker push robertredcor/postgres:9.6
+
+use postgres image to to create db container
+--------------------------------------------
+  docker run --name db -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -d/postgres:9.6 -P
+
+
+setting permissions:
+--------------------
+root@alice2 ~/odoo_instances # find breitschtraeff10/ -type d -exec chmod 777 {} +
+root@alice2 ~/odoo_instances # find breitschtraeff10/ -type f -exec chmod 666 {} +
+
+ 4102  chown 999:1000 breitschtraeff10/
+ 4103  chown 999:1000 breitschtraeff10/* -R
+
+build image:
+------------
+  create the following folder structure:
+      drwxr-xr-x 2 robert robert 4096 Jun 18 08:33 data
+      -rw-r--r-- 1 robert robert  593 Jun 18 08:35 Dockerfile
+      drwxr-xr-x 2 robert robert 4096 Jun 18 08:33 external-src
+      drwxr-xr-x 2 robert robert 4096 Jun 18 08:33 features
+      drwxr-xr-x 2 robert robert 4096 Jun 18 08:33 local-src
+      -rw-r--r-- 1 robert robert    0 Jun 18 08:34 migration.yml
+      -rw-r--r-- 1 robert robert   67 Jun 18 08:34 requirements.txt
+      -rw-r--r-- 1 robert robert  895 Jun 18 08:34 setup.py
+      drwxr-xr-x 2 robert robert 4096 Jun 18 08:33 songs
+      -rw-r--r-- 1 robert robert    6 Jun 18 08:33 VERSION
+  initialize git:
+      in SITENAME/docker:
+          git init .
+          git submodule init
+          git submodule add -b 10.0 https://github.com/odoo/odoo.git src
+
+create camptocamp base image:
+-----------------------------
+    setup submodules:
+        odoo
+        git submodule init
+        git submodule add -b master https://github.com/camptocamp/docker-odoo-project.git
+    create image:
+        cd docker-odoo-project
+        make VERSION=10.0
+
+
+    we should tag it differently!!!!
+    like
+
+
+user and group mapping:
+----------------------
+  host:
+  uid=1000(administrator) gid=1000(administrator) groups=1000(administrator),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lpadmin),111(sambashare)
+  uid=999(psaadm) gid=1001(psaadm) groups=1001(psaadm),999(lock-manager),1002(swkey-data),1003(psaserv),1009(psasb)
+  uid=104(sshd) gid=65534(nogroup) groups=65534(nogroup)
+  mlocate:x:107:
+
+  administrator administrator
+  psaadm   administrator
+  root     root
+  sshd     mlocate
+
+
+  guest:
+  uid=999(odoo) gid=1000(odoo) groups=1000(odoo)
+  uid=101(systemd-network) gid=104(systemd-network) groups=104(systemd-network)
+
+
+  checking file ownership:
+    loocks as if only folder 9.0 was created from within the guest
+    with a different ownership
+      root@d71023eb26b1:/opt# ls -l /mnt/
+      total 8
+      drwxrwxrwx  2 1000 odoo 4096 Jun  9 07:54 dump
+      drwxrwxrwx 23 1000 odoo 4096 Jun 12 20:18 extra-addons
+        drwx------  2 odoo odoo 4096 Jan 31 19:35 9.0
+        drwxr-xr-x  9 root root 4096 May 25 11:37 afbs_cms
+        drwxr-xr-x  8 root root 4096 Apr 18 18:36 afbs_dashboard
+        drwxr-xr-x  8 root root 4096 Jun  9 15:26 afbs_extra_data
+        drwxr-xr-x  5 root root 4096 Jan 31 19:34 afbs_mass_mailing
+        .....
+
+        why has openerp-server.conf owner with id 1000?
+        root@d71023eb26b1:/opt# ls -l /etc/odoo/
+        total 4
+        -rwxrwxrwx 1 1000 odoo 1367 Jun 16 12:43 openerp-server.conf

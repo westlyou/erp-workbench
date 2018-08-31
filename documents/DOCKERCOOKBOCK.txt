@@ -1,0 +1,145 @@
+DOCKERCOOKBOOK.txt
+------------------
+recipes to use docker with odoo instances.
+
+recipies:
+    - create docker image with actual oddo
+    - create a docker container with postgres
+    - remove all images/containers/volumes
+    - access local docker db of site hugo using psql
+    - create dbdumper image
+    - update docker image
+    - install update within a docker image (or is it container ??)
+    - become root within an container (obsolete)
+    - other odoo docker providers
+    - docker support tools
+
+create docker image with actual oddo
+------------------------------------
+    A docker image is buildt executing several steps:
+    sample is psytec:
+    - mkdir /home/robert/odoo_instances/psytex/docker/
+    - collect extra pyhton and apt libraries
+    - construct Dockerfile in in docker folder
+    - construct subfolder in docker folder:
+        'external-src', 'local-src', 'data', 'features', 'songs'
+    - construct data in these subfolders:
+        for f in [
+            ('VERSION', docker_odoo_setup_version % str(date.today())),
+            ('migration.yml', ''),
+            ('requirements.txt', docker_odoo_setup_requirements),
+            ('setup.py', docker_odoo_setup_script),]:
+            # do not overwrite anything ..
+            fp = '%s%s' % (docker_target_path, f[0])
+            if not os.path.exists(fp):
+                open(fp, 'w').write(f[1])
+            else:
+                print '%s\n%s\n%snot overwitten %s' % (bcolors.WARNING, '-'*80, fp, bcolors.ENDC)
+    - download odoo source:
+            'git init .',
+            'git submodule init',
+            'git submodule add -b %s https://github.com/odoo/odoo.git src' % odoo_version
+        
+    
+
+create a docker container with postgres
+---------------------------------------
+
+    docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo --name db postgres --restart=always
+
+    docker run --name db -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -d postgres -P --restart=always
+
+remove all images/containers/volumes:
+-------------------------------------
+    containers:
+        docker rm $(docker ps -q -a
+        docker rm -f $(docker ps -q -a # force
+    images:
+        docker rmi  $(docker images -q)
+        docker rmi -f $(docker images -q) # force
+    volumes:
+        docker volume rm $(docker volume ls -q)
+
+
+access local docker db of site hugo using psql:
+-----------------------------------------------
+
+    psql -h 172.17.0.2 -d hugo -U odoo
+
+
+create dbdumper image:
+----------------------
+    to be able to do transfer data to a databse within docker, we need a dbdumer Image
+    this can be created as follows:
+
+      cd dumper
+      # make sure that the ubuntu version used in the dockerfile
+      # employs the same postgres version, as the one running in the container named 'db'
+      docker build  -t dbdumper . # this creates the image
+      test it:
+          docker run -v /root/odoo_instances:/mnt/sites --rm=true --link db:db -it dbdumper -h
+
+
+update docker image:
+--------------------
+    update docker image:
+        docker pull IMAGENAME
+        then restart container
+
+install update within a docker image:
+-------------------------------------
+    # here for the database afbsdemo
+    # update the modul afbs_snippets
+    /usr/bin/openerp-server  -u afbs_snippets -d afbsdemo --stop-after-init --db_host=db -r odoo -w odoo -c /etc/odoo/openerp-server.conf --no-xmlrpc
+
+become root within a conatiner(obsolete)
+----------------------------------------
+You can log into the Docker Image using the root user (ID = 0) instead of the provided default user when you use the -u option. E.g.
+
+docker exec -u 0 -it mycontainer bash
+
+other answer(obsolete):
+I had exactly this problem of not being able to su to root because I was running in the container as an unprivileged user.
+
+But I didn't want to rebuild a new image as the previous answers suggest.
+
+Instead I have found that I could access the container as root using 'nsenter', see: https://github.com/jpetazzo/nsenter
+
+First determine the PID of your container on the host:
+
+docker inspect --format {{.State.Pid}} <container_name_or_ID>
+
+Then use nsenter to enter the container as root
+
+nsenter --target <PID> --mount --uts --ipc --net --pid
+
+yet an other:
+
+The password is 'ubuntu' for the 'ubuntu' user (at least in docker for ubuntu :14.04.03).
+
+NB: 'ubuntu' is created after the startup of the container so, if you just do this:
+
+ docker run -i -t --entrypoint /bin/bash  ubuntu
+
+You'll get the root prompt directly. From there you can force the password change of root, commit the container and optionally tag it (with -f) to ubuntu:latest like this:
+
+root@ec384466fbbb:~# passwd
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+root@ec384466fbbb:~# exit
+
+% docker commit ec3844
+5d3c03e7d6d861ce519fe33b184cd477b8ad03247ffe19b2a57d3f0992d71bca
+
+docker tag -f 5d3c ubuntu:latest
+
+You must rebuild your eventual dependencies on ubuntu:latest.
+
+other odoo docker providers
+---------------------------
+  https://github.com/Elico-Corp/odoo-docker
+
+docker support tools
+--------------------
+https://github.com/v2tec/watchtower

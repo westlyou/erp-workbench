@@ -1,0 +1,7 @@
+encrypt docker on aws
+---------------------
+https://www.promptworks.com/blog/handling-environment-secrets-in-docker-on-the-aws-container-service
+
+tresorit.ch encryption storage
+------------------------------
+https://tresorit.com/pricing

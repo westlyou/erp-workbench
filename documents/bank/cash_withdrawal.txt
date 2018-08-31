@@ -1,0 +1,35 @@
+
+
+Hi Kaushik,
+
+For cash withdrawal from bank scenario kindly test with Payment Type as
+'Internal Transfer', selecting payment journal as 'Bank' and transfer to
+as 'cash'.
+
+Two journal will be posted, one for debiting Cash account and the second
+to credit Bank. Transfer Account will be used as parking account.
+
+
+Thanks & Regards,
+
+Anwar Ahmed
+Business Analyst
+
+Dynamic Web Technologies Pty. Ltd.
+
+[P] +966 13 814 8371
+[F] +966 13 814 8376
+[M] +966 50 749 7540
+[E] a.ahmed@dwt.com.au
+
+http://dwt.com.au/
+
+Disclaimer: This email message is for the sole use of the intended recipient(s) and may contain confidential and privileged information. Any unauthorised review, use, disclosure or distribution is prohibited. If you are not the intended recipient, please destroy all copies of the  original message and notify the sender immediately, so that our address record can be corrected. Dynamic Web Technologies Pty. Ltd. operates in  Saudi Arabia in partnership with Sky Gulf Information Technology Co. Thank you.
+
+On 09/06/17 09:46, Kaushik Kudtarkar wrote:
+> ellaneous or Int
+
+_______________________________________________
+Mailing-List: https://www.odoo.com/groups/community-59
+Post to: mailto:community@mail.odoo.com
+Unsubscribe: https://www.odoo.com/groups?unsubscribe

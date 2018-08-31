@@ -1,0 +1,52 @@
+MODULEUPGRADE.txt
+-----------------
+Musings about upgrading OCA:crm/mass_mailing_partner to V8:
+-----------------------------------------------------------
+installing:
+    to be able to install change mass_mailing_partner/__openerp__.py --> 'installable': True,
+
+when trying to install the module an error is thrown:
+
+...
+ParseError: "Invalid view definition
+
+Error details:
+Element '<div class="oe_right oe_button_box">' cannot be located in parent view
+
+searching use of oe_button_box:
+    ack oe_button_box
+    reveals:
+
+mass_mailing_partner/mass_mailing_partner/views/res_partner_view.xml
+10:        <div class="oe_right oe_button_box" position="inside">
+
+so we find in mass_mailing_partner/mass_mailing_partner/views/res_partner_view.xml:
+    <record model="ir.ui.view" id="view_partner_form">
+        <field name="name">Partner Form with mailing contacts</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>   <--------- parent!!!
+        <field name="arch" type="xml">
+            <div class="oe_right oe_button_box" position="inside">
+                <button name="%(mass_mailing.action_view_mass_mailing_contacts)d"
+                        context="{'search_default_partner_id': active_id,
+                                  'default_partner_id': active_id}"
+                        type="action"
+                        class="oe_stat_button oe_inline"
+                        icon="fa-envelope-o">
+                    <field name="mass_mailing_contacts_count"
+                           widget="statinfo"
+                           string="Mailing lists"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+
+hunting for the definition of the parent base.view_partner_form we find in
+    parts/odoo/openerp/addons/base/res/res_partner_view.xml
+
+    that oe_button_box exists but nothing with oe_right:
+    so change:
+        <div class="oe_right oe_button_box" position="inside">
+    to:
+        <div class="oe_button_box" position="inside">
