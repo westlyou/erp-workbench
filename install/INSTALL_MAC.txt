@@ -1,7 +1,0 @@
-xcode-select --install
-set editor to use:
-    bin/s -set editor=atom -F
-  or
-    bin/s -set editor=pico -F
-
-aliases wird nicht gestartet

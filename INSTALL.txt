@@ -1,0 +1,15 @@
+Erp-Workbench install
+---------------------
+The installation of erp-workbench hast the following major steps:
+
+1. setup virtualenv wrapper
+    This is explained in install/virtualenv_wrapper.txt
+2. create a virtual env using virtualenv-wrapper
+    - cd to the folder where erp-workbench is donloaded to
+    ececute the following commands:
+
+    mkvirtualenv -a . -p python3 workbench
+    (cd bin; ln -s $(which python))
+    (cd bin; ln -s $(which pip))
+    bin/pip install -r install /requirements.txt
+    (cd help; make html)
