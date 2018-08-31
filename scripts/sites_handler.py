@@ -54,7 +54,7 @@ class SitesHandler(object):
             # BB, move localdata to config
             if os.path.exists('%s/localdata.py' % self.base_path):
                 open(p1, 'w').write(open('%s/localdata.py' % self.base_path, 'r').read())
-                print LOCALDATA_MOVED % ('%s/localdata.py' % self.base_path, p1)
+                print(LOCALDATA_MOVED % ('%s/localdata.py' % self.base_path, p1))
                 os.unlink('%s/localdata.py' % self.base_path)
                 try:
                     os.unlink('%s/localdata.pyc' % self.base_path)
@@ -63,14 +63,14 @@ class SitesHandler(object):
                 sys.exit()
             # silently copy the defaults file
             open(p1, 'w').write(open(p2, 'r').read())
-            print LOCALDATA_CREATED % p1
+            print(LOCALDATA_CREATED % p1)
             sys.exit()
         else:
             data = open(p1, 'r').read().split('\n')
             m = re.compile(r'[^#]+UNEDITED')
             for line in data:
                 if m.match(line):
-                    print LOCALDATA_NOT_EDITED % p1
+                    print(LOCALDATA_NOT_EDITED % p1)
 
     def check_and_copy_globaldefaults(self):
         #GLOBALDEFAULTS = {
@@ -103,7 +103,7 @@ class SitesHandler(object):
         if sites_list_url == 'localhost':
             bp = '/' + '/'.join([p for p in sites_list_path.split('/') if p][:-1])
             if not os.path.exists(bp):
-                print LOCALSITESLIST_BASEPATH_MISSING % bp
+                print(LOCALSITESLIST_BASEPATH_MISSING % bp)
             p1 = sites_list_path
             if not os.path.exists(p1):
                 os.makedirs(p1)
@@ -122,7 +122,7 @@ class SitesHandler(object):
                 open('%s/sites_local/demo_local.py' % p1, 'w').write(SITES_GLOBAL_TEMPLATE % (
                     'demo_global', template % {'site_name' : 'demo_local', 'marker' : self.marker, 
                                                'base_sites_home' : '/home/%s/odoo_instances' % ACT_USER}))
-                print LOCALSITESLIST_CREATED % (os.path.normpath('%s/sites_global/demo_global.py' % p1), os.path.normpath('%s/sites_local/demo_local.py' % p1))
+                print(LOCALSITESLIST_CREATED % (os.path.normpath('%s/sites_global/demo_global.py' % p1), os.path.normpath('%s/sites_local/demo_local.py' % p1)))
                 sys.exit()
         elif not os.path.exists(sites_list_path):
             # try to git clone sites_list_url
@@ -137,7 +137,7 @@ class SitesHandler(object):
                     env=dict(os.environ,  PATH='/usr/bin'),
                     shell=True)
                 p.communicate()
-            print LOCALSITESLIST_CLONED % (sites_list_url, os.getcwd())
+            print(LOCALSITESLIST_CLONED % (sites_list_url, os.getcwd()))
             os.chdir(act)
         return sites_list_path
 
@@ -166,7 +166,7 @@ class SitesHandler(object):
         # -------------------------------------------------------------
         # test code from prakash to set the local sites value to true
         #------------------------------------------------------------
-        for key in SITES_L.keys():
+        for key in list(SITES_L.keys()):
             SITES_L[key]['is_local'] = True
 
         SITES = {}
@@ -188,9 +188,9 @@ class SitesHandler(object):
         except ImportError:
             pass
         # merge them
-        for key in SITES.keys():
+        for key in list(SITES.keys()):
             kDic = SITES_PW.get(key, DEFAULT_PWS)
-            for k in DEFAULT_PWS.keys():
+            for k in list(DEFAULT_PWS.keys()):
                 SITES[key][k] = kDic.get(k, '')
             # get dockerhub password if available
             docker_info = SITES[key].get('docker', {})
@@ -215,37 +215,37 @@ class SitesHandler(object):
     def drop_site(self, template_name):
         SITES, SITES_L = self.get_sites()
         sites_list_path = self.sites_list_path
-        if template_name in SITES_L.keys():
+        if template_name in list(SITES_L.keys()):
             try:
                 os.unlink('%s/sites_local/%s.py' % (sites_list_path, template_name))
                 os.unlink('%s/sites_local/%s.pyc' % (sites_list_path, template_name))
             except:
                 pass
             return True
-        elif template_name in SITES.keys():
+        elif template_name in list(SITES.keys()):
             try:
                 os.unlink('%s/sites_global/%s.py' % (sites_list_path, template_name))
                 os.unlink('%s/sites_global/%s.pyc' % (sites_list_path, template_name))
             except:
                 pass
             return True
-        print(bcolors.FAIL)
-        print('*' * 80)
-        print('%s is not an existing site description' % template_name)
-        print(bcolors.ENDC)
+        print((bcolors.FAIL))
+        print(('*' * 80))
+        print(('%s is not an existing site description' % template_name))
+        print((bcolors.ENDC))
         
     
     def find_template(self, template_name):
         sites_list_path = self.check_and_create_sites_repo()
         SITES, SITES_L = self.get_sites()
-        if template_name in SITES.keys():
+        if template_name in list(SITES.keys()):
             return open('%ssites_global/%s.py' % (sites_list_path, template_name)).read()
-        elif template_name in SITES_L.keys():
+        elif template_name in list(SITES_L.keys()):
             return open('%ssites_local/%s.py' % (sites_list_path, template_name)).read()
-        print(bcolors.FAIL)
-        print('*' * 80)
-        print('%s is not an existing site description' % template_name)
-        print(bcolors.ENDC)
+        print((bcolors.FAIL))
+        print(('*' * 80))
+        print(('%s is not an existing site description' % template_name))
+        print((bcolors.ENDC))
                
     def add_site_global(self, handler, template_name = '', preset_values = {}):
         """add a global site to the list of site
@@ -299,10 +299,10 @@ class SitesHandler(object):
     def _add_site(self, where, template, no_outer):
         site_name = self.handler.site_name
         if self.handler.sites.get(site_name):
-            print "site %s allready defined" % site_name
+            print("site %s allready defined" % site_name)
             return
         if site_name.find('.') > -1 :
-            print SITE_ADDED_NO_DOT % site_name
+            print(SITE_ADDED_NO_DOT % site_name)
             return
         if where not in ['L', 'G']:
             return

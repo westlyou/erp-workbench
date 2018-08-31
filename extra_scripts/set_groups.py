@@ -58,9 +58,9 @@ def run(self, **kw_args):
     users = res_users.browse(res_users.search([]))
     for user in users:
         if AFBS_MANAGER in [gid.id for gid in user.groups_id]:
-            print 'manager:', user.name
+            print('manager:', user.name)
             continue
-        print user.name, user.groups_id, 
+        print(user.name, user.groups_id, end=' ') 
         user.groups_id = base_groups
-        print user.groups_id
+        print(user.groups_id)
     

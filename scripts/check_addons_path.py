@@ -51,7 +51,7 @@ def check_addons_paths(cfg_path, path_mapping=[], verbose=False, create=False):
     if os.path.exists(cfg_path) and os.path.isdir(cfg_path):
         cfg_path = '%s/openerp.cfg' % cfg_path
     if not os.path.exists(cfg_path):
-        print bcolors.FAIL + '%s can not be accessed' % cfg_path + bcolors.ENDC
+        print(bcolors.FAIL + '%s can not be accessed' % cfg_path + bcolors.ENDC)
         return
     addons = [
         a.strip() for a in [
@@ -59,7 +59,7 @@ def check_addons_paths(cfg_path, path_mapping=[], verbose=False, create=False):
     result = []
     for addon in addons:
         if verbose:
-            print addon
+            print(addon)
         if path_mapping:
             # odoo running in a docker, has an other addon origin
             m1, m2 = path_mapping
@@ -73,7 +73,7 @@ def check_addons_paths(cfg_path, path_mapping=[], verbose=False, create=False):
                 except:
                     result.append(bcolors.FAIL + '%s could not be created' % addon + bcolors.ENDC)
     if result:
-        print '\n'.join(result)
+        print('\n'.join(result))
 
 if __name__ == '__main__':
     check_addons_paths('/home/robert/projects/afbstest/afbstest/etc', verbose=True)

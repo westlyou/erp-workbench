@@ -10,5 +10,5 @@ class GreetingMaker(object):
 daemon = Pyro4.Daemon()                # make a Pyro daemon
 uri = daemon.register(GreetingMaker)   # register the greeting maker as a Pyro object
 
-print("Ready. Object uri =", uri)      # print the uri so we can use it in the client later
+print(("Ready. Object uri =", uri))      # print the uri so we can use it in the client later
 daemon.requestLoop()                   # start the event loop of the server to wait for calls

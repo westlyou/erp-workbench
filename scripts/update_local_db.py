@@ -8,7 +8,7 @@ from optparse import OptionParser
 import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, BASE_INFO, BASE_PATH, SITES_HOME
-from utilities import get_process_id
+from .utilities import get_process_id
 import psutil
 import time
 
@@ -26,9 +26,9 @@ CREATE DATABASE
 """
 PROCESS_NAMES_DIC = {'odoo': 'odoo_bin',
                      'flectra': 'flectra_bin', 'start_openerp': ''}
-PROCESS_NAMES = PROCESS_NAMES_DIC.keys()
+PROCESS_NAMES = list(PROCESS_NAMES_DIC.keys())
 #sys.path.insert(0, SITES_HOME)
-from utilities import get_remote_server_info, bcolors, SITES
+from .utilities import get_remote_server_info, bcolors, SITES
 
 # to find executable python
 
@@ -138,8 +138,8 @@ class DBUpdater(object):
         dbname = self.site_name
         dpath = ''
         dpath = '%s/%s/dump' % (BASE_INFO['odoo_server_data_path'], dbname)
-        print bcolors.WARNING
-        print '*' * 80
+        print(bcolors.WARNING)
+        print('*' * 80)
         # step one, create local dump
         if os.path.exists(dpath):
             odoo = self.get_odoo(verbose=True)
@@ -155,28 +155,28 @@ class DBUpdater(object):
                     (self.db_password, self.db_host,
                      self.db_user, dbname, dpath, dbname)
 
-                print cmdline
+                print(cmdline)
                 #print cmds
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
                 p.communicate()
-                print 'dumped:', dpath
+                print('dumped:', dpath)
             elif odoo:
                 if not opts.force:
-                    print(bcolors.FAIL)
-                    print('*' * 80)
-                    print('site %s is running, not %s, I can not determin what to so. leaving!' % (runnig_db, dbname))
+                    print((bcolors.FAIL))
+                    print(('*' * 80))
+                    print(('site %s is running, not %s, I can not determin what to so. leaving!' % (runnig_db, dbname)))
                     if opts.new_target_site:
-                        print('stop the the running odoo or use the option -F (force) if you just want to copy %s to %s' % 
-                              (dbname, opts.new_target_site))
-                    print(bcolors.ENDC)
+                        print(('stop the the running odoo or use the option -F (force) if you just want to copy %s to %s' % 
+                              (dbname, opts.new_target_site)))
+                    print((bcolors.ENDC))
                     sys.exit()
-                print 'odoo is not running, so NO! dump was created'                
+                print('odoo is not running, so NO! dump was created')                
             else:
-                print 'odoo is not running, so NO! dump was created'
+                print('odoo is not running, so NO! dump was created')
         else:
-            print 'not existing:', dpath
-            print bcolors.ENDC
+            print('not existing:', dpath)
+            print(bcolors.ENDC)
             sys.exit()
         # if we want to copy the dumped stuff to a remote site
         # do it now
@@ -187,9 +187,9 @@ class DBUpdater(object):
             target_site_name = dbname
             if opts.new_target_site:
                 # is this a valid site?
-                if not opts.new_target_site in self.sites.keys():
-                    print 'not a valid site:', opts.new_target_site
-                    print bcolors.ENDC
+                if not opts.new_target_site in list(self.sites.keys()):
+                    print('not a valid site:', opts.new_target_site)
+                    print(bcolors.ENDC)
                     sys.exit()
                 target_site_name = opts.new_target_site
             server_dic = get_remote_server_info(opts)
@@ -208,14 +208,14 @@ class DBUpdater(object):
                     BASE_INFO['odoo_server_data_path'], dbname)
                 target = '%s/%s/dump' % (
                     BASE_INFO['odoo_server_data_path'], target_site_name)
-                print '*' * 80
-                print 'will copy the site data to %s' % rfst_path
+                print('*' * 80)
+                print('will copy the site data to %s' % rfst_path)
                 cmdline = 'rsync -av %s/ %s/ --delete' % (lfst_path, rfst_path)
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
-                print cmdline
+                print(cmdline)
                 if opts.verbose:
-                    print p.communicate()
+                    print(p.communicate())
                 else:
                     p.communicate()
                 # now copy dumped db
@@ -225,22 +225,22 @@ class DBUpdater(object):
                 cmdline = 'rsync -av %s %s' % (local_dump, remote_dump)
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
-                print cmdline
+                print(cmdline)
                 if opts.verbose:
-                    print p.communicate()
+                    print(p.communicate())
                 else:
                     p.communicate()
             else:
-                print '*' * 80
-                print 'will copy the site data to %s@%s:/%s' % (
-                    remote_user, opts.use_ip_target, rfst_path)
+                print('*' * 80)
+                print('will copy the site data to %s@%s:/%s' % (
+                    remote_user, opts.use_ip_target, rfst_path))
                 cmdline = 'rsync -av %s/ %s@%s:%s/ --delete' % (
                     lfst_path, remote_user, opts.use_ip_target, rfst_path)
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
-                print cmdline
+                print(cmdline)
                 if opts.verbose:
-                    print p.communicate()
+                    print(p.communicate())
                 else:
                     p.communicate()
                 # now copy dumped db
@@ -251,13 +251,13 @@ class DBUpdater(object):
                     local_dump, remote_user, opts.use_ip_target, remote_dump)
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
-                print cmdline
+                print(cmdline)
                 if opts.verbose:
-                    print p.communicate()
+                    print(p.communicate())
                 else:
                     p.communicate()
 
-        print bcolors.ENDC
+        print(bcolors.ENDC)
 
     def close_db_connections_and_delete_db(self, site_name):
         """
@@ -278,7 +278,7 @@ class DBUpdater(object):
             'postgres', ACT_USER, 'localhost', dbpw)
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
-        print 'close connections'
+        print('close connections')
         cursor.execute(SQL % site_name)
         cursor.fetchall()
         conn.commit()
@@ -286,13 +286,13 @@ class DBUpdater(object):
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
         conn.autocommit = True
-        print 'drop db %s' % site_name
+        print('drop db %s' % site_name)
         try:
             cursor.execute(SQL2 % site_name)
         except psycopg2.ProgrammingError as e:
             pass
         except Exception as e:
-            print str(e)
+            print(str(e))
         conn.commit()
         conn.close()
 
@@ -305,22 +305,22 @@ class DBUpdater(object):
             self.create_folders(site_name, quiet=True)
         except AttributeError:
             pass
-        if extra_data.has_key('remote_user'):
+        if 'remote_user' in extra_data:
             remote_user = extra_data['remote_user']
         else:
             remote_user = self.remote_user
         #remote_data_path = self.remote_data_path
-        if extra_data.has_key('remote_url'):  # self.opts.use_ip:
+        if 'remote_url' in extra_data:  # self.opts.use_ip:
             remote_url = extra_data['remote_url']
         else:
             remote_url = self.remote_url
         # remote_data_path = self.remote_data_path # server_info['remote_data_path']
-        if extra_data.has_key('remote_data_path'):
+        if 'remote_data_path' in extra_data:
             remote_data_path = extra_data['remote_data_path']
         else:
             remote_data_path = self.remote_data_path
         #
-        if extra_data.has_key('remote_pw'):
+        if 'remote_pw' in extra_data:
             remote_pw = extra_data['remote_pw']
         else:
             remote_pw = self.db_password
@@ -484,9 +484,9 @@ class DBUpdater(object):
                 use_site_name,
             ))
             if not os.path.exists(dpath):
-                print '-------------------------------------------------------'
-                print '%s not found' % dpath
-                print '-------------------------------------------------------'
+                print('-------------------------------------------------------')
+                print('%s not found' % dpath)
+                print('-------------------------------------------------------')
                 return
             try:
                 if self.opts.backup:
@@ -498,7 +498,7 @@ class DBUpdater(object):
             # make sure the needed directories exist
             fp = '%s/%s/filestore' % (self.data_path, use_site_name)
             if not os.path.exists(fp) and os.path.isdir(fp):
-                print bcolors.FAIL + '%s is not yet created, can not be updated' % use_site_name + bcolors.ENDC
+                print(bcolors.FAIL + '%s is not yet created, can not be updated' % use_site_name + bcolors.ENDC)
                 return
             pw = self.login_info['db_password']
             user = self.login_info['db_user']
@@ -568,7 +568,7 @@ class DBUpdater(object):
                 found = True
                 break
         if not found:
-            print 'no config file found'
+            print('no config file found')
             return
         d = open('etc/%s' % f_name).read()
         # just add new values for the db stuff
@@ -583,7 +583,7 @@ class DBUpdater(object):
                 found = True
                 break
         if not found:
-            print 'no executable script found'
+            print('no executable script found')
             return
         process_info = get_process_id(p_name, self.default_values['inner'])
         if process_info:
@@ -603,14 +603,14 @@ class DBUpdater(object):
         # no wait for 10 secs to allow odoo to spinn up
         process_info = get_process_id(p_name, self.default_values['inner'])
         if not process_info:
-            print bcolors.FAIL, '\n------------------------------'
-            print 'could not start', 'bin/%s' % p_name
-            print bcolors.ENDC
+            print(bcolors.FAIL, '\n------------------------------')
+            print('could not start', 'bin/%s' % p_name)
+            print(bcolors.ENDC)
         # wait for 5 secs to allow odoo to spin up
-        print bcolors.OKBLUE, '\n------------------------------'
-        print 'started odoo in the background'
-        print 'now waiting for 5 secs to allow odoo to spin up'
-        print bcolors.ENDC
+        print(bcolors.OKBLUE, '\n------------------------------')
+        print('started odoo in the background')
+        print('now waiting for 5 secs to allow odoo to spin up')
+        print(bcolors.ENDC)
         time.sleep(5)
         # now we can create a new database
         # for this we attach to odoo first
@@ -619,38 +619,38 @@ class DBUpdater(object):
         except:
             pass
         if not odoo:
-            print bcolors.FAIL, '\n------------------------------'
-            print 'could not start odoo'
-            print 'please try again. If this does not help, look for a prosses using'
-            print 'ps aux | grep ', p_name
-            print 'and kill it'
-            print bcolors.ENDC
+            print(bcolors.FAIL, '\n------------------------------')
+            print('could not start odoo')
+            print('please try again. If this does not help, look for a prosses using')
+            print('ps aux | grep ', p_name)
+            print('and kill it')
+            print(bcolors.ENDC)
         old_timeout = odoo.config['timeout']
         odoo.config['timeout'] = 600
-        print bcolors.WARNING, '\n------------------------------'
-        print 'dropping db:', self.site_name
-        print bcolors.ENDC
+        print(bcolors.WARNING, '\n------------------------------')
+        print('dropping db:', self.site_name)
+        print(bcolors.ENDC)
         # drop the old db
         try:
             odoo.db.drop('admin', db=self.site_name)
         except:
             pass
-        print bcolors.WARNING, '\n------------------------------'
-        print 'creating new db:', self.site_name
-        print bcolors.ENDC
+        print(bcolors.WARNING, '\n------------------------------')
+        print('creating new db:', self.site_name)
+        print(bcolors.ENDC)
         odoo.db.create('admin', db=self.site_name,
                        demo=True, admin_password='admin')
         # now kill the process again
-        print bcolors.WARNING, '\n------------------------------'
-        print 'killing the procces',
-        print bcolors.ENDC
+        print(bcolors.WARNING, '\n------------------------------')
+        print('killing the procces', end=' ')
+        print(bcolors.ENDC)
 
         process_info = get_process_id(p_name, self.default_values['inner'])
         if process_info and process_info[0]:
             psutil.Process(process_info[0][0]).terminate()
-        print bcolors.OKGREEN, '------------------------------'
-        print 'all done',
-        print bcolors.ENDC
+        print(bcolors.OKGREEN, '------------------------------')
+        print('all done', end=' ')
+        print(bcolors.ENDC)
 
     def doUpdate(self, db_update=True, norefresh=None, names=[], is_local=False, set_local=True):
         """
@@ -683,7 +683,7 @@ class DBUpdater(object):
             if set_local:
                 # kill the process
                 if not process_info:
-                    print 'odoo/flectra not running'
+                    print('odoo/flectra not running')
                 else:
                     if not norefresh:
                         p = psutil.Process(process_info[0][0])
@@ -718,9 +718,9 @@ class DBUpdater(object):
                             if lcounter > 100:
                                 break
                             if "running on" in line:
-                                print bcolors.OKGREEN
-                                print "STARTUP OK"
-                                print bcolors.ENDC
+                                print(bcolors.OKGREEN)
+                                print("STARTUP OK")
+                                print(bcolors.ENDC)
                                 break
                             else:
                                 print(line)
@@ -731,7 +731,7 @@ class DBUpdater(object):
                                 break
                         prossess_pid = p.pid
                 except:
-                    print 'could not chdir to:%s' % self.default_values['inner']
+                    print('could not chdir to:%s' % self.default_values['inner'])
                     pass
                 if not opts.noupdatedb:
                     try:
@@ -742,7 +742,7 @@ class DBUpdater(object):
                         pass
                     if prossess_pid:
                         p = psutil.Process(prossess_pid,)
-                        print 'about to terminate %s' % p.cmdline()[-1]
+                        print('about to terminate %s' % p.cmdline()[-1])
                         if p.is_running():
                             p.terminate()
                             p.kill()
@@ -751,13 +751,13 @@ class DBUpdater(object):
                         PROCESS_NAMES_DIC[process_name], self.default_values['inner'])
                     if process_info:
                         p = psutil.Process(process_info[0][0])
-                        print 'about to terminate %s' % ','.join(p.cmdline()[-1])
+                        print('about to terminate %s' % ','.join(p.cmdline()[-1]))
                         if p.is_running():
                             try:
                                 p.terminate()
                             except:
-                                print 'failed to terminate: %' % ','.join(
-                                    p.cmdline()[-1])
+                                print('failed to terminate: %' % ','.join(
+                                    p.cmdline()[-1]))
 
     def doTransfer(self):
         """
@@ -781,9 +781,9 @@ class DBUpdater(object):
             if not server_dic:
                 return
             if not site_name in self.get_instance_list():
-                print '*' * 80
-                print 'site %s does not exist or is not initialized' % site_name
-                print 'run bin/c.sh -D %s' % site_name
+                print('*' * 80)
+                print('site %s does not exist or is not initialized' % site_name)
+                print('run bin/c.sh -D %s' % site_name)
                 if len(self.site_names) > 1:
                     continue
                 return
@@ -797,29 +797,29 @@ class DBUpdater(object):
             if opts.transferdocker:
                 docker_info = slave_db_data.get('docker')
                 if not docker_info or not docker_info.get('container_name'):
-                    print '*' * 80
-                    print 'no docker info found for %s, or container_name not set' % site_name
+                    print('*' * 80)
+                    print('no docker info found for %s, or container_name not set' % site_name)
                     if len(self.site_names) > 1:
                         continue
                     return
             slave_info = slave_db_data.get('slave_info')
             if not slave_info:
-                print '*' * 80
-                print 'no slave info found for %s' % site_name
+                print('*' * 80)
+                print('no slave info found for %s' % site_name)
                 if len(self.site_names) > 1:
                     continue
                 return
             master_name = slave_info.get('master_site')
             if not master_name in self.get_instance_list():
-                print '*' * 80
-                print 'master_site %s does not exist or is not initialized' % master_name
-                print 'run bin/c.sh -D %s' % master_name
+                print('*' * 80)
+                print('master_site %s does not exist or is not initialized' % master_name)
+                print('run bin/c.sh -D %s' % master_name)
                 if len(self.site_names) > 1:
                     continue
                 return
             if not master_name:
-                print '*' * 80
-                print 'master_site not provided for %s' % site_name
+                print('*' * 80)
+                print('master_site not provided for %s' % site_name)
                 if len(self.site_names) > 1:
                     continue
                 return

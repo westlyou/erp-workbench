@@ -17,7 +17,7 @@ def run(self, **kw_args):
     
     
     # second last argument must be name of the newslist
-    print kw_args
+    print(kw_args)
     args = sys.argv
     n_name = kw_args.get('name','')
     n_file = kw_args.get('path','')
@@ -27,22 +27,22 @@ def run(self, **kw_args):
     
     nl_id = odoo.env['mail.mass_mailing.list'].search([('name', '=', n_name)])
     if not nl_id:
-        print bcolors.FAIL
-        print 'mailing-list %s does not exist' % n_name
-        print 'run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,path=PATH-TO-DATA'
-        print bcolors.ENDC
+        print(bcolors.FAIL)
+        print('mailing-list %s does not exist' % n_name)
+        print('run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,path=PATH-TO-DATA')
+        print(bcolors.ENDC)
         return
     else:
         nl_id = nl_id[0]
     
     if not (os.path.exists(n_file) or os.path.exists(r_file)):
-        print bcolors.FAIL
-        print 'datafile %s does not exist' % n_file
-        print 'run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,path=PATH-TO-DATA'
-        print ' -OR- '
-        print 'run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,rpath=PATH-TO-DATA'
-        print 'in the second case, the emails found in rpath are REMOVED from the email list'
-        print bcolors.ENDC
+        print(bcolors.FAIL)
+        print('datafile %s does not exist' % n_file)
+        print('run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,path=PATH-TO-DATA')
+        print(' -OR- ')
+        print('run bin/c -E import_nl_email SITE-NAME -EP name=NL_NAME,rpath=PATH-TO-DATA')
+        print('in the second case, the emails found in rpath are REMOVED from the email list')
+        print(bcolors.ENDC)
         return
     
     contacts = odoo.env['mail.mass_mailing.contact']
@@ -57,7 +57,7 @@ def run(self, **kw_args):
             
             if l_object:
                 contacts.browse(l_object).unlink()
-                print 'removed:', email
+                print('removed:', email)
     else:
         with open(n_file) as f: 
             lines = f.readlines()
@@ -65,7 +65,7 @@ def run(self, **kw_args):
             email = email.split(',')[0].strip()
             if email and not contacts.search([('email', '=', email), ('list_id', '=', nl_id)]) and ('@' in email):
                 contacts.create({'email' : email, 'list_id' : nl_id})
-                print email
+                print(email)
                 
         
     

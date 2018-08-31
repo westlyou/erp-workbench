@@ -60,13 +60,13 @@ def find_addon_names(addon):
     name = ''
     names = []
     a = addon
-    if a.has_key('names'):
+    if 'names' in a:
         names = a['names']
-    elif a.has_key('name'):
+    elif 'name' in a:
         name = a['name']
-    elif a.has_key('group'):
+    elif 'group' in a:
         name = a['group']
-    elif a.has_key('add_path'):
+    elif 'add_path' in a:
         name = a['add_path']
     names = names + [name]
     return [n.strip() for n in names if n]
@@ -92,17 +92,17 @@ class Handler(object):
                     
         # read the site descrition
         if not os.path.exists(SITE_DESCRIPTION):
-            print bcolors.FAIL + '*' * 80
-            print SITE_DESCRIPTION + 'not accessible' + bcolors.ENDC
+            print(bcolors.FAIL + '*' * 80)
+            print(SITE_DESCRIPTION + 'not accessible' + bcolors.ENDC)
         sd = open(SITE_DESCRIPTION, 'r').read()
         pos = sd.find('{')
         try:
             site_description = eval(sd[pos:])
         except Exception as e:
-            print bcolors.FAIL + '*' * 80
-            print str(e)
-            print '*' * 80 + bcolors.ENDC
-        self.site_name, self.site_description = site_description.items()[0]
+            print(bcolors.FAIL + '*' * 80)
+            print(str(e))
+            print('*' * 80 + bcolors.ENDC)
+        self.site_name, self.site_description = list(site_description.items())[0]
         self.opts = opts
         
     # ----------------------------------
@@ -152,7 +152,7 @@ class Handler(object):
             open('%s/%s' % (CFG_PATH, ODOO_CFG), 'w').write(config_file)
         else:
             # should never happen
-            print bcolors.FAIL + 'ERROR: folder %s does not exist' %  CFG_PATH + bcolors.ENDC
+            print(bcolors.FAIL + 'ERROR: folder %s does not exist' %  CFG_PATH + bcolors.ENDC)
     
     def checkout_sa(self):
         """
@@ -206,15 +206,15 @@ class Handler(object):
                     target = os.path.normpath(ADDONS_PATH)
                     branch = site_addon.get('branch', 'master')
                     #branch = 'master' #ubDic.get(name, site_addon.get('branch', 'master'))
-                    if site_addon.has_key('group'):
+                    if 'group' in site_addon:
                         target = '%s/%s' % (target, site_addon['group'])
                     target = os.path.normpath(target)
                     if not dev_list or name in dev_list:
                         #if os.path.exists(temp_target % name):
                             #print VCS_MSG_DEVELOP % (name, target)
                         #else:
-                            print VCS_MSG % (name, target)
-                            print(target, url)
+                            print(VCS_MSG % (name, target))
+                            print((target, url))
                             try:
                                 if site_addon.get('type') == 'git':
                                     gr = GitRepo(target, url)
@@ -224,11 +224,11 @@ class Handler(object):
                                     #sv(branch)
                             except UpdateError as e:
                                 result['failed'].append(target)
-                                print VCS_ERROR % target
-                                print bcolors.WARNING
-                                print str(e)
-                                print bcolors.ENDC
-                                print VCS_ERROR_END
+                                print(VCS_ERROR % target)
+                                print(bcolors.WARNING)
+                                print(str(e))
+                                print(bcolors.ENDC)
+                                print(VCS_ERROR_END)
                     done.append(url)
         return result
 
@@ -242,7 +242,7 @@ class Handler(object):
         result = self.checkout_sa()
         if not os.path.exists('%s/%s' % (CFG_PATH,ODOO_CFG)) or self.opts.force:
             self.construct_config()
-        print result
+        print(result)
         
         
 def main(opts):
@@ -252,7 +252,7 @@ def main(opts):
         return
     if opts.force:
         handler.construct_config()
-    print 'cd %s;%s/%s -c %s/%s' % (ODOO_START_DIR, ODOO_PATH, ODOO_CMD, CFG_PATH, ODOO_CFG)
+    print('cd %s;%s/%s -c %s/%s' % (ODOO_START_DIR, ODOO_PATH, ODOO_CMD, CFG_PATH, ODOO_CFG))
     
 # ----------------------------------------------------------------------------------------------
 # git stuff
@@ -281,7 +281,7 @@ def wrap_check_call(exc_cls, call_fn):
         """Variant on subprocess.check_* that raises %s.""" % exc_cls
         try:
             return call_fn(*args, **kwargs)
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             up_exc = exc_cls(e.returncode, e.cmd)
             output = getattr(e, 'output', None)
             if output is not None:
@@ -323,7 +323,7 @@ class BaseRepo(object):
                  offline=False, clear_locks=False, **options):
 
         self.target_dir = target_dir
-        self.url = isinstance(url, basestring) and url.strip() or url
+        self.url = isinstance(url, str) and url.strip() or url
         self.clear_retry = clear_retry
         self.offline = offline
         self.clear_locks = clear_locks
@@ -612,8 +612,8 @@ def check_output(*popenargs, **kwargs):
         # in python 2.6, CalledProcessError.__init__ does not have output kwarg
         exc = subprocess.CalledProcessError(retcode, cmd)
         exc.output = output
-        print '*' * 80
-        print os.getcwd()
+        print('*' * 80)
+        print(os.getcwd())
         raise exc
     return output
 

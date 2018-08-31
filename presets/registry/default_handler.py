@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+
 
 import datetime
 import os
@@ -91,7 +91,7 @@ class BaseHandler(object):
         if raw:
             return yaml_data
 
-        for obj_name, data_set in yaml_data.items():
+        for obj_name, data_set in list(yaml_data.items()):
             if data_set.get('handler', '') == self.name:
                 yaml_data = data_set
                 # we want to be able to ask for the obj_name both
@@ -245,7 +245,7 @@ class BaseHandler(object):
         yaml_data_raw = self._get_yaml_data(True)
         # out of the raw data we have to get the dataset
         # the actual handler deals with
-        for data_set in yaml_data_raw.values():
+        for data_set in list(yaml_data_raw.values()):
             if data_set.get('handler', BASE_YAML_HANDLER) == self.name:
                 yaml_data = data_set
                 break
@@ -389,7 +389,7 @@ class BaseHandler(object):
         parent_data = self.check_and_run_parent(yaml_data, self.name)
         values = {}  # dict that will be used to create an object
         yaml_data['parent_data'] = parent_data
-        for k, v in yaml_data.items():
+        for k, v in list(yaml_data.items()):
             if k.endswith('_help') or k in self._skip_names:
                 continue
             values[k] = v
@@ -465,7 +465,7 @@ class BaseYamlHandler(BaseHandler):
                     yaml_data['new_object_id'] = new_id
                 self.yaml_data = yaml_data
                 self._run_handler_end()
-            except Exception, e:
+            except Exception as e:
                 print(bcolors.FAIL)
                 print('*' * 80)
                 print(str(e))

@@ -1,9 +1,9 @@
 import os
 import logging
 import subprocess
-import urlparse
-import urllib
-from StringIO import StringIO
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
+from io import StringIO
 from copy import deepcopy
 
 from zc.buildout import UserError
@@ -53,9 +53,9 @@ class BzrBranch(BaseRepo):
 
             # first arg (name) of look_up is acturally ignored
             url = LPDIR.look_up('', self.url)
-            parsed = list(urlparse.urlparse(url))
-            parsed[2] = urllib.quote(parsed[2])
-            self.url = urlparse.urlunparse(parsed)
+            parsed = list(urllib.parse.urlparse(url))
+            parsed[2] = urllib.parse.quote(parsed[2])
+            self.url = urllib.parse.urlunparse(parsed)
 
     def conf_file_path(self):
         return os.path.join(self.target_dir, '.bzr', 'branch', 'branch.conf')
@@ -84,7 +84,7 @@ class BzrBranch(BaseRepo):
         """Write counterpart to :meth:`read_conf`
         """
         lines = ('%s = %s' % (k, v) + os.linesep
-                 for k, v in conf.items())
+                 for k, v in list(conf.items()))
         with use_or_open(to_file, self.conf_file_path(), 'w') as conffile:
             conffile.writelines(lines)
 

@@ -70,7 +70,7 @@ class partnerHandler(object):
         return not [c for c in row if c.value]
     
     def handle_excel(self, wbObject=None):
-        result = u''
+        result = ''
         opts = self.opts
         skip_lines = opts.skip_lines
         header_line = opts.header_line
@@ -117,7 +117,7 @@ class partnerHandler(object):
                 # membership
                 data['free_member'] = 1
                 records[0].write(data)
-                print data['firstname'], data['lastname']
+                print(data['firstname'], data['lastname'])
         #open('/home/robert/xx.txt', 'w').write(result)
 
 def main(opts):
@@ -178,5 +178,5 @@ if __name__ == '__main__':
     if args.input and args.name:
         main(args) #opts.noinit, opts.initonly)
     else:
-        print parser.print_help()
+        print(parser.print_help())
         

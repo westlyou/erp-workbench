@@ -39,6 +39,6 @@ data_json = json.dumps(
 )
 url = 'http://localhost:8069/web/dataset/search_read?model=calendar.attendee&fields=name'
 res=requests.get(url=url, data=data_json, headers=headers)
-print res
+print(res)
 
 a=1

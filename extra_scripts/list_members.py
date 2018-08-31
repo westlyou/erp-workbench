@@ -32,7 +32,7 @@ class MemberLister(object):
         pdomains = self.odoo.env['product.domain.list']
         # make sure we have the membership types
         self.listMembershipTypes()
-        mtypes = self.mtypes.keys()
+        mtypes = list(self.mtypes.keys())
         mtypes.sort()
         pps = []
         for mtype in mtypes:
@@ -120,7 +120,7 @@ class MemberLister(object):
                     end):
                 c+= 1
                 new_sheet.write(rowcounter, c, v)
-            print rowcounter
+            print(rowcounter)
             
         wb.save(self.opts.output)
         
@@ -161,12 +161,12 @@ class MemberLister(object):
                     except:
                         pass
                 if not d.partner_id.name:
-                    print 'no name:%s '% d.partner_dom.name, d.domain_data
+                    print('no name:%s '% d.partner_dom.name, d.domain_data)
                 else:
-                    print d.partner_id.name
+                    print(d.partner_id.name)
                     #assigned_partners.create(vals=params)
             else:
-                print '>>(%s)'% d.partner_dom.name, d.partner_id.name, 'not found'
+                print('>>(%s)'% d.partner_dom.name, d.partner_id.name, 'not found')
             
         
     def check_hierarchy(self):
@@ -174,7 +174,7 @@ class MemberLister(object):
         for pd in pdomain.browse(pdomain.search([])):
             p = pd[0].partner_id
             if p.parent_id:
-                print '--------->', pd[0].id, p.id, p.name, pd[0].partner_dom.name, p.parent_id[0].name
+                print('--------->', pd[0].id, p.id, p.name, pd[0].partner_dom.name, p.parent_id[0].name)
                 self.bad_parent[p.id] = p.parent_id[0]
                 
     def _get_connection(self):
@@ -213,15 +213,15 @@ class MemberLister(object):
             for _ in header:
                 c+= 1
                 v = row[c]
-                if isinstance(v, basestring):
+                if isinstance(v, str):
                     v = v.decode('utf8')
                 else:
                     if c == 7 and v:
                         v = v.strftime('%Y-%m-%d')
                 new_sheet.write(rowcounter, c, v)
-                print v,
-            print
-        print '------->', rowcounter
+                print(v, end=' ')
+            print()
+        print('------->', rowcounter)
             
         wb.save(self.opts.output or FILE_NAME)
         
@@ -249,25 +249,25 @@ class MemberLister(object):
                 #details = pythonwhois.get_whois(row[0])
                 answers = dns.resolver.query(row[0], 'MX')
             except Exception as e:
-                print 'ERROR:', row[0]
-                print str(e)
+                print('ERROR:', row[0])
+                print(str(e))
                 cur.execute(q2 % row[0])
                 r = cur.fetchone()
-                print r.keys()
-                print r['partner_id'],row[0]
+                print(list(r.keys()))
+                print(r['partner_id'],row[0])
                 #cur.execute(q3 % (row[0], r['partner_id']))
                 cur.execute(q3 % (row[0]))
-                print cur.fetchall()
+                print(cur.fetchall())
 
                 continue
             if answers:
                 continue
-                print '.', #row[0], 
+                print('.', end=' ') #row[0], 
                 for rdata in answers:
-                    print 'Host', rdata.exchange, 'has preference', rdata.preference 
-                print '---------------------------------'
+                    print('Host', rdata.exchange, 'has preference', rdata.preference) 
+                print('---------------------------------')
             else:
-                print 'not found', row[0]
+                print('not found', row[0])
             
 
 def main(opts):

@@ -9,7 +9,7 @@ from subprocess import PIPE
 if len(sys.argv) > 1:
     dbname = sys.argv[1]
 else:
-    print 'no database name provided'
+    print('no database name provided')
     sys.exit()
 verbose = len(sys.argv) > 3
 dumper_cmd = len(sys.argv) > 2 and sys.argv[2] or '-d'
@@ -23,7 +23,7 @@ try:
     BASE_INFO.update(getattr(fun, n))
     os.chdir(SITES_HOME)
 except:
-    print 'trying to import base_info from %s/config failed' % SITES_HOME
+    print('trying to import base_info from %s/config failed' % SITES_HOME)
     sys.exit()
 
 DATA_HOME = BASE_INFO['odoo_server_data_path']
@@ -44,8 +44,8 @@ else:
     
 (DATA_HOME, SITES_HOME, dumper_cmd, dbname)
 if verbose:
-    print '--------- rundocker start ----------'
-    print cmd_line
+    print('--------- rundocker start ----------')
+    print(cmd_line)
     cmd_line = cmd_line + ' -v'
 p = subprocess.Popen(cmd_line, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
 if verbose:
@@ -54,9 +54,9 @@ if verbose:
         errs = result[1].split('\n')
         result = result[0].split('\n')
         for l in result:
-            print l
+            print(l)
         for l in errs:
-            print l
-    print '--------- rundocker end ----------'
+            print(l)
+    print('--------- rundocker end ----------')
 else:
     p.communicate()

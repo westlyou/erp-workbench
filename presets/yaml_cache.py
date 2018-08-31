@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 try:
-    import yaml 
-    from fcache import FileCache
+    from . import yaml 
+    from .fcache import FileCache
 except ImportError:
     raise
-    from bcolors import bcolors
-    print(bcolors.FAIL)
-    print('*' * 80)
+    from .bcolors import bcolors
+    print((bcolors.FAIL))
+    print(('*' * 80))
     print('there was an error importing yaml or fcache, please run:bin/pip install -r install/requirements.txt')
-    print(bcolors.ENDC)
+    print((bcolors.ENDC))
 
 class YamlCache(object):
     """Maintain a cache of yyaml files.
@@ -44,7 +44,7 @@ class YamlCache(object):
     def get(self, yaml_name):
         # did we read the file before?
         yaml_file_path_for_site = '%s/%s.yaml' % (self.manager.yaml_data_folder, yaml_name)
-        if self._cache.has_key(yaml_file_path_for_site):# preset_path):
+        if yaml_file_path_for_site in self._cache:# preset_path):
             return self._cache[yaml_file_path_for_site]
         else:
             # preset_path_origin = preset_path
@@ -52,10 +52,10 @@ class YamlCache(object):
             preset_path = os.path.abspath(
                 '%s/%s.yaml' % (self.manager.base_yaml_path, yaml_name))            
             if not os.path.exists(preset_path):
-                print(bcolors.FAIL)
-                print('*' * 80)
-                print('%s does not exist' % preset_path)
-                print(bcolors.ENDC)
+                print((bcolors.FAIL))
+                print(('*' * 80))
+                print(('%s does not exist' % preset_path))
+                print((bcolors.ENDC))
                 raise ValueError('yaml file not found:' + preset_path)
 
             # if the file does not exist or is older 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # https://github.com/badele/gitcheck/blob/master/gitcheck/gitcheck.py
-from __future__ import unicode_literals, absolute_import, division, print_function
+
 
 import os
 import re

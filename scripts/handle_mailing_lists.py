@@ -21,27 +21,27 @@ def main(opts):
 
     ifile = opts.input
     if not ifile:
-        print '*' * 80
-        print 'no inputfile defined'
+        print('*' * 80)
+        print('no inputfile defined')
         sys.exit()
 
     if not os.path.exists(ifile):
-        print '*' * 80
-        print '%s not found' % ifile
+        print('*' * 80)
+        print('%s not found' % ifile)
         sys.exit()
 
     mailinglist = opts.mailinglist
     if not mailinglist:
-        print '*' * 80
-        print 'no mailinglist defined'
+        print('*' * 80)
+        print('no mailinglist defined')
         sys.exit()
 
     # does mailing list exist ?
     try:
         cursor.execute('select * from mail_mass_mailing_list')
     except psycopg2.ProgrammingError:
-        print '*' * 80
-        print 'mass mailing seems not to be installed for %s' % opts.dbname
+        print('*' * 80)
+        print('mass mailing seems not to be installed for %s' % opts.dbname)
         sys.exit()
 
     mlist_name = opts.mailinglist
@@ -49,9 +49,9 @@ def main(opts):
                    mlist_name)
     row = cursor.fetchone()
     if not row:
-        print '*' * 80
-        print '%s mailing list does not exist for %s' % (mlist_name,
-                                                         opts.dbname)
+        print('*' * 80)
+        print('%s mailing list does not exist for %s' % (mlist_name,
+                                                         opts.dbname))
         sys.exit()
     mailinglist_id = row[0]
     emails = open(ifile)
@@ -68,8 +68,8 @@ def main(opts):
                     email, mailinglist_id)
                 cursor.execute(s)
                 conn.commit()
-                print email
-    print '-- done --'
+                print(email)
+    print('-- done --')
 
 
 if __name__ == '__main__':

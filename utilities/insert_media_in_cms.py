@@ -34,13 +34,13 @@ def _read_file(fname, inputdir):
         size = os.path.getsize(full_path)
         r = open(full_path, 'rb').read().encode('base64')
     except (IOError, OSError):
-        print "Cant read File: %s" % full_path
+        print("Cant read File: %s" % full_path)
     return r, size
 
 
 def _vprint(text, verbose):
     if verbose:
-        print text
+        print(text)
 
 
 class ImageHandler(object):
@@ -71,21 +71,21 @@ class ImageHandler(object):
         f, size = _read_file(fname, self.opts.inputdir)
 
         self.odoo.env["cms.media"].create({
-            u'datas': f,
-            u'datas_fname': fname,
-            u'description': False,
+            'datas': f,
+            'datas_fname': fname,
+            'description': False,
             # u'force_category_id': category_id,
-            u'image': f,
-            u'lang_id': False,
-            u'name': fname,
-            u'page_id': parent_id,
-            u'published_date': False,
+            'image': f,
+            'lang_id': False,
+            'name': fname,
+            'page_id': parent_id,
+            'published_date': False,
             # u'res_id': u'',
-            u'res_model': u'cms.page',
-            u'type': u'binary',
-            u'url': False,
-            u'website_published': True,
-            u'mimetype': mime_type,
+            'res_model': 'cms.page',
+            'type': 'binary',
+            'url': False,
+            'website_published': True,
+            'mimetype': mime_type,
             # u'file_size': size
         })
 
@@ -103,7 +103,7 @@ class ImageHandler(object):
         
         for m in medias.browse(medias.search([('page_id', '=', parent_id)])):
             if m.image:
-                print m.datas_fname
+                print(m.datas_fname)
                 open('%s/%s' % (odir, m.datas_fname), 'wb').write(base64.b64decode(m.image))
         
     def process_dir(self):

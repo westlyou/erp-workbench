@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-from ConfigParser import ConfigParser, RawConfigParser
+from configparser import ConfigParser, RawConfigParser
 from zc.buildout import UserError
 
 from ..testing import COMMIT_USER_FULL
@@ -21,7 +21,7 @@ class HgBaseTestCase(VcsTestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         nodes = p.communicate()[0].split()
-        self.assertEquals(len(nodes), 1, msg="Expected only one parent")
+        self.assertEqual(len(nodes), 1, msg="Expected only one parent")
         return nodes[0]
 
     def create_src(self):
@@ -59,7 +59,7 @@ class HgBaseTestCase(VcsTestCase):
         f = open(os.path.join(target_dir, 'tracked'))
         lines = f.readlines()
         f.close()
-        self.assertEquals(lines[0].strip(), 'future')
+        self.assertEqual(lines[0].strip(), 'future')
 
     def assertDefaultBranch(self, repo):
         """Check that we are on the 'future' branch in target_dir repo."""
@@ -68,13 +68,13 @@ class HgBaseTestCase(VcsTestCase):
         f = open(os.path.join(target_dir, 'tracked'))
         lines = f.readlines()
         f.close()
-        self.assertEquals(lines[0].strip(), 'default')
+        self.assertEqual(lines[0].strip(), 'default')
 
     def assertRevision(self, branch, revno):
         p = subprocess.Popen(['hg', '--cwd', branch.target_dir,
                               'parents', '--template={rev}\n'],
                              stdout=subprocess.PIPE)
-        self.assertEquals(p.communicate()[0].split(), [str(revno)])
+        self.assertEqual(p.communicate()[0].split(), [str(revno)])
 
 
 class HgTestCase(HgBaseTestCase):
@@ -121,9 +121,9 @@ class HgTestCase(HgBaseTestCase):
                 f.write('content')
         repo.clean()
         for path in dirty_files:
-            self.failIf(os.path.exists(path),
+            self.assertFalse(os.path.exists(path),
                         "Untracked file should have been removed")
-        self.failIf(os.path.exists(dirty_dir),
+        self.assertFalse(os.path.exists(dirty_dir),
                     "Untracked dir should have been removed")
 
     def test_clean_no_extension(self):
@@ -150,9 +150,9 @@ class HgTestCase(HgBaseTestCase):
                 f.write('content')
         repo.clean()
         for path in dirty_files:
-            self.failIf(os.path.exists(path),
+            self.assertFalse(os.path.exists(path),
                         "Untracked file %r should have been removed" % path)
-        self.failIf(os.path.exists(dirty_dir),
+        self.assertFalse(os.path.exists(dirty_dir),
                     "Untracked dir should have been removed")
 
     def test_update(self):
@@ -218,8 +218,8 @@ class HgTestCase(HgBaseTestCase):
         HgRepo(target_dir, new_src).update_hgrc_paths()
         parser = ConfigParser()
         parser.read(os.path.join(target_dir, '.hg', 'hgrc'))
-        self.assertEquals(parser.get('paths', 'default'), new_src)
-        self.assertEquals(parser.get('paths', 'buildout_save_1'),
+        self.assertEqual(parser.get('paths', 'default'), new_src)
+        self.assertEqual(parser.get('paths', 'buildout_save_1'),
                           self.src_repo)
 
         # second rename
@@ -227,10 +227,10 @@ class HgTestCase(HgBaseTestCase):
         HgRepo(target_dir, new_src_2).update_hgrc_paths()
         parser = ConfigParser()
         parser.read(os.path.join(target_dir, '.hg', 'hgrc'))
-        self.assertEquals(parser.get('paths', 'default'), new_src_2)
-        self.assertEquals(parser.get('paths', 'buildout_save_1'),
+        self.assertEqual(parser.get('paths', 'default'), new_src_2)
+        self.assertEqual(parser.get('paths', 'buildout_save_1'),
                           self.src_repo)
-        self.assertEquals(parser.get('paths', 'buildout_save_2'), new_src)
+        self.assertEqual(parser.get('paths', 'buildout_save_2'), new_src)
 
     def test_hgrc_no_paths(self):
         """Method to update hgrc paths should not fail if [paths] is missing.
@@ -247,7 +247,7 @@ class HgTestCase(HgBaseTestCase):
         repo.update_hgrc_paths()
         parser = ConfigParser()
         parser.read(os.path.join(target_dir, '.hg', 'hgrc'))
-        self.assertEquals(parser.get('paths', 'default'), repo.url)
+        self.assertEqual(parser.get('paths', 'default'), repo.url)
 
         # now with [paths] section but no value for 'default'
         with open(hgrc_path, 'w') as hgrc:
@@ -255,7 +255,7 @@ class HgTestCase(HgBaseTestCase):
         repo.update_hgrc_paths()
         parser = ConfigParser()
         parser.read(os.path.join(target_dir, '.hg', 'hgrc'))
-        self.assertEquals(parser.get('paths', 'default'), repo.url)
+        self.assertEqual(parser.get('paths', 'default'), repo.url)
 
     def test_hgrc_no_hgrc(self):
         """Method to update hgrc paths should not fail if hgrc is missing.
@@ -268,7 +268,7 @@ class HgTestCase(HgBaseTestCase):
         repo.update_hgrc_paths()
         parser = ConfigParser()
         parser.read(os.path.join(target_dir, '.hg', 'hgrc'))
-        self.assertEquals(parser.get('paths', 'default'), repo.url)
+        self.assertEqual(parser.get('paths', 'default'), repo.url)
 
     def test_url_change(self):
         """HgRepo adapts itself to changes in source URL."""
@@ -311,7 +311,7 @@ class HgTestCase(HgBaseTestCase):
         archive_dir = os.path.join(self.dst_dir, "archive directory")
         repo.archive(archive_dir)
         with open(os.path.join(archive_dir, 'tracked')) as f:
-            self.assertEquals(f.readlines()[0].strip(), 'default')
+            self.assertEqual(f.readlines()[0].strip(), 'default')
 
 
 class HgOfflineTestCase(HgBaseTestCase):

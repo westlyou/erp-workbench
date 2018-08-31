@@ -22,7 +22,7 @@ class FormatHandler(object):
     def check_required_opts(self):
         # check if the required options are set
         missing_opts = []
-        for opt_name in self.required_opts.keys():
+        for opt_name in list(self.required_opts.keys()):
             if not self.required_opts[opt_name]:
                 missing_opts.append(opt_name)
         return missing_opts

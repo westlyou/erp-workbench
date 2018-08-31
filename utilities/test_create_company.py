@@ -18,9 +18,9 @@ class partnerHandler(object):
             self.odoo = odoo
             self.partners = odoo.env['res.partner']
         except Exception as e:
-            print 'not logged into odoo'
+            print('not logged into odoo')
             if not opts.name:
-                print 'no database name is defined. Use -n to do so'
+                print('no database name is defined. Use -n to do so')
             
     def rmt(self):
         # remove test entities
@@ -56,7 +56,7 @@ class partnerHandler(object):
         tp3['parent_id'] = p_id
         p3_id = self.partners.create(tp3)        
 
-        print c_id, p_id
+        print(c_id, p_id)
         
 def main(opts):
     handler = partnerHandler(opts)

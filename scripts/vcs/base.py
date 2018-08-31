@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 import logging
-import utils
+from . import utils
 
 SUBPROCESS_ENV = os.environ.copy()
 SUBPROCESS_ENV['PYTHONPATH'] = SUBPROCESS_ENV.pop(
@@ -27,7 +27,7 @@ def wrap_check_call(exc_cls, call_fn):
         """Variant on subprocess.check_* that raises %s.""" % exc_cls
         try:
             return call_fn(*args, **kwargs)
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             up_exc = exc_cls(e.returncode, e.cmd)
             output = getattr(e, 'output', None)
             if output is not None:
@@ -74,7 +74,7 @@ class BaseRepo(object):
                  offline=False, clear_locks=False, **options):
 
         self.target_dir = target_dir
-        self.url = isinstance(url, basestring) and url.strip() or url
+        self.url = isinstance(url, str) and url.strip() or url
         self.clear_retry = clear_retry
         self.offline = offline
         self.clear_locks = clear_locks

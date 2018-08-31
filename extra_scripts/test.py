@@ -4,7 +4,7 @@
 # as first parameter. like this we have access on all its attributes
 def run(self, **kw_args):
     odoo = self.get_odoo()
-    print 'we run with %s' % kw_args
+    print('we run with %s' % kw_args)
     res_users = odoo.env['res.users']
     res_partners = odoo.env['res.partner']
     domain_list = odoo.env['product.domain.list']
@@ -19,12 +19,12 @@ def run(self, **kw_args):
             c_map[domain] = c.id
     # find memberships that have not assigned owners
     for dl in domain_list.browse(domain_list.search([])):
-        print 'handling:', dl.domain_data, dl.partner_id
+        print('handling:', dl.domain_data, dl.partner_id)
         if not dl.partner_id:
             partner_id = c_map.get(dl.domain_data)
             if partner_id and partner_id > 1:
                 dl.write({'partner_id' : partner_id})
             else:
-                print dl.domain_data, c_map.get(dl.domain_data)
+                print(dl.domain_data, c_map.get(dl.domain_data))
         
     

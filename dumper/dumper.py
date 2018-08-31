@@ -51,20 +51,20 @@ def get_instance_list(opts, quiet = False):
                 db = get_value_from_config(p, 'db_name')
                 result[d] = db
                 if not quiet:
-                    print d, 'db:', get_value_from_config(p, 'db_name')
+                    print(d, 'db:', get_value_from_config(p, 'db_name'))
     return result
 
 def reload_instance(opts):
     dbname = opts.reload
     verbose = opts.verbose
     if verbose:
-        print '*' * 80
-        print 'make sure container is stopped !!!'
+        print('*' * 80)
+        print('make sure container is stopped !!!')
     # collect list of dictionaries with all sites
     # known in this environment
     data = get_instance_list(opts, quiet = True)
     instances = []
-    names = data.keys()
+    names = list(data.keys())
     # all allows us do restore all backups
     if dbname == 'all':
         instances = names
@@ -79,12 +79,12 @@ def reload_instance(opts):
             '-c', '"drop database IF EXISTS %s;"' % dbname ]
         cmdline = ' '.join(cmds)
         if verbose:
-            print '*' * 80
-            print cmdline
+            print('*' * 80)
+            print(cmdline)
         # recreate database
         p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, shell=True)
         if verbose:
-            print p.communicate()
+            print(p.communicate())
         else:
             p.communicate()
         cmds = ["PGPASSWORD=%s " % POSTGRES_PASSWORD, '/usr/bin/psql',
@@ -92,10 +92,10 @@ def reload_instance(opts):
             '-c', '"create database %s;"' % dbname ]
         cmdline = ' '.join(cmds)
         if verbose:
-            print cmdline
+            print(cmdline)
         p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, shell=True)
         if verbose:
-            print p.communicate()
+            print(p.communicate())
         else:
             p.communicate()
         # do the actual reading of the database
@@ -107,11 +107,11 @@ def reload_instance(opts):
             "%s/%s.dmp" % (dpath, dbname)]
         cmdline = ' '.join(cmds)
         if verbose:
-            print cmdline
+            print(cmdline)
         #print cmds
         p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, shell=True)
         if verbose:
-            print p.communicate()
+            print(p.communicate())
         else:
             p.communicate()
 
@@ -119,7 +119,7 @@ def dump_instance(opts):
     dbname = opts.dump
     data = get_instance_list(opts, quiet = True)
     instances = []
-    names = data.keys()
+    names = list(data.keys())
     if dbname == 'all':
         instances = names
     else:
@@ -134,14 +134,14 @@ def dump_instance(opts):
         if os.path.exists(dpath):
             cmds = ["PGPASSWORD=%s " % POSTGRES_PASSWORD, "/usr/bin/pg_dump", "-h", POSTGRES_HOST, "-U", POSTGRES_USER, '-Fc', dbname, "> %s/%s.dmp" % (dpath, dbname)]
             cmdline = ' '.join(cmds)
-            print '*' * 80
-            print cmdline
+            print('*' * 80)
+            print(cmdline)
             #print cmds
             p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, shell=True)
             p.communicate()
-            print 'dumped:', dpath
+            print('dumped:', dpath)
         else:
-            print 'not existing:', dpath
+            print('not existing:', dpath)
 def main():
     usage = "dumper.py -h for help on usage"
     parser = ArgumentParser(usage=usage)

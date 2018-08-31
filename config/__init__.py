@@ -1,5 +1,4 @@
 #!bin/python
-# -*- encoding: utf-8 -*-
 import os
 import sys
 # BASE_PATH is the home directory of odoo_instances
@@ -79,10 +78,10 @@ try:
     from base_info import base_info as BASE_INFO
     NEED_BASEINFO = False
     # check whether BASE_DEFAULTS has new keys
-    for k in BASE_DEFAULTS.keys():
-        if not BASE_INFO.has_key(k):
+    for k in list(BASE_DEFAULTS.keys()):
+        if k not in BASE_INFO:
             NEED_BASEINFO = True
-            print BASEINFO_CHANGED
+            print()
 except ImportError:
     NEED_BASEINFO = True
 # what folders do we need to create in odoo_sites for a new site
@@ -114,12 +113,12 @@ try:
     try:
         from localdata import REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD
     except ImportError:
-        print 'please create config/localdata.py'
-        print 'it must have values for REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL'
-        print 'use template/localdata.py as template'
+        print('please create config/localdata.py')
+        print('it must have values for REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL')
+        print('use template/localdata.py as template')
         sys.exit()
     except SyntaxError:
-        print 'please edit config/localdata.py'
+        print('please edit config/localdata.py')
     os.chdir(pwd)
 except ImportError:
     APACHE_PATH = ''
@@ -128,10 +127,10 @@ except ImportError:
     sites_handler = None
 except OSError:
     # we probably runing from within docker
-    print '-------------------------------------->>>>', os.getcwd()
+    print('-------------------------------------->>>>', os.getcwd())
     BASE_INFO['odoo_server_data_path'] = '/mnt/sites'
     if os.getcwd() == '/mnt/sites':
-        print '------------------------------'
+        print('------------------------------')
         raise ImportError()
     
 # try to get also NGINX_PATH
@@ -139,12 +138,12 @@ except OSError:
 try:
     from localdata import NGINX_PATH
 except ImportError:
-    print bcolors.WARNING + '*' * 80
-    print 'could not read nginx path from config.localdata'
-    print 'assuming it is: /etc/nginx/'
-    print 'you can fix this by executing: bin/e'
-    print "and adding: NGINX_PATH = '/etc/nginx/'"
-    print '*' * 80 + bcolors.ENDC
+    print(bcolors.WARNING + '*' * 80)
+    print('could not read nginx path from config.localdata')
+    print('assuming it is: /etc/nginx/')
+    print('you can fix this by executing: bin/e')
+    print("and adding: NGINX_PATH = '/etc/nginx/'")
+    print('*' * 80 + bcolors.ENDC)
     NGINX_PATH = '/etc/nginx/'
     
 try:
@@ -168,7 +167,7 @@ MODULES_TO_ADD_LOCALLY = ['pytest-odoo']
 SITES_HOME =  os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 
 try:
-    from version_info import *
+    from .version_info import *
 except:
     version_info = None
     

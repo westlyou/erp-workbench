@@ -156,7 +156,7 @@ class AccountBankStatementImport(object):
             # TODO : add real support for balances read from camt file
             }
         for transact in transactions:
-            print transact
+            print(transact)
         return currency, account_number, [vals_bank_statement]
     
     def write_xls(self):
@@ -198,8 +198,8 @@ class AccountBankStatementImport(object):
         transactions = mt940.parse(self.file_name) 
         for t in transactions:                                                 
             if 1: #'energie' in t.data['transaction_details'].lower():                
-                print t.data['date']
-                print t.data['transaction_details']
+                print(t.data['date'])
+                print(t.data['transaction_details'])
         
     
 

@@ -20,7 +20,7 @@ import glob
 import re
 import odoorpc
 from copy import deepcopy
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from collections import OrderedDict
 import psycopg2
 import psycopg2.extras
@@ -234,8 +234,8 @@ class partnerHandler(object):
         parser.optionxform = str
         config_path = os.path.normpath(os.path.expanduser('%s/%s' % (opts.path, opts.config)))
         if not os.path.exists(config_path):
-            print bcolors.WARNING + '*' * 80
-            print config_path, 'does not exist' + bcolors.ENDC
+            print(bcolors.WARNING + '*' * 80)
+            print(config_path, 'does not exist' + bcolors.ENDC)
         parser.read(config_path)
         self.parser = parser
 
@@ -245,29 +245,29 @@ class partnerHandler(object):
             self.odoo = odoo
             self.odoo.env.context['lang'] = 'en_US'
             # make sure we have all models loaded so we can use to search them or create objects
-            for k,v in OBJECT_MAP.items():
+            for k,v in list(OBJECT_MAP.items()):
                 models = [v['model']] + v.get('extra_models', [])
                 for m in models:
                     m = v['model']
-                    if not self.modules_map.has_key(m):
+                    if m not in self.modules_map:
                         self.modules_map[m] = (odoo.env[m], m, k)
                 clist = v.get('child_of', [])
                 for c in clist:
                     m = OBJECT_MAP[c.get('parent')]['model']
-                    if not self.modules_map.has_key(m):
+                    if m not in self.modules_map:
                         self.modules_map[m] = (odoo.env[m], m, c.get('parent'))
         except Exception as e:
-            print bcolors.WARNING + '*' * 80
-            print 'not logged into odoo'
+            print(bcolors.WARNING + '*' * 80)
+            print('not logged into odoo')
             if not opts.name:
-                print 'no database name is defined. Use -n to do so'
+                print('no database name is defined. Use -n to do so')
             if opts.verbose:
-                print str(e)
+                print(str(e))
                 tmp = sys.exc_info()
-                print tmp[0], tmp[1]
-                print str(tmp[2])
+                print(tmp[0], tmp[1])
+                print(str(tmp[2]))
                 del tmp
-            print '*' * 80 + bcolors.ENDC
+            print('*' * 80 + bcolors.ENDC)
             
         if opts.dbpassword:
             conn_string = "dbname='%s' user=%s host='%s' password='%s'" % (opts.name, opts.dbuser,  opts.dbhost, opts.dbpassword)
@@ -333,7 +333,7 @@ class partnerHandler(object):
         except:
             self.title_map = {}
             title_map = self.title_map
-        if title_map.has_key(value):
+        if value in title_map:
             return (field_name, title_map[value])
         titles = model.search([('name', '=', value)])
         if titles:
@@ -370,7 +370,7 @@ class partnerHandler(object):
         except:
             self.state_map = {}
             state_map = self.state_map
-        if state_map.has_key(value):
+        if value in state_map:
             return (field_name, state_map[value])
         # look up value in STATES_MAP
         value_m = STATES_MAP.get(str(value).lower())
@@ -405,7 +405,7 @@ class partnerHandler(object):
             
     def add_to_error(self, line, data, reason, extra=None):
         if self.opts.verbose:
-            print reason, data, extra
+            print(reason, data, extra)
         self.error_list.append((line, data, reason, extra or ''))
 
     def get_fields(self):
@@ -416,8 +416,8 @@ class partnerHandler(object):
     def get_gen_map(self):
         if not self.gen_map:
             gm = {}
-            for k, v in OBJECT_MAP.items():
-                if v.has_key('key'):
+            for k, v in list(OBJECT_MAP.items()):
+                if 'key' in v:
                     gm[v['key']] =  v
             self.gen_map = gm
         return self.gen_map
@@ -438,7 +438,7 @@ class partnerHandler(object):
         if first_cell:
             if str(first_cell).strip().startswith('#'):
                 return True
-        mks = my_fields.keys()
+        mks = list(my_fields.keys())
         for ki in mks:
             if row[int(ki)].value:return False
         return True
@@ -448,7 +448,7 @@ class partnerHandler(object):
         # chek if name is known in list of fields
         fields = self.get_fields()
         try:
-            assert name in fields.keys() or name in FIELD_FUNCTIONS.keys()
+            assert name in list(fields.keys()) or name in list(FIELD_FUNCTIONS.keys())
         except:
             raise ValueError('%s not valid' % name)
         
@@ -459,7 +459,7 @@ class partnerHandler(object):
             key_rule = info.get('need_key')
             if key_rule and key_rule.get('type') == 'email':
                 d = {}
-                for k,v in data.items():
+                for k,v in list(data.items()):
                     d[k.split('.')[-1]] = v
                 fields = key_rule.get('fields', [])
                 key = '.'.join([str(d.get(f, '')) for f in fields]) + AUTO_EMAIL_DOMAIN
@@ -486,7 +486,7 @@ class partnerHandler(object):
         error_message = ''
         result = None
         m = info.get('model')
-        if not info.has_key('model_obj'):
+        if 'model_obj' not in info:
             model = self.modules_map[m][0]
             info['model_obj'] = model
         else:
@@ -502,7 +502,7 @@ class partnerHandler(object):
         key_info = {}
         if k_val:
             # check whether that key is well formed
-            if info.has_key('need_key'):
+            if 'need_key' in info:
                 key_info = info['need_key']
                 if key_info.get('type') == 'email':
                     k_val = k_val.replace('(at)', '@').replace('[at]', '@').replace(' ', '').replace('[aet]', '@').replace('[dot]', '.').strip()
@@ -527,7 +527,7 @@ class partnerHandler(object):
         # now we check for more search fields, and check whether we find a unique 
         if search_fields:
             domain = []
-            if not isinstance(search_fields, (list, tuple,)):
+            if not isinstance(search_fields, (list, tuple)):
                 search_fields = [search_fields]
             for f in search_fields:
                 v = data.get('%s.%s' % ('_'.join(m.split('.')),f))
@@ -550,9 +550,9 @@ class partnerHandler(object):
         
         values = defaults
         mm = m.replace('.', '_')
-        for k,v in data.items():
+        for k,v in list(data.items()):
             # does the field need some lookup ?
-            if FIELD_FUNCTIONS.has_key(k):
+            if k in FIELD_FUNCTIONS:
                 fun = getattr(self, FIELD_FUNCTIONS[k], None)
                 if fun:
                     f_name, f_value = fun(model, v)
@@ -576,7 +576,7 @@ class partnerHandler(object):
                 # if donotcreate is set, we want this object only as referenz
                 if info.get('donotcreate', False):
                     domain = []
-                    for k,v in defaults.items():
+                    for k,v in list(defaults.items()):
                         domain.append((k, '=', v))
                     result = model.search(domain)
                 else:
@@ -605,15 +605,15 @@ class partnerHandler(object):
         # for each generation we have an object (parent, children ..)
         # each fields definition is generation:fields ..
         o_map = OrderedDict()
-        for val in my_fields.values():
+        for val in list(my_fields.values()):
             parts = val.split(':') 
             if len(parts) == 1:
                 gen = parts[0]
             else:
                 gen = parts.pop(0)
-            if not o_map.has_key(gen):
+            if gen not in o_map:
                 # genmap was generated from OBJECT_MAP
-                if gen_map.has_key(gen):
+                if gen in gen_map:
                     o_map[gen] = {}
                 else:
                     raise ValueError('%s is not a valid generation field' % gen)
@@ -703,7 +703,7 @@ class partnerHandler(object):
             if row_i < skip -1:
                 continue
             # clean out items fromm the previous line
-            for k,v in o_map.items():
+            for k,v in list(o_map.items()):
                 v['obj'] = None
                 v['values'] = {}
             row = sheet.row(row_i)
@@ -711,9 +711,9 @@ class partnerHandler(object):
                 continue
             l_counter = 0
             for i in range(sheet.ncols):
-                if my_fields.has_key(str(i)):
+                if str(i) in my_fields:
                     ldata = row[i].value
-                    if isinstance(ldata, basestring):
+                    if isinstance(ldata, str):
                         ldata = ldata.replace('\n', ' ')
                     # now get rid of trailing 0 in numbers
                     try:
@@ -721,15 +721,15 @@ class partnerHandler(object):
                             ldata = int(ldata) 
                     except:
                         pass
-                    if isinstance(ldata, basestring) and ldata.strip().startswith('#'):
+                    if isinstance(ldata, str) and ldata.strip().startswith('#'):
                         continue
                     process_field(ldata, my_fields[str(i)])
             if self.opts.verbose:
-                print '-->', row_i, page_name
+                print('-->', row_i, page_name)
             # now create all the objects
             #gmr = dict([(v,k) for k,v in gen_map.items()]) # reverse gen map
             error_found = False
-            for k,v in o_map.items():
+            for k,v in list(o_map.items()):
                 info = gen_map[k]
                 defaults = deepcopy(OBJECT_MAP[k].get('defaults', {}))
                 obj, err_message = self.search_object(info, v['values'], row_i, defaults, page_name) # find existing or create one
@@ -737,7 +737,7 @@ class partnerHandler(object):
                     if k in must_exist:
                         self.add_to_error(row_i, v, reason=err_message, extra=page_name)
                         if self.opts.verbose:
-                            print '-->', row_i, k, err_message
+                            print('-->', row_i, k, err_message)
                 if not obj:
                     if info.get('must_exist'):
                         error_found = True
@@ -748,7 +748,7 @@ class partnerHandler(object):
             # now we collected all records for this line
             # so we can assign parrent to children
             # and also assign flags, title et al
-            for k, v in o_map.items():
+            for k, v in list(o_map.items()):
                 obj = v['obj']
                 if not obj:
                     continue
@@ -799,15 +799,15 @@ class partnerHandler(object):
         # open the excel file
         file_path =  os.path.normpath('%s/%s' % (opts.path, file_name))
         if not os.path.exists(file_path):
-            print bcolors.WARNING + '*' * 80
-            print 'file %s does not exist' % file_path
-            print '*' * 80 + bcolors.ENDC
+            print(bcolors.WARNING + '*' * 80)
+            print('file %s does not exist' % file_path)
+            print('*' * 80 + bcolors.ENDC)
             return
 
         if os.path.splitext(file_path)[-1] in USUPPORTED_TYPES:
-            print bcolors.WARNING + '*' * 80
-            print 'files of type %s are not supported' % os.path.splitext(file_path)[-1]
-            print '*' * 80 + bcolors.ENDC
+            print(bcolors.WARNING + '*' * 80)
+            print('files of type %s are not supported' % os.path.splitext(file_path)[-1])
+            print('*' * 80 + bcolors.ENDC)
             return
                        
         wb = xlrd.open_workbook(file_path)
@@ -817,9 +817,9 @@ class partnerHandler(object):
         errors_found = False
         for page in pages:
             if page not in sheet_names:
-                print bcolors.WARNING + '*' * 80
-                print 'page %s does not exist in %s' % (page, file_path)
-                print '*' * 80 + bcolors.ENDC
+                print(bcolors.WARNING + '*' * 80)
+                print('page %s does not exist in %s' % (page, file_path))
+                print('*' * 80 + bcolors.ENDC)
                 errors_found = True
         if errors_found:
             return
@@ -836,9 +836,9 @@ class partnerHandler(object):
                 self.process_page(wb, page, page_section)
                 values = parser.items(page_section)
             else:
-                print bcolors.WARNING + '*' * 80
-                print 'section %s is missing' % page_section
-                print '*' * 80 + bcolors.ENDC
+                print(bcolors.WARNING + '*' * 80)
+                print('section %s is missing' % page_section)
+                print('*' * 80 + bcolors.ENDC)
             
     
     def is_processed(self, file_name):
@@ -868,9 +868,9 @@ class partnerHandler(object):
         try:
             file_list = parser.items('files')
         except:
-            print bcolors.FAIL + '*' * 80
-            print 'is odoo running ??'
-            print '*' * 80 + bcolors.ENDC
+            print(bcolors.FAIL + '*' * 80)
+            print('is odoo running ??')
+            print('*' * 80 + bcolors.ENDC)
             return
         force = self.opts.force
         for file_name, section_name in file_list:
@@ -968,8 +968,8 @@ class partnerHandler(object):
                     # construct a string from value_list
                     value_list =  act_vals['value_list']
                     result_str = ''
-                    for k, v in value_list.items():
-                        if isinstance(v, basestring):
+                    for k, v in list(value_list.items()):
+                        if isinstance(v, str):
                             result_str += v
                         elif isinstance(v, list):
                             result_str += '%s:%s\n' % (k, ','.join(v))
@@ -1087,4 +1087,4 @@ if __name__ == '__main__':
     elif args.construct_config:
         main(args)
     else:
-        print parser.print_help()
+        print(parser.print_help())

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import mimetypes
 from argparse import ArgumentParser
-import ConfigParser
+import configparser
 import sys
 import os
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
@@ -77,12 +77,12 @@ class OdooHandler(object):
     
     def __init__(self, opts):
         self.opts = opts
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         cp = os.path.normpath('%s/%s' % (opts.config_path, opts.config))
         config.read(cp)
         sections = config.sections()
         if (not 'source' in sections) or (not 'target' in sections):
-            print bcolors.FAIL + 'either source or option missing in %s' % opts.config + bcolors.ENDC
+            print(bcolors.FAIL + 'either source or option missing in %s' % opts.config + bcolors.ENDC)
             return
         tinfo = {}
         sinfo = {}
@@ -95,7 +95,7 @@ class OdooHandler(object):
                 try:
                     idic[o] = config.get(sect, o)
                 except:
-                    print bcolors.FAIL + 'problem with %s in section %s' % (sect, o) + bcolors.ENDC
+                    print(bcolors.FAIL + 'problem with %s in section %s' % (sect, o) + bcolors.ENDC)
         sinfo['dbname'] = config.get('source', SOURCEDBNAME)
         tinfo['dbname'] = config.get('target', TARGETDBNAME)
         # if the source an target pots are the same
@@ -135,7 +135,7 @@ class OdooHandler(object):
         m = self.id_map.get(model_name, {})
         if to_new:
             return [m.get(i) for i in ids]
-        return [k for k,i in m.items() if i in ids]
+        return [k for k,i in list(m.items()) if i in ids]
             
     def get_models(self, mname):
         """
@@ -149,7 +149,7 @@ class OdooHandler(object):
             nothing
         """
         # try to load from cache
-        if self.model_dic['source'].has_key(mname):
+        if mname in self.model_dic['source']:
             return self.model_dic['source'][mname], self.model_dic['target'][mname]
         # load and add to cache
         self.model_dic['source'][mname] = self.sodoo.env[mname]
@@ -170,18 +170,18 @@ class OdooHandler(object):
             field_map[fname] = None
             
         # make sure all modells for all dependent records are loaded
-        if minfo.has_key('one2many_fields'):
-            for fname, finfo in minfo['one2many_fields'].items():
+        if 'one2many_fields' in minfo:
+            for fname, finfo in list(minfo['one2many_fields'].items()):
                 field_info['one2many_fields'].append(fname)
                 field_map[fname] = finfo
                 self.handle_block(finfo[0], process_records = False)
-        if minfo.has_key('many2one_fields'):
-            for fname, finfo in minfo['many2one_fields'].items():
+        if 'many2one_fields' in minfo:
+            for fname, finfo in list(minfo['many2one_fields'].items()):
                 field_info['many2one_fields'].append(fname)
                 field_map[fname] = finfo
                 self.handle_block(finfo[0], process_records = False)
-        if minfo.has_key('many2many_fields'):
-            for fname, finfo in minfo['many2many_fields'].items():
+        if 'many2many_fields' in minfo:
+            for fname, finfo in list(minfo['many2many_fields'].items()):
                 field_info['many2many_fields'].append(fname)
                 field_map[fname] = finfo
                 self.handle_block(finfo[0])
@@ -213,7 +213,7 @@ class OdooHandler(object):
         for sr in source_records:
             record = smodel.browse(sr)
             old_id = record.id
-            print getattr(record, filter and filter[0][0] or 'id')
+            print(getattr(record, filter and filter[0][0] or 'id'))
             new_r_dic = {}
             for f in simple_fields:
                 new_r_dic[f] = getattr(record, f)
@@ -228,7 +228,7 @@ class OdooHandler(object):
                 #'user_id': ('res.users', 'id'), # 'Salesperson'
                 #'company_id': ('res.company', 'id'), # 'Company'
             #},
-            for fm2o, fm2o_info in many2one_fields.items():
+            for fm2o, fm2o_info in list(many2one_fields.items()):
                 # in a many2one_field the actual record points to an existing
                 # record in an other table
                 # we therefore have to make sure, that this other record exists
@@ -250,7 +250,7 @@ class OdooHandler(object):
                 #'bank_ids':('res.partner.bank', 'partner_id'),            
                 #'user_ids' : ('res.users', 'partner_id'),
             #},
-            for f2m, f2m_info in one2many_fields.items():
+            for f2m, f2m_info in list(one2many_fields.items()):
                 # in a one2many field a value in our record, is used to 
                 # link a record in a foreing table to the actual record
                 # we therefore have to make sure, that the foreing table is loaded
@@ -271,7 +271,7 @@ class OdooHandler(object):
                 self.add_to_id_map(mname, old_id, new_id)
             
             # make sure the records that point to this record are also created
-            for f2m, f2m_info in one2many_fields.items():
+            for f2m, f2m_info in list(one2many_fields.items()):
                 # do not try to copy if it is a recursive relation like a 
                 # person related to a company
                 pname = f2m_info[0]
@@ -290,7 +290,7 @@ class OdooHandler(object):
                 #'view_access': ('ir.ui.view', 'ir_ui_view_group_rel', 'group_id', 'view_id'),
                 #'model_access': ('ir.model.access', 'group_id', 'Access Controls'),
             #}
-            for fm2m, fm2m_info in many2many_fields.items():
+            for fm2m, fm2m_info in list(many2many_fields.items()):
                 fm2m_info = list(fm2m_info)
                 fm2m_model = fm2m_info.pop(0)
                 # the second element is not allways the name of the relation
@@ -320,7 +320,7 @@ class OdooHandler(object):
         # add ourselfs to the list of handled models
         # so we do not process the same model twice
         self.handled.append(mname)
-        print 'hadled:', mname
+        print('hadled:', mname)
      
     def handle_block(self, mname, process_records = False):
         """

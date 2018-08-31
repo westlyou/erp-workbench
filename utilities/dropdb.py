@@ -37,22 +37,22 @@ class bcolors:
 dbpw = 'admin'
 db_name = len(sys.argv) > 1 and sys.argv[1]
 if not db_name:
-    print 'no database name provided'
+    print('no database name provided')
     sys.exit()
 
 conn_string = "dbname='%s' user=%s host='%s' password='%s'" % ('postgres', ACT_USER, 'localhost', dbpw)
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 cursor.execute('SET AUTOCOMMIT = ON;')
-print 'close connections'
-print cursor.execute(SQL % db_name)
-print cursor.fetchall()
-print conn.commit()
+print('close connections')
+print(cursor.execute(SQL % db_name))
+print(cursor.fetchall())
+print(conn.commit())
 conn.close()
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 conn.autocommit = True
-print 'drop db %s' % db_name
-print cursor.execute(SQL2 % db_name)
-print conn.commit()
-print conn.close()
+print('drop db %s' % db_name)
+print(cursor.execute(SQL2 % db_name))
+print(conn.commit())
+print(conn.close())

@@ -108,7 +108,7 @@ def run(self, **kw_args):
                     new_sheet.write(line_counter, STAFF_COL, 'user')
 
         # now repeat everything with the branches
-        print cm.id, cm.name
+        print(cm.id, cm.name)
         branches = partners.search([('is_company','=', True), ('parent_id', '=', cm.id)], order='name')
         for bm in partners.browse(branches):
             line_counter += 1
@@ -140,13 +140,13 @@ def run(self, **kw_args):
                     else:
                         new_sheet.write(line_counter, STAFF_COL, 'user')
             # now repeat everything for the branches
-            print 'branch', bm.id, bm.name
+            print('branch', bm.id, bm.name)
     # now collect all partners we have not seen yet
     line_counter += 2
     new_sheet.write(line_counter, MAIN_COL, 'Nicht zugeordnete Partner')
     line_counter += 1            
     new_sheet.write(line_counter, MAIN_COL, '-------------------------')
-    seen = seen_ids.keys()
+    seen = list(seen_ids.keys())
     not_seen = [p for p in partners.search([]) if p not in seen]
     for ns in partners.browse(not_seen):
         line_counter += 1

@@ -23,8 +23,8 @@ def copy_database(conn_parms):
     if not db_new:
         db_new = '%s_migrated' % conn_parms['database']
     del conn_parms['new_database'] # not used anymore
-    print('copying database %(db_old)s to %(db_new)s...' % {'db_old': db_old,
-                                                            'db_new': db_new})
+    print(('copying database %(db_old)s to %(db_new)s...' % {'db_old': db_old,
+                                                            'db_new': db_new}))
     if conn_parms.get('host') == 'False':
         del conn_parms['host']
         del conn_parms['port']
@@ -309,10 +309,10 @@ if options.add:
 
 for version in options.migrations.split(','):
     if version not in migrations:
-        print('%s is not a valid version! (valid verions are %s)' % (
+        print(('%s is not a valid version! (valid verions are %s)' % (
             version,
             ','.join(sorted([a for a in migrations])))
-        )
+        ))
 
 logfile = os.path.join(options.branch_dir, 'migration.log')
 
@@ -340,10 +340,10 @@ for version in options.migrations.split(','):
                 cmd_revno.run(location=os.path.join(options.branch_dir,
                                                     version,
                                                     name))
-                print('updating %s rev%s' % (
+                print(('updating %s rev%s' % (
                     os.path.join(version, name),
                     cmd_revno.outf.getvalue().strip())
-                )
+                ))
                 cmd_update = bzrlib.builtins.cmd_update()
                 cmd_update.outf = StringIO()
                 cmd_update.outf.encoding = 'utf8'
@@ -351,7 +351,7 @@ for version in options.migrations.split(','):
                     dir=os.path.join(options.branch_dir, version, name))
                 if hasattr(cmd_update, '_operation'):
                     cmd_update.cleanup_now()
-                print('now at rev' + cmd_revno.outf.getvalue().strip())
+                print(('now at rev' + cmd_revno.outf.getvalue().strip()))
             elif addon_config_type == 'git':
                 os.system('cd %(location)s; git pull origin %(branch)s' % {
                     'branch': addon_config.get('branch', 'master'),
@@ -363,16 +363,16 @@ for version in options.migrations.split(','):
                 raise Exception('Unknown type %s' % addon_config_type)
         else:
             if addon_config_type == 'link':
-                print('linking %s to %s' % (addon_config['url'],
+                print(('linking %s to %s' % (addon_config['url'],
                                             os.path.join(options.branch_dir,
                                                          version,
-                                                         name)))
+                                                         name))))
                 os.symlink(addon_config['url'],
                            os.path.join(options.branch_dir, version, name))
             elif addon_config_type == 'bzr':
                 bzrlib.plugin.load_plugins()
                 bzrlib.trace.enable_default_logging()
-                print('getting ' + addon_config['url'])
+                print(('getting ' + addon_config['url']))
                 cmd_checkout = bzrlib.builtins.cmd_checkout()
                 cmd_checkout.outf = StringIO()
                 cmd_checkout.run(
@@ -380,7 +380,7 @@ for version in options.migrations.split(','):
                     os.path.join(options.branch_dir, version, name),
                     lightweight=True)
             elif addon_config_type == 'git':
-                print('getting ' + addon_config['url'])
+                print(('getting ' + addon_config['url']))
                 result = os.system('git clone --branch %(branch)s --single-branch --depth=1 %(url)s %(target)s' %
                                    {
                                           'branch': addon_config.get('branch', 'master'),
@@ -406,15 +406,15 @@ else:
             'url': 'https://github.com/OCA/openupgradelib',
             'target': openupgradelib,
             })
-os.environ['PYTHONPATH'] = ':'.join(filter(None, [
-    openupgradelib, os.environ.get('PYTHONPATH')]))
+os.environ['PYTHONPATH'] = ':'.join([_f for _f in [
+    openupgradelib, os.environ.get('PYTHONPATH')] if _f])
 
 db_name = conn_parms['database']
 if not options.inplace:
     db_name = copy_database(conn_parms)
 
 for version in options.migrations.split(','):
-    print('running migration for '+version)
+    print(('running migration for '+version))
     config.set('options', 'without_demo', 'True')
     config.set('options', 'logfile', logfile)
     config.set('options', 'port', 'False')
@@ -463,8 +463,8 @@ for version in options.migrations.split(','):
                                        #'server.cfg')
             #}))
     if 1: #result != 0:
-        print("copied %s to %s_migration" % (db_name, db_name))
-        print(os.path.join(
+        print(("copied %s to %s_migration" % (db_name, db_name)))
+        print((os.path.join(
             options.branch_dir,
             version,
             'server',
@@ -472,5 +472,5 @@ for version in options.migrations.split(','):
                 'db': db_name,
                 'config': os.path.join(options.branch_dir, version,
                                        'server.cfg')
-            }))
+            })))
         sys.exit()

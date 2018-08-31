@@ -30,7 +30,7 @@ class TestManager(unittest.TestCase):
         for n in ['model', 'model_help']:
             self.assertTrue(company[n], '%s is missing %s' % ('company', n))
         # all other elements need these fields also
-        for k, v in data.items():
+        for k, v in list(data.items()):
             for n in ['model', 'model_help']:
                 self.assertTrue(v[n], '%s is missing %s' % (k, n))
 
@@ -40,7 +40,7 @@ class TestManager(unittest.TestCase):
         """
         self.manager.set_test_mode()
         registry = self.manager.handler_registry
-        for handler in registry.values():
+        for handler in list(registry.values()):
             self.assertTrue(handler._test_mode)
 
     def shortDescriptiontest_get_handlers_from_base_preset(self):
@@ -50,7 +50,7 @@ class TestManager(unittest.TestCase):
             all of these handlers must by calling handler.get_yaml_file(preset_name)
         """
         data = self.manager.get_yaml_file('base_preset')
-        for _, v in data.items():
+        for _, v in list(data.items()):
             handler = v['handler']
             self.assertTrue(self.manager.get_handler_by_name(handler), 'Manager has no handler %s' % handler)
 
@@ -63,7 +63,7 @@ class TestManager(unittest.TestCase):
         from the folder with test data.
         """
         data = self.manager.get_yaml_file('base_preset')
-        for _, v in data.items():
+        for _, v in list(data.items()):
             handler = v['handler']
             model = v['model']
             handler = self.manager.get_handler_for_model(model)[0]
@@ -83,7 +83,7 @@ class TestManager(unittest.TestCase):
             and within the app name a sequnce
         """
         sequence = self.manager.get_app_sequence()
-        first_key = sequence.keys()[0]
+        first_key = list(sequence.keys())[0]
         first_name = sequence[first_key].name # the keys of the index start at 1!!
         self.assertTrue(first_name == 'read_yaml_company', 'name of first index element is %s, should be read_yaml_company'% first_name)
 

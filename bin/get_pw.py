@@ -24,7 +24,7 @@ def main(opts):
     if opts.name in SITES_PW:
         pprint(SITES_PW[opts.name])
     else:
-        print(bcolors.FAIL, 'stanza %s not found' % opts.name, bcolors.ENDC)
+        print((bcolors.FAIL, 'stanza %s not found' % opts.name, bcolors.ENDC))
     
     
 if __name__ == '__main__':

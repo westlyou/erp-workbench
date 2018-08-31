@@ -61,7 +61,7 @@ class SimpleCompleter(object):
         go_on = True
         while go_on:
             #line = (raw_input('%s / %s("q" to quit, tab for options): ' % (self.parsername, self.prompt)) + (line and '(%s)' % line or ''))
-            line = raw_input('%s / "q" to quit, tab for options) %s:%s' % (self.parsername, self.prompt, self.default)) 
+            line = input('%s / "q" to quit, tab for options) %s:%s' % (self.parsername, self.prompt, self.default)) 
             if line:
                 line = line.strip()
             if line in self.options:

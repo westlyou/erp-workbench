@@ -30,7 +30,7 @@ def run(self, **kw_args):
     #self.dbhost
     #'localhost'
     
-    print 'we run with %s' % kw_args
+    print('we run with %s' % kw_args)
     # get the start options that where passed to the calling script
     opts_orig_data = self.opts.__dict__['_OptsWrapper__d'].__dict__
     
@@ -95,9 +95,9 @@ def run(self, **kw_args):
             eps = ep.split('=')
             if len(eps) == 2:
                 nsp_data[eps[0]] = eps[1]
-                print 'setting param:%s to %s' % ((eps[0], eps[1]))
+                print('setting param:%s to %s' % ((eps[0], eps[1])))
             else:
-                print '%s is not a valid parameter to transfer.py' % ep
+                print('%s is not a valid parameter to transfer.py' % ep)
     # create a namespace object that will be used as opts in transfer.py run method
     opts = Namespace(**nsp_data)
     # now do the transfer    

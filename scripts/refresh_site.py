@@ -59,7 +59,7 @@ def main(opts, site_name):
             stdout=PIPE,
             env=dict(os.environ, PGPASSWORD=pw,  PATH='/usr/bin'),
             shell=shell)
-        print p.communicate()
+        print(p.communicate())
     
 if __name__ == '__main__':
     usage = "drefresh.py -h for help on usage"
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     opts = parser.parse_args()
     args, unknownargs = parser.parse_known_args()
     if not unknownargs:
-        print 'need name of site'
+        print('need name of site')
         sys.exit()
     site_name = unknownargs[0]
     if not SITES.get(site_name):
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         sys.exit()
     pp = os.path.normpath('%s/%s' % (BASE_INFO.get('odoo_server_data_path'), site_name))
     if not os.path.exists(pp) and os.path.isdir(pp):
-        print '%s does not point to a valid site sctructure' % pp
+        print('%s does not point to a valid site sctructure' % pp)
         sys.exit()
     main(args, site_name)
 #

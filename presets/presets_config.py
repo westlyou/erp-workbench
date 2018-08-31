@@ -18,7 +18,7 @@ a['bank'] = 1
 
 # assign sequence numbers
 counter = 0
-for k in APP_SEQUENCE.keys():
+for k in list(APP_SEQUENCE.keys()):
     counter += 1 # should never be 0
     a[k] = counter * 10
 

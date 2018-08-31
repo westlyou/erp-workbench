@@ -10,8 +10,8 @@ from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, ACT_USER, APACHE_PATH, NGINX_PATH, MARKER, bcolors
 from copy import deepcopy
 
-from create_handler import InitHandler
-from utilities import collect_options
+from .create_handler import InitHandler
+from .utilities import collect_options
 HA = """
     %s
     """
@@ -43,8 +43,8 @@ class RemoteHandler(InitHandler):
         default_values = self.default_values
         default_values['marker'] = MARKER
         site_name = self.site_name
-        if not SITES.has_key(site_name):
-            print '%s is not known in sites.py' % site_name
+        if site_name not in SITES:
+            print('%s is not known in sites.py' % site_name)
             return
         df = deepcopy(default_values)
         site_info = self.flatten_site_dic(site_name)
@@ -57,7 +57,7 @@ class RemoteHandler(InitHandler):
         template = open('%s/templates/apache.conf' % default_values['sites_home'], 'r').read() % df
         #template = template % d
     
-        print template
+        print(template)
         apa = '%s/sites-available/%s.conf' % (APACHE_PATH, site_name )
         ape = '%s/sites-enabled/%s.conf' % (APACHE_PATH, site_name )
         try:
@@ -71,10 +71,10 @@ class RemoteHandler(InitHandler):
                 os.symlink(apa, ape)
             except:
                 pass
-            print "%s added to apache" % site_name
-            print 'restart apache to activate'
+            print("%s added to apache" % site_name)
+            print('restart apache to activate')
         except:
-            print "could not write %s" % apa
+            print("could not write %s" % apa)
 
     # ----------------------------------
     # add_site_to_nginx
@@ -99,8 +99,8 @@ class RemoteHandler(InitHandler):
         default_values['marker'] = MARKER
         site_name = self.site_name
         
-        if not SITES.has_key(site_name):
-            print '%s is not known in sites.py' % site_name
+        if site_name not in SITES:
+            print('%s is not known in sites.py' % site_name)
             return
 
         df = deepcopy(default_values)
@@ -114,17 +114,17 @@ class RemoteHandler(InitHandler):
         df['vservername'] = site_info.get('vservername', '    www.%s.ch' % site_name)
         lets_encrypt = site_info.get('letsencrypt')
         if not lets_encrypt:
-            print bcolors.WARNING + '*' * 80
-            print 'could not read lets_encrypt_path the site description'
-            print 'this is needed to add the site to nginx'
-            print 'you can fix this by executing: bin/e %s ' % site_name
-            print "and addinga stanza like"
-            print """
+            print(bcolors.WARNING + '*' * 80)
+            print('could not read lets_encrypt_path the site description')
+            print('this is needed to add the site to nginx')
+            print('you can fix this by executing: bin/e %s ' % site_name)
+            print("and addinga stanza like")
+            print("""
             'letsencrypt' : {
                 'path' :'/etc/letsencrypt/live/'
             },
-            """
-            print '*' * 80 + bcolors.ENDC
+            """)
+            print('*' * 80 + bcolors.ENDC)
             return
         
         lets_encrypt_path = lets_encrypt['path']
@@ -134,7 +134,7 @@ class RemoteHandler(InitHandler):
         #template_443 = open('%s/templates/nginx.conf.443' % default_values['sites_home'], 'r').read() % df
         #template = template % d
     
-        print template_80
+        print(template_80)
         #print template_443
         apa_80 = '%s/sites-available/%s-80' % (NGINX_PATH, site_name )
         ape_80 = '%s/sites-enabled/%s-80' % (NGINX_PATH, site_name )
@@ -161,10 +161,10 @@ class RemoteHandler(InitHandler):
                 #os.symlink(apa_443, ape_443)
             #except:
                 #pass
-            print "%s added to nginx" % site_name
-            print 'restart nginx to activate'
+            print("%s added to nginx" % site_name)
+            print('restart nginx to activate')
         except:
-            print "could not write %s" % ape_80
+            print("could not write %s" % ape_80)
             
     # ----------------------------------
     # flatten_site_dic
@@ -181,7 +181,7 @@ class RemoteHandler(InitHandler):
         res = {}
         site_dic = sites.get(site_name)
         if not site_dic:
-            print 'error: %s not found in provided list of sites' % site_name
+            print('error: %s not found in provided list of sites' % site_name)
             return
         sd = site_dic.copy()
         parts = [
@@ -193,18 +193,18 @@ class RemoteHandler(InitHandler):
             'slave_info',
         ]
         both = parts + vparts
-        for k, v in sd.items():
+        for k, v in list(sd.items()):
             if not k in both:
                 res[k] = v
         for p in parts:
             pDic = sd.get(p)
             if not pDic:
-                print 'error: %s not found site description for %s' % (p, site_name)
+                print('error: %s not found site description for %s' % (p, site_name))
                 return
-            for k, v in pDic.items():
+            for k, v in list(pDic.items()):
                 res[k] = v
         for p in vparts:
             pDic = sd.get(p, {})
-            for k, v in pDic.items():
+            for k, v in list(pDic.items()):
                 res[k] = v
         return res

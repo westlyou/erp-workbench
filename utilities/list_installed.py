@@ -23,7 +23,7 @@ class OdooHandler(object):
             mlist = modules.search([('state', '=', 'installed'), ('application', '=', True)])
         for mid in mlist:
             m = modules.browse(mid)
-            print "'%s', # %s" % (m.name, m.shortdesc)
+            print("'%s', # %s" % (m.name, m.shortdesc))
 
 
 def main(opts):

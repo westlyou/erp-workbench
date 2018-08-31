@@ -44,8 +44,8 @@ class BzrBaseTestCase(VcsTestCase):
         f = open(os.path.join(target_dir, 'tracked'))
         lines = f.readlines()
         f.close()
-        self.assertEquals(lines[0].strip(), first_line, msg=msg)
-        self.assertEquals(branch.parents(as_revno=True), [rev], msg=msg)
+        self.assertEqual(lines[0].strip(), first_line, msg=msg)
+        self.assertEqual(branch.parents(as_revno=True), [rev], msg=msg)
 
     def assertRevision1(self, branch, **kw):
         """Assert that branch is at revision 1."""
@@ -93,7 +93,7 @@ class BzrTestCase(BzrBaseTestCase):
         self.assertRevision2(branch, msg="Test impaired by other problem")
 
         parents = branch.parents()
-        self.assertEquals(len(parents), 1)
+        self.assertEqual(len(parents), 1)
         self.assertTrue(parents[0].startswith('revid:test@example.org-'),
                         msg="Result does not look to be a revid")
 
@@ -104,7 +104,7 @@ class BzrTestCase(BzrBaseTestCase):
         self.assertRevision2(branch, msg="Test impaired by other problem")
 
         parents = branch.parents(pip_compatible=True)
-        self.assertEquals(parents, ['2'])
+        self.assertEqual(parents, ['2'])
 
     def test_branch_options_conflict(self):
         target_dir = os.path.join(self.dst_dir, "My branch")
@@ -228,10 +228,10 @@ class BzrTestCase(BzrBaseTestCase):
                                           stdout=subprocess.PIPE)
             out = bzr_status.communicate()[0]
 
-        self.assertEquals(bzr_status.returncode, 0)
+        self.assertEqual(bzr_status.returncode, 0)
         # output of 'bzr status' should be empty : neither unknown file nor
         # any local modification, including removal of 'subdir'
-        self.assertEquals(out.strip(), '')
+        self.assertEqual(out.strip(), '')
 
     def test_uncommitted_changes_tracked(self):
         target_dir = os.path.join(self.dst_dir, "clone to dirty")
@@ -272,7 +272,7 @@ class BzrTestCase(BzrBaseTestCase):
         archive_dir = os.path.join(self.dst_dir, "archive directory")
         branch.archive(archive_dir)
         with open(os.path.join(archive_dir, 'tracked')) as f:
-            self.assertEquals(f.readlines()[0].strip(), 'first')
+            self.assertEqual(f.readlines()[0].strip(), 'first')
 
     def test_url_update(self):
         """Method to update branch.conf does it and stores old values"""
@@ -291,7 +291,7 @@ class BzrTestCase(BzrBaseTestCase):
         branch = BzrBranch(target_dir, new_src)
         branch('last:1')
 
-        self.assertEquals(branch.parse_conf(), dict(
+        self.assertEqual(branch.parse_conf(), dict(
             buildout_save_parent_location_1=old_src,
             parent_location=new_src))
 
@@ -313,7 +313,7 @@ class BzrTestCase(BzrBaseTestCase):
         branch('1')
         self.assertTrue(self.pulled)
 
-        self.assertEquals(branch.parse_conf(), dict(
+        self.assertEqual(branch.parse_conf(), dict(
             buildout_save_parent_location_1=old_src,
             buildout_save_parent_location_2=new_src,
             parent_location=new_src2))
@@ -344,7 +344,7 @@ class BzrTestCase(BzrBaseTestCase):
         branch = BzrBranch(target_dir, new_src)
         branch('last:1')
 
-        self.assertEquals(branch.parse_conf(), dict(
+        self.assertEqual(branch.parse_conf(), dict(
             buildout_save_parent_location_1=old_src,
             parent_location=new_src))
 
@@ -352,11 +352,11 @@ class BzrTestCase(BzrBaseTestCase):
         """lp: locations are being rewritten to the actual target."""
         branch = BzrBranch('', 'lp:anybox.recipe.openerp')
         # just testing for now that it's been rewritten
-        self.failIf(branch.url.startswith('lp:'))
+        self.assertFalse(branch.url.startswith('lp:'))
 
         # checking idempotency of rewritting
         branch2 = BzrBranch('', branch.url)
-        self.assertEquals(branch2.url, branch.url)
+        self.assertEqual(branch2.url, branch.url)
 
     def test_lp_url_nobzrlib(self):
         """We can't safely handle lp: locations without bzrlib."""
@@ -454,7 +454,7 @@ class BzrOfflineTestCase(BzrBaseTestCase):
                                offline=True)
         self.assertRaises(UserError, new_branch, '1')
         # conf has not changed
-        self.assertEquals(new_branch.parse_conf(), branch.parse_conf())
+        self.assertEqual(new_branch.parse_conf(), branch.parse_conf())
 
     def test_update_live_rev_url_change(self):
         """[offline mode] upd to a live revspec with URL change is an error
@@ -465,7 +465,7 @@ class BzrOfflineTestCase(BzrBaseTestCase):
         new_branch = BzrBranch(branch.target_dir, 'http://other.url.example',
                                offline=True)
         self.assertRaises(UserError, new_branch, 'last:1')
-        self.assertEquals(new_branch.parse_conf(), branch.parse_conf())
+        self.assertEqual(new_branch.parse_conf(), branch.parse_conf())
 
     def test_update_available_revid_url_change(self):
         """[offline mode] upd to an available revid with URL change is ok

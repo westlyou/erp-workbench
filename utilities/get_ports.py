@@ -1,6 +1,6 @@
 #!bin/python
 # -*- encoding: utf-8 -*-
-from __future__ import print_function
+
 import sys
 import os
 from pprint import pprint
@@ -19,7 +19,7 @@ server_map = {
     '88.198.51.174' : 'lisa',
 }
 result = {}
-for k, v in SITES_G.items():
+for k, v in list(SITES_G.items()):
     remote_url = server_map[v.get('remote_server', {}).get('remote_url')]
     if not 'remote_url':
         continue

@@ -1,11 +1,11 @@
 #!bin/python
 # -*- encoding: utf-8 -*-
-from __future__ import print_function
+
 import sys
 import os
 # from name_completer import SimpleCompleter
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
-from bcolors import bcolors
+from scripts.bcolors import bcolors
 try:
     from ruamel.std.argparse import ArgumentParser, set_default_subparser
     import argparse
@@ -48,7 +48,7 @@ from config.handlers import MailHandler
 # scripts.vcs handles git stuff
 import scripts.vcs
 from scripts.messages import *
-from update_local_db import DBUpdater
+from .update_local_db import DBUpdater
 
 
 """
@@ -1002,7 +1002,7 @@ class _HelpAction(argparse._HelpAction):
         # but better save than sorry
         for subparsers_action in subparsers_actions:
             # get all subparsers and print help
-            for choice, subparser in subparsers_action.choices.items():
+            for choice, subparser in list(subparsers_action.choices.items()):
                 print("Subparser '{}'".format(choice))
                 print(subparser.format_help())
 

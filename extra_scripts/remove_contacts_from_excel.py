@@ -20,11 +20,11 @@ def run(self, **kw_args):
     
     while not done:
         pids = partners.search([('id', '>', 130), ('id', '<', 75190)], limit=1000)
-        print pids
+        print(pids)
         if pids:
             handler.unlink_partner(pids)
         else:
             done = True
 
-    print '>>>>>>>>>>>>>> DONE <<<<<<<<<<<<<<<<<<'
+    print('>>>>>>>>>>>>>> DONE <<<<<<<<<<<<<<<<<<')
  

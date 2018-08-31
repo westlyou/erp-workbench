@@ -37,4 +37,4 @@ class SvnTestCase(VcsTestCase):
         f = open(os.path.join(target_dir, 'tracked'))
         lines = f.readlines()
         f.close()
-        self.assertEquals(lines[0].strip(), 'last')
+        self.assertEqual(lines[0].strip(), 'last')

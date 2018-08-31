@@ -30,7 +30,7 @@ def run(self, **kw_args):
     #self.dbhost
     #'localhost'
     
-    print 'we run with %s' % kw_args
+    print('we run with %s' % kw_args)
     opts = Namespace(
         host = self.dbhost,
         dbname = self.db_name,

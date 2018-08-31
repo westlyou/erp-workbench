@@ -25,10 +25,10 @@ try:
     from ruamel.std.argparse import ArgumentParser, set_default_subparser
     import argparse
 except ImportError:
-    print '*' * 80
-    print bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC
-    print 'not all libraries are installed'
-    print '*' * 80
+    print('*' * 80)
+    print(bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC)
+    print('not all libraries are installed')
+    print('*' * 80)
     sys.exit()
 
 ALIAS_HEADER = ""
@@ -74,13 +74,13 @@ class AliasHandler(object):
         try:
             dist = open("/etc/lsb-release").readline()
             dist = dist.split("=")
-            print dist[1]
+            print(dist[1])
             if dist[1].strip("\n") == "LinuxMint":
                 alias_script = "bashrc"
             elif dist[1].strip("\n") == "Ubuntu":
                 alias_script = "bash_aliases"
         except:
-            print 'could not determine linux distribution'
+            print('could not determine linux distribution')
             pass
         home = os.path.expanduser("~")
         alias_path = '%s/.%s' % (home, alias_script)

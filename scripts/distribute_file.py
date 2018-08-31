@@ -10,7 +10,7 @@ from optparse import OptionParser
 import shutil
 import inspect
 sys.path.insert(0, os.getcwd())
-from utilities import list_sites, SITES, BASE_PATH
+from .utilities import list_sites, SITES, BASE_PATH
 
 def main(opts, args):
     """
@@ -20,7 +20,7 @@ def main(opts, args):
         return
     for a in args:
         if not os.path.isfile(a):
-            print a, 'is not a file'
+            print(a, 'is not a file')
 
 
 if __name__ == '__main__':

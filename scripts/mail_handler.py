@@ -3,10 +3,10 @@
 
 from config import SITES #, BASE_INFO, GLOBALDEFAULTS
 #from config.handlers import InitHandler, DBUpdater
-from create_handler import InitHandler
+from .create_handler import InitHandler
 import os
 import sys
-from utilities import bcolors
+from .utilities import bcolors
 from scripts.messages import *
 import datetime
 #from froxlor.wrapper import DatabaseObject, PanelCustomer, PanelDomain
@@ -239,7 +239,7 @@ class MailHandler(InitHandler):
         return self.tables
            
     def get_table(self, tbl_name):
-        if not self.table_dic.has_key(tbl_name):
+        if tbl_name not in self.table_dic:
             if tbl_name not in self.get_tables():
                 raise EmailValueError('table %s is not defined')
             meta = MetaData(self.get_session().connection().engine)
@@ -553,7 +553,7 @@ class MailHandler(InitHandler):
         customer = self.get_customer_froxlor(name = mail_server_data.get('customer'))
         if not customer:
             server_data['panel_customer_tbl'] = 'panel_customers'
-            print CUSTOMER_UNKNOWN % server_data
+            print(CUSTOMER_UNKNOWN % server_data)
         # next we need to get the customer_id from the know customer name
         domain = self.get_domain_froxlor(mail_server_data.get('domain'), customer.customerid)
         if not domain:
@@ -570,7 +570,7 @@ class MailHandler(InitHandler):
         missing_mail_virtual = {}
         bad_mail_virtual = {}
         existing_mail_virtual = {}
-        for mailuser, user_data in mail_data.get('mail_user', {}).items():
+        for mailuser, user_data in list(mail_data.get('mail_user', {}).items()):
             result = self.manage_mail_account(mailuser, user_data, server_data, cmd='check')
             
                 

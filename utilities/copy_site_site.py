@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import mimetypes
 from argparse import ArgumentParser
-import ConfigParser
+import configparser
 import sys
 import os
 import odoorpc
@@ -45,8 +45,8 @@ MODELS = [
     'membership.membership_line',
 ]
 base_def = {
-        'tz' : u'Europe/Zurich',
-        'lang' : u'de_CH',
+        'tz' : 'Europe/Zurich',
+        'lang' : 'de_CH',
     }
 DEFAULTS = {
     'res.partner' : base_def,
@@ -106,15 +106,15 @@ class Handler(object):
             #login(self, db, login='admin', password='admin'
             odoo.login(s.db, s.user, s.pw)
         except:
-            print bcolors.FAIL
-            print '*' * 80
-            print 'could not execute: odoorpc.ODOO(%s, port=%s, timeout=1200)' % (s.host, s.port)
-            print 'followed by:'
-            print 'login(%s, "%s", "%s")' % (s.db, s.user, s.pw)
-            print '*' * 80 + bcolors.ENDC
+            print(bcolors.FAIL)
+            print('*' * 80)
+            print('could not execute: odoorpc.ODOO(%s, port=%s, timeout=1200)' % (s.host, s.port))
+            print('followed by:')
+            print('login(%s, "%s", "%s")' % (s.db, s.user, s.pw))
+            print('*' * 80 + bcolors.ENDC)
             sys.exit()
         finally:
-            print bcolors.ENDC
+            print(bcolors.ENDC)
         return odoo, s
     
     def _get_modules(self, module_name):
@@ -259,9 +259,9 @@ class Handler(object):
             'credit_limit' : s_partner.credit_limit,
             #'write_date' : s_partner.write_date,
             'active' : s_partner.active,
-            'tz' : u'Europe/Zurich', #s_partner.tz,
+            'tz' : 'Europe/Zurich', #s_partner.tz,
             #'write_uid' : s_partner.write_uid,
-            'lang' : u'de_CH', #s_partner.lang,
+            'lang' : 'de_CH', #s_partner.lang,
             #'create_uid' : s_partner.create_uid,
             'phone' : s_partner.phone,
             'mobile' : s_partner.mobile,
@@ -356,7 +356,7 @@ class Handler(object):
                 data['parent_id'] = self.get_new_partner(tmp_id, sm, tm)
                 
         # fix default values
-        for k, v in DEFAULTS[model].items():
+        for k, v in list(DEFAULTS[model].items()):
             data[k] = v
         
         # validate data
@@ -488,7 +488,7 @@ class Handler(object):
         # we must look up, whether we find any of the partners already in the partner map
         
         for pp in ['commercial_partner_id', 'parent_id', 'assigned_partner_id']:
-            if pp in partner._columns.keys():
+            if pp in list(partner._columns.keys()):
                 pp = getattr(partner, pp)
                 if pp and pp.id and pp.id != partner.id:
                     if len(pp):
@@ -510,7 +510,7 @@ class Handler(object):
             #partner = op[0] # itterating over a record set returns recordsets
             if op.name:
                 self.create_and_copy_partner(op, None, sm, tm, update)
-                print op.name
+                print(op.name)
             
     def copy_users(self):
         sm, tm = self._get_modules('res.users')
@@ -579,7 +579,7 @@ class Handler(object):
                     nu = tm.browse(nu)
                     if not self.mapper_get('res.users', ou.id):
                         self.mapper_add('res.users', ou.id, nu.id)
-                    print nu.name
+                    print(nu.name)
                     if self.update:
                         pass
                 else:
@@ -595,7 +595,7 @@ class Handler(object):
                     # create a user, this creates also a partner
                     # the copy data from old partner to new partner
                     # fix default values
-                    for k, v in DEFAULTS['res.user'].items():
+                    for k, v in list(DEFAULTS['res.user'].items()):
                         data[k] = v                    
                     nu_id = tm.create(data)
                     nu = tm.browse([nu_id])
@@ -604,8 +604,8 @@ class Handler(object):
                     # creating a user also creates a partner
                     # so we copy the partner values
                     self.create_and_copy_partner(ou.partner_id, nu.partner_id)
-                    print ou.name
-        print old_users
+                    print(ou.name)
+        print(old_users)
         
     def copy_langs(self):
         sm, tm = self._get_modules('res.lang')
@@ -642,7 +642,7 @@ class Handler(object):
         titles = sm.browse(sm.search([]))
         new_titles =  {x:y for x,y in[(t.name, t.id) for t in tm.browse(tm.search([]))]}
         for t in titles:
-            if new_titles.has_key(t.name):
+            if t.name in new_titles:
                 if not self.mapper_get(model, t.id):
                     self.mapper_add(model, t.id, new_titles[t.name])
             else:
@@ -705,7 +705,7 @@ class Handler(object):
                 }
                 
                 # fix default values
-                for k, v in DEFAULTS[model].items():
+                for k, v in list(DEFAULTS[model].items()):
                     data[k] = v
                 
                 if company.id == 1:
@@ -730,19 +730,19 @@ class Handler(object):
                     new_id = tm.search([('bank_account_id', 'ilike', acn.strip())])
                     if not new_id:
                         data = {
-                            u'bank_acc_number': account.bank_acc_number,
+                            'bank_acc_number': account.bank_acc_number,
                             #u'bank_id': account.bank_id.id, #776, #822
                             #'code': 'BNK4', # will be generated
                             #u'company_id': 1,
                             #u'currency_id': False,
                             #'default_credit_account_id': 174,
                             #'default_debit_account_id': 174,
-                            u'display_on_footer': account.display_on_footer,
+                            'display_on_footer': account.display_on_footer,
                             #'inbound_payment_method_ids': [[6, False, [1, 3]]],
                             'name': account.name,
                             #u'outbound_payment_method_ids': [[6, False, [2]]],
                             #'sequence_id': account.sequence_id.id,
-                            u'type': account.type,
+                            'type': account.type,
                         }
                         new_id = tm.create(data)
                     self.mapper_add(model, account.id, new_id)
@@ -805,7 +805,7 @@ class Handler(object):
             #'write_uid' : bank.write_uid,
             'zip' : bank.zip,
         }
-        existing_fields = bank._columns.keys()
+        existing_fields = list(bank._columns.keys())
         for field in spourious_fields:
             if field in existing_fields:
                 data[field] = getattr(bank, field)
@@ -854,7 +854,7 @@ class Handler(object):
         sm, tm = self._get_modules(model)       
         maillists = sm.browse(sm.search([]))
         for ml in maillists:
-            print ml.name
+            print(ml.name)
             new_id = self.mapper_get(model, ml.id)
             if not new_id:
                 data = {
@@ -873,7 +873,7 @@ class Handler(object):
         sm, tm = self._get_modules(model)       
         contacts = sm.browse(sm.search([]))
         for contact in contacts:
-            print contact.email
+            print(contact.email)
             new_id = self.mapper_get(model, contact.id)            
             if not new_id:
                 data = {
@@ -890,31 +890,31 @@ class Handler(object):
 
     def copy_productsxx(self):
         vals = {
-         u'active': True,
-         u'categ_id': 1,
-         u'company_id': 1,
-         u'default_code': u'mio',
-         u'description': u'mitonikonto',
-         u'description_sale': u'verkufsbechr',
-         u'list_price': 1,
-         u'membership': True,
-         u'membership_date_from': u'2017-05-19',
-         u'membership_date_to': u'2017-05-21',
+         'active': True,
+         'categ_id': 1,
+         'company_id': 1,
+         'default_code': 'mio',
+         'description': 'mitonikonto',
+         'description_sale': 'verkufsbechr',
+         'list_price': 1,
+         'membership': True,
+         'membership_date_from': '2017-05-19',
+         'membership_date_to': '2017-05-21',
          'message_follower_ids': [[0,
                                    0,
                                    {'partner_id': 3,
                                     'res_id': 19,
                                     'res_model': 'product.template',
                                     'subtype_ids': [(6, 0, [1])]}]],
-         u'name': u'Mitoni',
-         u'property_account_income_id': 17,
-         u'taxes_id': [[6, False, [14]]]}
+         'name': 'Mitoni',
+         'property_account_income_id': 17,
+         'taxes_id': [[6, False, [14]]]}
         
         model = 'product.product'
         sm, tm = self._get_modules(model)       
         products = sm.browse(sm.search([]))
         for product in products:
-            print product.name, product.price
+            print(product.name, product.price)
             new_id = self.mapper_get(model, product.id)
             if not new_id:
                 data = {
@@ -936,25 +936,25 @@ class Handler(object):
         
     def copy_products(self):
         vals = {
-         u'active': True,
-         u'categ_id': 1,
-         u'company_id': 1,
-         u'default_code': u'mio',
-         u'description': u'mitonikonto',
-         u'description_sale': u'verkufsbechr',
-         u'list_price': 1,
-         u'membership': True,
-         u'membership_date_from': u'2017-05-19',
-         u'membership_date_to': u'2017-05-21',
+         'active': True,
+         'categ_id': 1,
+         'company_id': 1,
+         'default_code': 'mio',
+         'description': 'mitonikonto',
+         'description_sale': 'verkufsbechr',
+         'list_price': 1,
+         'membership': True,
+         'membership_date_from': '2017-05-19',
+         'membership_date_to': '2017-05-21',
          'message_follower_ids': [[0,
                                    0,
                                    {'partner_id': 3,
                                     'res_id': 19,
                                     'res_model': 'product.template',
                                     'subtype_ids': [(6, 0, [1])]}]],
-         u'name': u'Mitoni',
-         u'property_account_income_id': 17,
-         u'taxes_id': [[6, False, [14]]]}
+         'name': 'Mitoni',
+         'property_account_income_id': 17,
+         'taxes_id': [[6, False, [14]]]}
         
         model = 'product.template'
         model_p = 'product.product'
@@ -964,7 +964,7 @@ class Handler(object):
         mtypes = MEMBERSHIP_ITEMS['membership_types']
         membership_start_end = MEMBERSHIP_ITEMS['membership_start_end']
         for pt in product_templates:
-            print pt.name
+            print(pt.name)
             new_id = self.mapper_get(model, pt.id)
             if not new_id:
                 # we need to get the product

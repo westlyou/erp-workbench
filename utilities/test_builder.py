@@ -191,17 +191,17 @@ class TestCreator(object):
         """
         # check if folder exists and chdir into it
         if not os.path.exists(path) or not os.path.isdir(path):
-            print '%s is not an existing folder' % path
+            print('%s is not an existing folder' % path)
             return
 
         os.chdir(path)
         pattern = "*.py" 
         for root in FOLDERS:
             for dir_name, subdirList, fileList in os.walk(root, topdown=False):
-                print('Found directory: %s' % dir_name)
+                print(('Found directory: %s' % dir_name))
                 for fname in fileList:
                     if fnmatch.fnmatch(fname, pattern) and not fname in SKIP_FILES:
-                        print('\t%s' % fname)
+                        print(('\t%s' % fname))
                         classes = self.load_suite('%s/%s' % (dir_name, fname))
                         module, _ = os.path.splitext(fname)
                         self.make_test_module('tests/test_%s_%s.py' % (dir_name, module), classes, module_name)
@@ -212,9 +212,9 @@ def main(opts):
     handler = TestCreator()
     app_path = opts.app_path
     if not app_path or not os.path.isdir(app_path):
-        print bcolors.FAIL
-        print "you must use option -a with a valid path"
-        print bcolors.ENDC
+        print(bcolors.FAIL)
+        print("you must use option -a with a valid path")
+        print(bcolors.ENDC)
         sys.exit()
     app_list = opts.app_list
     if not app_list:
@@ -228,7 +228,7 @@ def main(opts):
     for app_name in app_list:
         # construct the tests
         act_path = '%s/%s' % (app_path, app_name)
-        print 'handling: %s' % act_path
+        print('handling: %s' % act_path)
         handler.handle_odoo_module(act_path, app_name)
 
 

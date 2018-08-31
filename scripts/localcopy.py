@@ -18,10 +18,10 @@ try:
     from ruamel.std.argparse import ArgumentParser, set_default_subparser
     import argparse
 except ImportError:
-    print '*' * 80
-    print bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC
-    print 'not all libraries are installed'
-    print '*' * 80
+    print('*' * 80)
+    print(bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC)
+    print('not all libraries are installed')
+    print('*' * 80)
     sys.exit()
 
 #from argparse import ArgumentParser #, _SubParsersAction
@@ -72,9 +72,9 @@ def main():
         action="store", dest="remote_user", default='root',
         help="user on remote host. Default root")
     args, unknownargs = parser.parse_known_args()
-    print main_message %  ((unknownargs and unknownargs[0]) or 'SOURCE')
+    print(main_message %  ((unknownargs and unknownargs[0]) or 'SOURCE'))
     if len(unknownargs) != 2:
-        print bcolors.WARNING + 'need exactly two arguments: soucedirectory, targetdirectory' + bcolors.ENDC
+        print(bcolors.WARNING + 'need exactly two arguments: soucedirectory, targetdirectory' + bcolors.ENDC)
         return
     source, target = unknownargs
     source = source.strip()
@@ -84,21 +84,21 @@ def main():
     source_name = source.split('/')[-1]
     target_name = target.split('/')[-1]
     if not os.path.exists(source) and not os.path.isdir(source):
-        print bcolors.WARNING + '%s seems not to exist' % source + bcolors.ENDC
+        print(bcolors.WARNING + '%s seems not to exist' % source + bcolors.ENDC)
         return
     source_f = os.path.normpath('%s/filestore/%s' % (source, source_name))
     if not os.path.exists(source_f) and not os.path.isdir(source_f):
-        print bcolors.WARNING + '%s seems not to exist' % source_f + bcolors.ENDC
+        print(bcolors.WARNING + '%s seems not to exist' % source_f + bcolors.ENDC)
         return
     source_d = os.path.normpath('%s/dump/%s.dmp' % (source, source_name))
     if not os.path.exists(source_d):
-        print bcolors.WARNING + '%s seems not to exist' % source_d + bcolors.ENDC
+        print(bcolors.WARNING + '%s seems not to exist' % source_d + bcolors.ENDC)
         return
     if not os.path.exists(source) and not os.path.isdir(source):
-        print bcolors.WARNING + '%s seems not to exist' % source + bcolors.ENDC
+        print(bcolors.WARNING + '%s seems not to exist' % source + bcolors.ENDC)
         return
     if not os.path.exists(target) and not os.path.isdir(target):
-        print bcolors.WARNING + '%s seems not to exist' % target + bcolors.ENDC
+        print(bcolors.WARNING + '%s seems not to exist' % target + bcolors.ENDC)
         return
     target_d = os.path.normpath('%s/dump/%s.dmp' % (target, target_name))
     target_f = os.path.normpath('%s/filestore/%s' % (target, target_name))
@@ -125,11 +125,11 @@ def main():
         for cmd_line in cmd_lines:
             counter +=1
             if args.verbose:
-                print 'counter:', counter
+                print('counter:', counter)
             if not cmd_line:
                 continue
-            print '-' * 80
-            print cmd_line
+            print('-' * 80)
+            print(cmd_line)
             p = subprocess.Popen(
                 cmd_line,
                 stdout=PIPE,
@@ -137,24 +137,24 @@ def main():
                 shell=True)
             if args.verbose:
                 result = p.communicate()
-                print result[0]
+                print(result[0])
                 if result[1]:
-                    print bcolors.FAIL + 'an error occured:\n'
-                    print                '-----------------\n'+ bcolors.ENDC
-                    print result[1]
-                    print                
+                    print(bcolors.FAIL + 'an error occured:\n')
+                    print('-----------------\n'+ bcolors.ENDC)
+                    print(result[1])
+                    print()                
             else:
                 p.communicate()
-        print final_message % (target, target)            
+        print(final_message % (target, target))            
     else:
         for cmd_line in cmd_lines:
             counter +=1
             if args.verbose:
-                print 'counter:', counter
+                print('counter:', counter)
             if not cmd_line:
                 continue
-            print '-' * 80
-            print cmd_line
+            print('-' * 80)
+            print(cmd_line)
             p = subprocess.Popen(
                 cmd_line,
                 stdout=PIPE,
@@ -162,14 +162,14 @@ def main():
                 shell=True)
             if args.verbose:
                 result = p.communicate()
-                print result[0]
+                print(result[0])
                 if result[1]:
-                    print bcolors.FAIL + 'an error occured:\n'
-                    print                '-----------------\n'+ bcolors.ENDC
-                    print result[1]
-                    print
+                    print(bcolors.FAIL + 'an error occured:\n')
+                    print('-----------------\n'+ bcolors.ENDC)
+                    print(result[1])
+                    print()
                 else:
-                    print final_message % (target, target)
+                    print(final_message % (target, target))
 
             else:
                 p.communicate()        

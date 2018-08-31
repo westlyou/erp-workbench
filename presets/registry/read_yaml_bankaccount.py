@@ -1,6 +1,6 @@
 
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+
 from registry.default_handler import BaseHandler
 from presets_config import BASE_PATH
 from bcolors import bcolors
@@ -57,7 +57,7 @@ class ReadYamlBankaccountHandler(BaseHandler):
             # this bank _id we find in the parent data
             # under the 'banks' key
             values = yaml_data.get('values', {})
-            accounts = values.get('accounts', {}).values()
+            accounts = list(values.get('accounts', {}).values())
             banks = values['parent_data']['values']['banks']
             for account in accounts:
                 bank_id = account.get('bank_id')
@@ -82,7 +82,7 @@ class ReadYamlBankaccountHandler(BaseHandler):
                             new_id = Model.create(vals)
                             account['new_object_id'] = new_id
                             self._run_handler_end(safe = True)
-                        except Exception, e:
+                        except Exception as e:
                             print(bcolors.FAIL)
                             print('*' * 80)
                             print('failed to create a record for %s using %s' % (model, vals))

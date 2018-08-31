@@ -5,8 +5,8 @@ from hashlib import md5
 try:
     from Crypto.Cipher import AES
 except ImportError:
-    print "could not import Crypto.Cipher"
-    print "please run bin/pip install -r install/requirements.txt"
+    print("could not import Crypto.Cipher")
+    print("please run bin/pip install -r install/requirements.txt")
     import sys
     sys.exit()
 

@@ -9,7 +9,7 @@ fromAddress = 'info@redcor.ch'
 regex = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
 
 # Email address to verify
-inputAddress = input('Please enter the emailAddress to verify:')
+inputAddress = eval(input('Please enter the emailAddress to verify:'))
 addressToVerify = str(inputAddress)
 
 # Syntax check
@@ -21,7 +21,7 @@ if match == None:
 # Get domain for DNS lookup
 splitAddress = addressToVerify.split('@')
 domain = str(splitAddress[1])
-print('Domain:', domain)
+print(('Domain:', domain))
 
 # MX record lookup
 records = dns.resolver.query(domain, 'MX')

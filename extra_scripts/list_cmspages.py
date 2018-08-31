@@ -23,7 +23,7 @@ def get_models(self, models):
     "build list of models"
     odoo = self.get_odoo()
     for k,m in MODEL_NAMES:
-        if not models.has_key(k):
+        if k not in models:
             models[k] = odoo.env[m] 
             
 def get_view(cms_page, models):
@@ -69,7 +69,7 @@ def output_children(self, sheet, line_counter, parent_id, level=0, models = {}):
     # output name on next line below path
     #
     sheet.write(line_counter, START_COL + level, parent.name, level == 0 and st_bold or st_normal)
-    print '    ' * level, parent.name
+    print('    ' * level, parent.name)
     if parent.children_ids:
         level += 1
         for child_id in parent.children_ids:

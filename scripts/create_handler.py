@@ -1,6 +1,6 @@
 # bin/python
 # -*- encoding: utf-8 -*-
-from __future__ import print_function
+
 # import warnings
 import sys
 import os
@@ -23,7 +23,7 @@ import stat
 import shutil
 import psycopg2
 import psycopg2.extras
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from pprint import pformat
 from scripts.update_local_db import DBUpdater
 from scripts.utilities import collect_options, _construct_sa, bcolors, find_addon_names
@@ -228,7 +228,7 @@ class RPC_Mixin(object):
                 if verbose:
                     return odoo
                 return
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 print(bcolors.FAIL + 'could not login to odoo server host: %s:%s, db: %s, user: %s, pw: %s' %
                       (rpchost, rpcport, db_name, rpcuser, rpcpw))
                 print('connection was refused')
@@ -328,8 +328,8 @@ class InitHandler(RPC_Mixin):
         parsername, selected, options = collect_options(opts)
         self.selections = selected
         if not self.site_name and self.name_needed():
-            result = self._complete_selection(parsername, self.sites.keys(
-            ) + ['all'], results_only=True, prompt='sitename ?')
+            result = self._complete_selection(parsername, list(self.sites.keys(
+            )) + ['all'], results_only=True, prompt='sitename ?')
             if result:
                 self.site_names = [result]
         if not selected:
@@ -351,7 +351,7 @@ class InitHandler(RPC_Mixin):
             self.default_values['current_user'] = ACT_USER
             self.default_values['foldernames'] = FOLDERNAMES
             # make sure also freshly introduced variables do not create an error 
-            if not self.default_values.has_key('odoo_nightly'):
+            if 'odoo_nightly' not in self.default_values:
                  self.default_values['odoo_nightly'] = self.default_values['odoo_version'] 
              
             # construct path to datafolder odoo_server_data_path
@@ -526,7 +526,7 @@ class InitHandler(RPC_Mixin):
             from reimport import reimport, modified
         except ImportError:
             print(MODULE_MISSING % 'reimport')
-        s = self.sites.keys()
+        s = list(self.sites.keys())
         mlist = [m for m in modified() if m in s]
         if mlist:
             print(SITE_DESCRIPTION_RELOADED %
@@ -534,7 +534,7 @@ class InitHandler(RPC_Mixin):
             sys.exit()
 
     def show_config(self):
-        for k, v in BASE_INFO.items():
+        for k, v in list(BASE_INFO.items()):
             print(bcolors.WARNING + k + bcolors.ENDC, v)
 
     def set_config(self):
@@ -546,14 +546,14 @@ class InitHandler(RPC_Mixin):
             try:
                 for k, v in data:
                     if v and v[0] == '-':
-                        if BASE_INFO.has_key(k):
+                        if k in BASE_INFO:
                             BASE_INFO.pop(k)
                             changed = True
                     else:
                         if force:
                             BASE_INFO[k] = v
                             changed = True
-                        elif BASE_INFO.has_key(k) and v:
+                        elif k in BASE_INFO and v:
                             BASE_INFO[k] = v
                             changed = True
                         else:
@@ -742,7 +742,7 @@ class InitHandler(RPC_Mixin):
                 if _o:
                     self.opts._o.__dict__[_o] = _r
             else:
-                self.opts._o.__dict__[_o] = raw_input('value for %s:' % _o)
+                self.opts._o.__dict__[_o] = input('value for %s:' % _o)
 
     # -------------------------------------------------------------------
     # check_name
@@ -764,7 +764,7 @@ class InitHandler(RPC_Mixin):
         name = self.site_name
         if name:
             if name == 'all':
-                site_names = self.sites.keys()
+                site_names = list(self.sites.keys())
             else:
                 if name.endswith('/'):
                     name = name[:-1]
@@ -786,7 +786,7 @@ class InitHandler(RPC_Mixin):
         if no_completion:
             # probably called at startup
             if must_match:
-                matches = [k for k in SITES.keys() if k.startswith(name)]
+                matches = [k for k in list(SITES.keys()) if k.startswith(name)]
                 if not matches:
                     print(
                         bcolors.WARNING + ('%s does not match any site name, discarded!' % name) + bcolors.ENDC)
@@ -802,8 +802,8 @@ class InitHandler(RPC_Mixin):
         if not self.name_needed():
             return
         done = False
-        cmpl = SimpleCompleter('', options=SITES.keys(
-        ), default=name or opts.sitename or '', prompt='please provide valid site name:')
+        cmpl = SimpleCompleter('', options=list(SITES.keys(
+        )), default=name or opts.sitename or '', prompt='please provide valid site name:')
         while not done:
             _name = cmpl.input_loop()
             if _name is None:
@@ -838,9 +838,9 @@ class InitHandler(RPC_Mixin):
         """
         # we allow only one inheritance level
         # check this
-        for k, v in sites.items():
+        for k, v in list(sites.items()):
             inherits = v.get('inherit')
-            vkeys = v.keys()
+            vkeys = list(v.keys())
             if inherits:
                 # also the inherited site must be deepcopied
                 # otherwise we copy the original to our copy that is in fact nothing but a reference fo the original
@@ -860,17 +860,17 @@ class InitHandler(RPC_Mixin):
                 # result.update(inherited)
                 # now copy things back but do not overwrite "inherited" values
                 # update does not work as this overwrites values that are directories
-                for key, val in inherited.items():
+                for key, val in list(inherited.items()):
                     if isinstance(val, dict):
                         # make sure the dic exists otherwise we can not add the items
-                        vvkeys = v.get(key, {}).keys()
-                        if not v.has_key(key):
+                        vvkeys = list(v.get(key, {}).keys())
+                        if key not in v:
                             v[key] = {}
-                        for val_k, val_val in val.items():
+                        for val_k, val_val in list(val.items()):
                             if isinstance(val_val, list):
                                 # v is the element in the inherited site
                                 # if v does not have a key we add it with an empty list
-                                if not v[key].has_key(val_k):
+                                if val_k not in v[key]:
                                     v[key][val_k] = []
                                 [v[key][val_k].append(vi)
                                     for vi in val_val if vi not in v[key][val_k] and not ('-' + vi in v[key][val_k])]
@@ -882,15 +882,15 @@ class InitHandler(RPC_Mixin):
                                 # key is the key in the child
                                 # val is the value in the child
                                 # val_val
-                                if not v[key].has_key(val_k):
+                                if val_k not in v[key]:
                                     # so we have a target dict
                                     v[key][val_k] = {}
                                 # now add elements to the the target dict
                                 target = v[key][val_k]
-                                for val_val_k, val_val_v in val_val.items():
+                                for val_val_k, val_val_v in list(val_val.items()):
                                     # we do an other level of hierarchy
                                     if isinstance(val_val_v, list):
-                                        if not target.has_key(val_val_k):
+                                        if val_val_k not in target:
                                             target[val_val_k] = []
                                         sub_target = target[val_val_k]
                                         for tk in val_val_v:
@@ -898,13 +898,13 @@ class InitHandler(RPC_Mixin):
                                             if tk not in sub_target:
                                                 sub_target.append(tk)
                                     elif isinstance(val_val_v, dict):
-                                        if not target.has_key(val_val_k):
+                                        if val_val_k not in target:
                                             target[val_val_k] = {}
                                         sub_target = target[val_val_k]
-                                        for val_val_v_k, val_val_v_v in val_val_v.items():
+                                        for val_val_v_k, val_val_v_v in list(val_val_v.items()):
                                             sub_target[val_val_v_k] = val_val_v_v
                                     else:
-                                        if not target.has_key(val_val_k):
+                                        if val_val_k not in target:
                                             target[val_val_k] = val_val_v
                             else:
                                 if val_k not in vvkeys:
@@ -946,7 +946,7 @@ class InitHandler(RPC_Mixin):
         # the site_name is what the user with option -n and was checked by check_name
         default_values['site_name'] = site_name
         default_values.update(BASE_INFO)
-        if isinstance(site_name, basestring) and SITES.get(site_name):
+        if isinstance(site_name, str) and SITES.get(site_name):
             if opts:
                 if (not opts.add_site) and (not opts.add_site_local) and (not opts.listmodules):
                     if site_name:
@@ -998,8 +998,8 @@ class InitHandler(RPC_Mixin):
 
         # make sure that all placeholders are replaced
         m = re.compile(r'.*%\(.+\)s')
-        for k, v in self.default_values.items():
-            if isinstance(v, basestring):
+        for k, v in list(self.default_values.items()):
+            if isinstance(v, str):
                 counter = 0
                 while m.match(v) and counter < 10:
                     v = v % self.default_values
@@ -1110,7 +1110,7 @@ class InitHandler(RPC_Mixin):
         source = opts.copy_admin_pw
 
         # first check whether the source is valid
-        if not self.sites.has_key(source):
+        if source not in self.sites:
             print(bcolors.FAIL + '*' * 80)
             print('%s is not a valid source' % source)
             print('*' * 80 + bcolors.ENDC)
@@ -1219,9 +1219,9 @@ class InitHandler(RPC_Mixin):
 
             # next we set the key web.base.url.freeze
             # this prevenst that the key is reset when login in as addmin
-            if configs.has_key('ir.config_parameter'):
+            if 'ir.config_parameter' in configs:
                 # old structure like afbs
-                for key, data in configs.items():
+                for key, data in list(configs.items()):
                     try:
                         model = odoo.env[key]
                         records = data.get('records', [])
@@ -1276,7 +1276,7 @@ class InitHandler(RPC_Mixin):
                         if code:
                             data['default_lang_id'] = self.install_languages([code])[
                                 code]
-                for setting, values in configs.items():
+                for setting, values in list(configs.items()):
                     m = values['model']
                     model = odoo.env[m]
                     records = values['records']
@@ -1342,7 +1342,7 @@ class InitHandler(RPC_Mixin):
                 users = main_company.get('users')
                 if users:
                     users_o = odoo.env['res.users']
-                    for login, user_data in users.items():
+                    for login, user_data in list(users.items()):
                         firstname = user_data.get('firstname')
                         lastname = user_data.get('lastname')
                         language = user_data.get('name')
@@ -1413,7 +1413,7 @@ class InitHandler(RPC_Mixin):
             config = odoo.env['ir.config_parameter']
         if base_url:
             base_url_obj = config.browse(
-                config.search([('key', '=', u'web.base.url')]))
+                config.search([('key', '=', 'web.base.url')]))
             base_url_obj.write({'value': base_url})
             print(bcolors.OKGREEN, 'setting base_url to:%s' %
                   base_url, bcolors.ENDC)
@@ -1439,8 +1439,8 @@ class InitHandler(RPC_Mixin):
                 vals = c_param[1]
                 c_obj = config.browse(config.search([(c_key, '=', c_k_val)]))
                 if c_obj:
-                    for k, v in vals.items():
-                        if isinstance(v, basestring):
+                    for k, v in list(vals.items()):
+                        if isinstance(v, str):
                             vals[k] = v % self.default_values
                     c_obj.write(vals)
                 print(bcolors.OKGREEN, 'setting %s to:%s' %
@@ -1579,7 +1579,7 @@ class InitHandler(RPC_Mixin):
             from templates.install_blocks import INSTALL_BLOCKS
             print('\nthe following installable odoo module blocks exist:')
             print('---------------------------------------------------')
-            for k in INSTALL_BLOCKS.keys():
+            for k in list(INSTALL_BLOCKS.keys()):
                 print('    ', k)
             print('---------------------------------------------------')
             return
@@ -1634,19 +1634,19 @@ class InitHandler(RPC_Mixin):
             from templates.install_blocks import INSTALL_BLOCKS
             odoo_apps_info, odoo_modules_info = self.get_odoo_modules()
 
-            odoo_apps = odoo_apps_info.keys()
-            odoo_apps_names = odoo_apps_info.values()
+            odoo_apps = list(odoo_apps_info.keys())
+            odoo_apps_names = list(odoo_apps_info.values())
             odoo_apps_map = {}
-            for k, v in odoo_apps_info.items():
+            for k, v in list(odoo_apps_info.items()):
                 odoo_apps_map[v] = k
 
-            odoo_modules = odoo_modules_info.keys()
-            odoo_module_names = odoo_modules_info.values()
+            odoo_modules = list(odoo_modules_info.keys())
+            odoo_module_names = list(odoo_modules_info.values())
             odoo_module_map = {}
-            for k, v in odoo_modules_info.items():
+            for k, v in list(odoo_modules_info.items()):
                 odoo_module_map[v] = k
             for o in (odoo_addons or []):
-                o = unicode(o)
+                o = str(o)
                 if (o not in odoo_apps) and (o not in odoo_apps_names) \
                    and (o not in odoo_modules) and (o not in odoo_module_names):
                     print('!' * 80)
@@ -1976,8 +1976,8 @@ class InitHandler(RPC_Mixin):
         dp = self.data_path
         oop = BASE_PATH
         # shortnamesconstruct
-        alias_names = [n for n in SITES.keys() if len(n) <= ALIAS_LENGTH]
-        names = SITES.keys()
+        alias_names = [n for n in list(SITES.keys()) if len(n) <= ALIAS_LENGTH]
+        names = list(SITES.keys())
         names.sort()
         long_names = alias_names
         for n in names:
@@ -2061,7 +2061,7 @@ class InitHandler(RPC_Mixin):
             overwrite = True
             make_links = False
         o_overwrite = overwrite
-        for fname, tp in filedata.items():
+        for fname, tp in list(filedata.items()):
             # O = File, always overwrite
             # F = File
             # X = File set executable bit, allways overwrite
@@ -2240,8 +2240,8 @@ class SiteCreator(InitHandler, DBUpdater):
         data = open(REQUIREMENTS_FILE_TEMPLATE %
                     self.default_values['inner'], 'r').read()
         # we want to preserve changes in the requirements.txt
-        data = '\n'.join(dict(enumerate([d for d in data.split('\n') if d] +
-                                        self.default_values['pip_modules'].split('\n'))).values())
+        data = '\n'.join(list(dict(enumerate([d for d in data.split('\n') if d] +
+                                        self.default_values['pip_modules'].split('\n'))).values()))
         # MODULES_TO_ADD_LOCALLY are allways added to a local installation
         # these are tools to help testing and such
         s = data.split('\n') + (MODULES_TO_ADD_LOCALLY and MODULES_TO_ADD_LOCALLY or [])

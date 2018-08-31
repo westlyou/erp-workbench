@@ -7,18 +7,18 @@ import subprocess
 from subprocess import PIPE
 import re
 from pprint import pprint
-from StringIO import StringIO
+from io import StringIO
 from copy import deepcopy
 import psutil
 from scripts.messages import *
-from bcolors import bcolors
-from vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
-from vcs.svn import SvnCheckout
-from vcs.base import UpdateError
+from .bcolors import bcolors
+from .vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
+from .vcs.svn import SvnCheckout
+from .vcs.base import UpdateError
 try:
     from git import Repo
 except ImportError as e:
-    print MODULE_MISSING % 'git'
+    print(MODULE_MISSING % 'git')
     sys.exit()
 from config import BASE_PATH, BASE_INFO, SITES, SITES_LOCAL
 import git
@@ -56,13 +56,13 @@ SITE_TEMPLATE = """
 try:
     from config.localdata import REMOTE_USER_DIC
 except ImportError:
-    print '*' * 80
-    print 'localdata.py not found. Please create it.'
-    print """it should contain:
+    print('*' * 80)
+    print('localdata.py not found. Please create it.')
+    print("""it should contain:
     db_user = NAME_OF_LOCAL_DBUSER
     db_password = PASSWORD
-    """
-    print '*' * 80
+    """)
+    print('*' * 80)
 #    sys.exit()
 
 
@@ -210,16 +210,16 @@ def create_server_config(handler):
         def_dic = {}
         def_dic.update(handler.default_values)
         def_dic.update(CONFIG_NAME[server_type]['val_dic'])
-        for k, v in CONFIG_DEFAULTS.items():
+        for k, v in list(CONFIG_DEFAULTS.items()):
             vv = server_config.get(k, v)
-            if isinstance(vv, basestring):
+            if isinstance(vv, str):
                 vv = vv % def_dic
             line = '%s = %s\n' % (k,  vv)
             f.write(line)
         f.close()
     else:
         # should never happen
-        print bcolors.FAIL + 'ERROR: folder %s does not exist' % p + bcolors.ENDC
+        print(bcolors.FAIL + 'ERROR: folder %s does not exist' % p + bcolors.ENDC)
 
 
 # ----------------------------------
@@ -243,9 +243,9 @@ def get_single_value(
     @prompt       : prompt to display
     """
     # get input from user for a single value. present expanation and default value
-    print '*' * 50
-    print explanation
-    result = raw_input(prompt % (name, default))
+    print('*' * 50)
+    print(explanation)
+    result = input(prompt % (name, default))
     if not result:
         result = default
     return result
@@ -259,7 +259,7 @@ def set_base_info(info_dic, filename):
 
 def get_base_info(base_info, base_defaults):
     "collect base info from user, update base_info"
-    for k, v in base_defaults.items():
+    for k, v in list(base_defaults.items()):
         name, explanation, default = v
         # use value as stored, default otherwise
         default = BASE_INFO.get(k, default)
@@ -282,7 +282,7 @@ def update_base_info(base_info_path, defaults):
     base_info = {}
     get_base_info(base_info, defaults)
     set_base_info(base_info, base_info_path)
-    print '%s created' % base_info_path
+    print('%s created' % base_info_path)
 
 # ----------------------------------
 # list_sites
@@ -298,13 +298,13 @@ def list_sites(sites_dic):
     @sites_dic    : dictionary with info about sites
                     this is the combination of sites.py and local_sites.py
     """
-    keys = sites_dic.keys()
+    keys = list(sites_dic.keys())
     keys.sort()
     for key in keys:
         if sites_dic[key].get('is_local'):
-            print '%s (local)' % key
+            print('%s (local)' % key)
         else:
-            print key
+            print(key)
 
 # ----------------------------------
 # module_add
@@ -386,10 +386,10 @@ def module_add(opts, default_values, site_values, module_name):
         addons_path = '%(inner)s/%(site_name)s_addons' % default_values
         module_path = '%s/%s' % (addons_path, module_name)
         if not os.path.exists(addons_path):
-            print '%s does not exist'
+            print('%s does not exist')
             return
         if os.path.exists(module_path):
-            print 'module %s allready exists'
+            print('module %s allready exists')
             return
         # fine, we can go ahead
         # hopefully odoo is at its standard place
@@ -397,13 +397,13 @@ def module_add(opts, default_values, site_values, module_name):
         runner_path = '%(inner)s/bin/odoorunner.py' % default_values
         # usage: odoorunner.py scaffold [-h] [-t TEMPLATE] name [dest]
         cmdline = '%s scaffold %s %s' % (runner_path, module_name, addons_path)
-        print cmdline
+        print(cmdline)
         cur_dir = os.getcwd()
         os.chdir(default_values['inner'])
         p = subprocess.Popen(cmdline, stdout=PIPE, shell=True)
         p.communicate()
         os.chdir(cur_dir)
-        print 'added skeleton to %s' % module_path
+        print('added skeleton to %s' % module_path)
 
 
 # ----------------------------------
@@ -419,18 +419,18 @@ def find_addon_names(addon):
     names = []
     a = addon
     try:
-        if a.has_key('names'):
+        if 'names' in a:
             names = a['names']
-        elif a.has_key('name'):
+        elif 'name' in a:
             name = a['name']
-        elif a.has_key('group'):
+        elif 'group' in a:
             name = a['group']
-        elif a.has_key('add_path'):
+        elif 'add_path' in a:
             name = a['add_path']
         names = names + [name]
     except AttributeError:
-        print bcolors.FAIL, a, bcolors.ENDC
-        raw_input('hit enter to continue')
+        print(bcolors.FAIL, a, bcolors.ENDC)
+        input('hit enter to continue')
 
     return [n.strip() for n in names if n]
 
@@ -564,7 +564,7 @@ def need_git_pull(name, target, branch, changes=[], changes_only=False, reset_gi
         return True
     elif res_dic['BASE'] != res_dic['REMOTE']:
         # has diverged
-        print GIT_REPO_DIVERGED % repo.remotes[0].url
+        print(GIT_REPO_DIVERGED % repo.remotes[0].url)
         return False
 
     return True
@@ -572,17 +572,17 @@ def need_git_pull(name, target, branch, changes=[], changes_only=False, reset_gi
 
 def repo_get_tag_sha(repo_path, tag, verbose=False):
     if not os.path.exists(repo_path):
-        print bcolors.WARNING
-        print '*******************************'
-        print repo_path, 'not yet initialized'
-        print 'can not check what branch exists'
-        print 'please rerun after the repro is initialized'
+        print(bcolors.WARNING)
+        print('*******************************')
+        print(repo_path, 'not yet initialized')
+        print('can not check what branch exists')
+        print('please rerun after the repro is initialized')
         return
     else:
         repo = git.Repo(repo_path)
         try:
             tag_info = repo.tag('refs/tags/%s' % tag)
-        except ValueError, e:
+        except ValueError as e:
             # tag does not exist
             return None
     return str(tag_info.commit) # '669bc1f5949bc028f2a75c3e6e20fab9f20f2cfd'
@@ -590,25 +590,25 @@ def repo_get_tag_sha(repo_path, tag, verbose=False):
 
 def repo_has_branch(repo_path, branch, verbose=False):
     if not os.path.exists(repo_path):
-        print bcolors.WARNING
-        print '*******************************'
-        print repo_path, 'not yet initialized'
-        print 'can not check what branch exists'
-        print 'please rerun after the repro is initialized'
+        print(bcolors.WARNING)
+        print('*******************************')
+        print(repo_path, 'not yet initialized')
+        print('can not check what branch exists')
+        print('please rerun after the repro is initialized')
         return
     else:
         repo = git.Repo(repo_path)
     remote_branches = []
     if verbose:
-        print '------------------------------------------'
-        print repo_path
+        print('------------------------------------------')
+        print(repo_path)
     for ref in repo.git.branch('-r').split('\n'):
         br = ref.split('/')[-1]
         if verbose:
-            print br
+            print(br)
         remote_branches.append(br)
     if verbose:
-        print '>>>>>>>>>>', branch in remote_branches
+        print('>>>>>>>>>>', branch in remote_branches)
     return branch in remote_branches
 
 
@@ -617,7 +617,7 @@ def checkout_sa(opts):
     get addons from repository
     @opts   : options as entered by the user
     """
-    from git_check import gitcheck, argopts
+    from .git_check import gitcheck, argopts
     result = {'failed': [], 'need_reload': []}
     site_addons = []
     is_local = SITES_LOCAL.get(opts.name) is not None
@@ -679,10 +679,10 @@ def checkout_sa(opts):
         # when we have a folder full of addons, as it is the case with OCA modules
         # they will be downloaded to download_target
         download_target = ''
-        if site_addon.has_key('target'):
+        if 'target' in site_addon:
             download_target = '%s/%s' % (target, site_addon['target'])
             download_target = os.path.normpath(download_target)
-        if site_addon.has_key('group'):
+        if 'group' in site_addon:
             target = '%s/%s' % (target, site_addon['group'])
         target = os.path.normpath(target)
         
@@ -739,7 +739,7 @@ def checkout_sa(opts):
                         git.Repo(real_target).active_branch)
                 else:
                     actual_branch = None
-            except TypeError, e:
+            except TypeError as e:
                 # when the repo does not exist yet
                 # or the head is detached pointing to a flag
                 message = e.message
@@ -749,7 +749,7 @@ def checkout_sa(opts):
                     try:
                         if sha == repo_get_tag_sha(real_target, flag_info.get(addon_name), opts.verbose):
                             actual_branch = flag_info.get(addon_name)
-                    except ValueError, e:
+                    except ValueError as e:
                         if 'does not exist' in str(e):
                             pass
                         else:
@@ -762,15 +762,15 @@ def checkout_sa(opts):
                 # create sandbox and check out
                 try:
                     gr(branch)
-                except subprocess.CalledProcessError, e:
-                    print bcolors.FAIL
-                    print '*' * 80
-                    print 'target:', real_target
-                    print 'actual_branch:', actual_branch
-                    print 'target branch:', branch
-                    print str(e)
-                    print '*' * 80
-                    print bcolors.ENDC
+                except subprocess.CalledProcessError as e:
+                    print(bcolors.FAIL)
+                    print('*' * 80)
+                    print('target:', real_target)
+                    print('actual_branch:', actual_branch)
+                    print('target branch:', branch)
+                    print(str(e))
+                    print('*' * 80)
+                    print(bcolors.ENDC)
                     continue
             os.chdir(real_target)
             #argopts['verbose'] = True
@@ -806,22 +806,22 @@ def checkout_sa(opts):
                     else:
                         # hopalla, nothing here to link to
                         # this is an error!
-                        print bcolors.FAIL
-                        print('*' * 80)
-                        print '%s/%s' % (download_target,
-                                         name), 'does not exist'
-                        print bcolors.ENDC
+                        print(bcolors.FAIL)
+                        print(('*' * 80))
+                        print('%s/%s' % (download_target,
+                                         name), 'does not exist')
+                        print(bcolors.ENDC)
     if only_these_modules and only_these_modules[0]:
-        print bcolors.WARNING
-        print('*' * 80)
-        print '%s where not handled, maybe these are submodules and you should name it in its addons block' % only_these_modules
-        print bcolors.ENDC
+        print(bcolors.WARNING)
+        print(('*' * 80))
+        print('%s where not handled, maybe these are submodules and you should name it in its addons block' % only_these_modules)
+        print(bcolors.ENDC)
     if opts.verbose:
-        print(bcolors.OKGREEN)
-        print('*' * 80)
+        print((bcolors.OKGREEN))
+        print(('*' * 80))
         for d in downloaded:
             print(d)
-        print(bcolors.ENDC)     
+        print((bcolors.ENDC))     
     return result
 
 
@@ -861,15 +861,15 @@ def update_container_info(default_values, opts):
     try:
         from docker import Client
     except ImportError:
-        print '*' * 80
-        print 'could not import docker'
-        print 'please run bin/pip install -r install/requirements.txt'
+        print('*' * 80)
+        print('could not import docker')
+        print('please run bin/pip install -r install/requirements.txt')
         return
     name = opts.name
     site_info = SITES[name]
     docker = site_info.get('docker')
     if not docker or not docker.get('container_name'):
-        print 'the site description for %s has no docker description or no container_name' % opts.name
+        print('the site description for %s has no docker description or no container_name' % opts.name)
         return
     # collect info on database container which allways is named 'db'
     update_docker_info(default_values, 'db', required=True)
@@ -897,8 +897,8 @@ def get_remote_server_info(opts, use_name=None):
         # provided in opts ..
         name = use_name
         if not SITES.get(name):
-            print '*' * 80
-            print 'provided use_name=%s is not valid on this server' % use_name
+            print('*' * 80)
+            print('provided use_name=%s is not valid on this server' % use_name)
             raise ValueError(
                 'provided use_name=%s is not valid on this server' % use_name)
 
@@ -906,20 +906,20 @@ def get_remote_server_info(opts, use_name=None):
         try:
             addr = socket.gethostbyname(opts.use_ip)
         except gaierror:
-            print(bcolors.FAIL)
-            print('*' * 80)
-            print('% is not a vali ip' % opts.use_ip)
-            print(bcolors.ENDC)
+            print((bcolors.FAIL))
+            print(('*' * 80))
+            print(('% is not a vali ip' % opts.use_ip))
+            print((bcolors.ENDC))
             return
         serverDic = REMOTE_USER_DIC.get(addr)
     else:
         d = deepcopy(SITES[name])
         serverDic = d.get('remote_server')
         if not serverDic:
-            print '*' * 80
-            print 'the site description for %s has no remote_server description' % opts.name
-            print 'please add one'
-            print '*' * 80
+            print('*' * 80)
+            print('the site description for %s has no remote_server description' % opts.name)
+            print('please add one')
+            print('*' * 80)
             serverDic = {
                 'remote_url': d['remote_url'],
                 'remote_data_path': d['remote_data_path'],
@@ -929,17 +929,17 @@ def get_remote_server_info(opts, use_name=None):
         try:
             addr = socket.gethostbyname(opts.use_ip_target)
         except gaierror:
-            print(bcolors.FAIL)
-            print('*' * 80)
-            print('% is not a vali ip' % opts.use_ip_target)
-            print(bcolors.ENDC)
+            print((bcolors.FAIL))
+            print(('*' * 80))
+            print(('% is not a vali ip' % opts.use_ip_target))
+            print((bcolors.ENDC))
             return
         serverDic_target = REMOTE_USER_DIC.get(addr)
     if not serverDic:
-        print '*' * 80
-        print 'the ip %s has no site description' % ip
-        print 'please add one using bin/c support --add-server %s' % ip
-        print '*' * 80
+        print('*' * 80)
+        print('the ip %s has no site description' % ip)
+        print('please add one using bin/c support --add-server %s' % ip)
+        print('*' * 80)
         sys.exit()
     # if the remote url is overridden, replace it now
     if opts.use_ip:

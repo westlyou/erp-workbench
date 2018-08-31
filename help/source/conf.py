@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'erp workbench'
-copyright = u'2018, robert@redo2oo.ch'
-author = u'robert@redo2oo.ch'
+project = 'erp workbench'
+copyright = '2018, robert@redo2oo.ch'
+author = 'robert@redo2oo.ch'
 
 # The short X.Y version
-version = u''
+version = ''
 # The full version, including alpha/beta/rc tags
-release = u'0.9'
+release = '0.9'
 
 
 # -- General configuration ---------------------------------------------------
@@ -133,8 +133,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'odooinstances.tex', u'odoo instances Documentation',
-     u'robert@redo2oo.ch', 'manual'),
+    (master_doc, 'odooinstances.tex', 'odoo instances Documentation',
+     'robert@redo2oo.ch', 'manual'),
 ]
 
 
@@ -143,7 +143,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'odooinstances', u'odoo instances Documentation',
+    (master_doc, 'odooinstances', 'odoo instances Documentation',
      [author], 1)
 ]
 
@@ -154,7 +154,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'odooinstances', u'odoo instances Documentation',
+    (master_doc, 'odooinstances', 'odoo instances Documentation',
      author, 'odooinstances', 'One line description of project.',
      'Miscellaneous'),
 ]

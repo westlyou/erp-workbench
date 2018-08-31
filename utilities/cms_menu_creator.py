@@ -6,29 +6,29 @@ import os
 import odoorpc
 #filedata = open('%s/%s' % (PATH, NAME), 'rb').read()
 #SIAImportExportHandler(self.portal).handleSheet(filedata)
-SITE_DEFAULT = {u'redirect_to_id': False,
- u'type_id': 1,
- u'image': False,
- u'nav_include': False,
- u'no_dashboard': False,
- u'is_website_images': False,
- u'related_ids': [],
- u'sub_page_view_id': False,
- u'tag_ids': [],
- u'list_types_ids': [],
- u'': 5,
- u'website_published': False,
- u'body': u'<p><br></p>',
- u'description': False,
- u'view_group_ids': [],
+SITE_DEFAULT = {'redirect_to_id': False,
+ 'type_id': 1,
+ 'image': False,
+ 'nav_include': False,
+ 'no_dashboard': False,
+ 'is_website_images': False,
+ 'related_ids': [],
+ 'sub_page_view_id': False,
+ 'tag_ids': [],
+ 'list_types_ids': [],
+ '': 5,
+ 'website_published': False,
+ 'body': '<p><br></p>',
+ 'description': False,
+ 'view_group_ids': [],
  #u'view_id': 1242,
  #u'group_public_id': 4,
- u'is_public': False,
- u'sub_page_type_id': False,
- u'name': u'',
- u'work_group': [],
- u'default_view_item_id': False,
- u'published_date': False,}
+ 'is_public': False,
+ 'sub_page_type_id': False,
+ 'name': '',
+ 'work_group': [],
+ 'default_view_item_id': False,
+ 'published_date': False,}
 
 FLAGS = ['nav_include', 'no_dashboard', 'is_public',]
 
@@ -261,6 +261,6 @@ if __name__ == '__main__':
     if args.input and args.name:
         main(args) #opts.noinit, opts.initonly)
     else:
-        print parser.print_help()
+        print(parser.print_help())
         
     

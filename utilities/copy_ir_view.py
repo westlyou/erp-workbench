@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import mimetypes
 from argparse import ArgumentParser
-import ConfigParser
+import configparser
 import sys
 import os
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
@@ -80,7 +80,7 @@ class OdooHandler(object):
         cs_d = self.conn_s.cursor(cursor_factory=psycopg2.extras.DictCursor)
         ct_d = self.conn_t.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor = self.conn_t.cursor()
-        for table_name, fields in TABLE.items():
+        for table_name, fields in list(TABLE.items()):
             for t in tlist:
                 where = ''
                 for st in t:
@@ -97,16 +97,16 @@ class OdooHandler(object):
                 record_s = cs_d.fetchall()
                 record_t = ct_d.fetchall()
                 if len(record_s) > 1 or len(record_t) > 1:
-                    print '*' * 80
-                    print q
-                    print 'returned more than one record'
+                    print('*' * 80)
+                    print(q)
+                    print('returned more than one record')
                 record_s = record_s[0]
                 record_t = record_t[0]
                 must_commit = False
                 # loop over the fields of the record
-                for k, v in record_s.items():
-                    if isinstance(v, basestring):
-                        print k, len(v), len(record_t[k])
+                for k, v in list(record_s.items()):
+                    if isinstance(v, str):
+                        print(k, len(v), len(record_t[k]))
                     t_id = record_t['id']
                     if k in fields:
                         if len(v) != len(record_t[k]):
@@ -200,23 +200,23 @@ class OdooHandler(object):
         for r in records:
             out_string = ''
             if not(search_list) or check_line(r[0]):
-                print bcolors.HEADER + '*' * 80
-                print r[2], r[1]   
-                print  '*' * 80, bcolors.ENDC       
+                print(bcolors.HEADER + '*' * 80)
+                print(r[2], r[1])   
+                print('*' * 80, bcolors.ENDC)       
                 lines = r[0].split('\n')
                 for line in lines:
                     search_found = check_line(line)
                     if search_found:
                         if replace_str:
                             line = line.replace(search_found, replace_str)
-                        print bcolors.FAIL + line + bcolors.ENDC
+                        print(bcolors.FAIL + line + bcolors.ENDC)
                     else:
                         if opts.remove:
                             out_string += line + '\n'
-                        print line
-                print bcolors.HEADER + '*' * 80
-                print r[2], r[1]   
-                print  '*' * 80, bcolors.ENDC
+                        print(line)
+                print(bcolors.HEADER + '*' * 80)
+                print(r[2], r[1])   
+                print('*' * 80, bcolors.ENDC)
                 reslist.append([r[2], r[1]])
                 if opts.remove:
                     uq = 'update %s set %s' % (opts.table, opts.field) + ' = %s where id = %s'
@@ -224,7 +224,7 @@ class OdooHandler(object):
                     cursor.execute(uq, vals)
                     conn.commit()
 
-        print reslist
+        print(reslist)
                 
     def print_record(self):
         opts = self.opts
@@ -237,39 +237,39 @@ class OdooHandler(object):
         cursor.execute(query)
         r = cursor.fetchone()
         if r:
-            print bcolors.HEADER + '*' * 80
-            print r[1]   
-            print  '*' * 80, bcolors.ENDC       
+            print(bcolors.HEADER + '*' * 80)
+            print(r[1])   
+            print('*' * 80, bcolors.ENDC)       
             if opts.search:
                 lines = r[0].split('\n')
                 for line in lines:
                     if line.find(opts.search) > -1:
-                        print bcolors.FAIL + line + bcolors.ENDC
+                        print(bcolors.FAIL + line + bcolors.ENDC)
                     else:
-                        print line
+                        print(line)
             else:
-                print r[0]                
-            print bcolors.HEADER + '*' * 80
-            print r[1]   
-            print  '*' * 80, bcolors.ENDC       
+                print(r[0])                
+            print(bcolors.HEADER + '*' * 80)
+            print(r[1])   
+            print('*' * 80, bcolors.ENDC)       
 
 def main(opts):
     handler = OdooHandler(opts)
     if opts.dump:
         if not opts.record:
-            print bcolors.FAIL + 'you must specify record' + bcolors.ENDC
+            print(bcolors.FAIL + 'you must specify record' + bcolors.ENDC)
         else:
             handler.dump_record()            
         return
     if opts.updaterecord:
         if not opts.record:
-            print bcolors.FAIL + 'you must specify record' + bcolors.ENDC
+            print(bcolors.FAIL + 'you must specify record' + bcolors.ENDC)
         else:
             handler.update_record_from_dump()            
         return
     if opts.delete_record:
         if not opts.record:
-            print bcolors.FAIL + 'you must specify record' + bcolors.ENDC
+            print(bcolors.FAIL + 'you must specify record' + bcolors.ENDC)
         else:
             handler.delete_record()            
         return

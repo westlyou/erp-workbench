@@ -4,7 +4,7 @@ import os
 import pickle
 import shutil
 import tempfile
-import yaml
+from . import yaml
 #import appdirs
 """
 this is based on
@@ -13,13 +13,13 @@ https://raw.githubusercontent.com/tsroten/fcache/develop/fcache/cache.py
 
 try:
     from collections.abc import MutableMapping
-    unicode = str
+    str = str
 except ImportError:
     # Python 2 imports
     from collections import MutableMapping
     FileNotFoundError = IOError
 
-from posixemulation import rename
+from .posixemulation import rename
 
 logger = logging.getLogger(__name__)
 
@@ -199,7 +199,7 @@ class FileCache(MutableMapping):
         :class:`str`.
 
         """
-        if isinstance(key, str) or isinstance(key, unicode):
+        if isinstance(key, str) or isinstance(key, str):
             key = key.encode(self._keyencoding)
         elif not isinstance(key, bytes):
             raise TypeError("key must be bytes or str")

@@ -58,8 +58,8 @@ def collect_aliases(alias_path, aDic):
 
 
 def find_alias(aDic, candidate):
-    keys = aDic.keys()
-    keyr = aDic.values()
+    keys = list(aDic.keys())
+    keyr = list(aDic.values())
     if candidate in keys:
         return ''
     for i in range(len(candidate)-4):
@@ -148,7 +148,7 @@ def main():
     for item in prohome:
         if item == prn:
             prohome = "/".join(prohome[:i])
-            print prohome
+            print(prohome)
             break
         i += 1
 
@@ -160,13 +160,13 @@ def main():
         try:
             dist = open("/etc/lsb-release").readline()
             dist = dist.split("=")
-            print dist[1]
+            print(dist[1])
             if dist[1].strip("\n") == "LinuxMint":
                 alias_script = "bashrc"
             elif dist[1].strip("\n") == "Ubuntu":
                 alias_script = "bash_aliases"
         except:
-            print 'could not determine linux distribution'
+            print('could not determine linux distribution')
             pass
 
     alias_path = '%s/.%s' % (home, alias_script)

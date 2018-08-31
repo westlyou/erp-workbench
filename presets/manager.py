@@ -1,5 +1,5 @@
 #!bin/python
-from __future__ import absolute_import, division, print_function
+
 
 import argparse
 import os
@@ -58,7 +58,7 @@ class Manager(object):
             self.login(site_name, user, password)
         # provision all handler with access to odoo
         # and a backlink to the manager
-        for handler in self._handler_registry.values():
+        for handler in list(self._handler_registry.values()):
             handler.odoo = self.odoo
             handler.manager = self
         # cache to cache yaml data
@@ -112,7 +112,7 @@ class Manager(object):
             dict -- a container with all yaml handlers
         """
         if not self._reverse_registry:
-            for name, handler in self._handler_registry.items():
+            for name, handler in list(self._handler_registry.items()):
                 self._reverse_registry[(
                     handler.obj_name, handler.model)] = handler
 
@@ -175,7 +175,7 @@ class Manager(object):
         Arguments:
             name {string} -- name of the handler to return
         """
-        if self.handler_registry.has_key(name):
+        if name in self.handler_registry:
             return self.handler_registry[name]
         else:
             print(bcolors.WARNING)
@@ -215,7 +215,7 @@ class Manager(object):
     def set_test_mode(self):
         """in test mode acctions are not really executed
         """
-        for handler in self.handler_registry.values():
+        for handler in list(self.handler_registry.values()):
             handler._test_mode = True
 
     def get_app_sequence(self):
@@ -228,7 +228,7 @@ class Manager(object):
         """
         from presets_config import APP_SEQUENCE
         sec_dic = {}
-        for handler in self.handler_registry.values():
+        for handler in list(self.handler_registry.values()):
             app_group_index = APP_SEQUENCE.get(handler.app_group)
             # APP_SEQUENCE is something like
             # OrderedDict([('company', 1), ('mailhandler', 2), ('bank', 3)])
@@ -245,7 +245,7 @@ class Manager(object):
         # now go trough sec_dic in order of its app_group_index entries
         # and add the values which are (index, handler) tupels in order of the inx to
         # the sequence_dic
-        app_keys = sec_dic.keys()
+        app_keys = list(sec_dic.keys())
         app_keys.sort()
         for app_key in app_keys:
             handlers = sec_dic[app_key]
@@ -253,7 +253,7 @@ class Manager(object):
             for h in handlers:
                 k, v = h
                 # make key unique, if no goo sequence was provided
-                while sequence_dic.has_key(k):
+                while k in sequence_dic:
                     k += 1
                 sequence_dic[k] = v
         # fine, we now have a struct that represents the sequence of handlers to load
@@ -274,7 +274,7 @@ class Manager(object):
             or does an addon define a set of handler that needs to be handled
         """
         result = []
-        for handler in self.handler_registry.values():
+        for handler in list(self.handler_registry.values()):
             if handler.model == model:
                 result.append(handler)
         return result

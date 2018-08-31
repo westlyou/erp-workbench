@@ -27,10 +27,10 @@ try:
     from ruamel.std.argparse import ArgumentParser, set_default_subparser
     import argparse
 except ImportError:
-    print '*' * 80
-    print bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC
-    print 'not all libraries are installed'
-    print '*' * 80
+    print('*' * 80)
+    print(bcolors.WARNING +bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC)
+    print('not all libraries are installed')
+    print('*' * 80)
     sys.exit()
     
 def main(opts):
@@ -41,10 +41,10 @@ def main(opts):
         os.makedirs(dbfullpath)
     site_name = opts.name
     if not site_name:
-        print bcolors.WARNING + 'sitename needed' + bcolors.ENDC
+        print(bcolors.WARNING + 'sitename needed' + bcolors.ENDC)
         return
     if not SITES.get(site_name):
-        print '%s is not a known site' % site_name
+        print('%s is not a known site' % site_name)
         return
     
     dbsitepath = '%s/%s' % (dbfullpath, site_name)
@@ -52,7 +52,7 @@ def main(opts):
     sitepath = '%s/%s/%s' % (projpath, site_name, site_name)
     siteaddonpath = '%s/%s/%s/%s_addons' % (projpath, site_name, site_name, site_name)
     if not os.path.exists(sitepath):
-        print 'site %s is not yet created. Please create it with\nbin/c -c %s' % (site_name, site_name)
+        print('site %s is not yet created. Please create it with\nbin/c -c %s' % (site_name, site_name))
     if not os.path.exists(dbsitepath):
         os.makedirs(dbsitepath)
     # if both targetpath and sourcepath exist we check whether siteaddonpath is a link to dbsiteaddonpath
@@ -61,13 +61,13 @@ def main(opts):
             # we rename it ..
             try:
                 os.rename(siteaddonpath, '%s.ori' % siteaddonpath)
-                print (bcolors.WARNING + '%s renamed to %s' + bcolors.ENDC) % (siteaddonpath, dbsiteaddonpath)
+                print((bcolors.WARNING + '%s renamed to %s' + bcolors.ENDC) % (siteaddonpath, dbsiteaddonpath))
             except:
-                print (bcolors.FAIL + 'could not rename %s to %s.ori' + bcolors.ENDC) % (siteaddonpath, siteaddonpath)
+                print((bcolors.FAIL + 'could not rename %s to %s.ori' + bcolors.ENDC) % (siteaddonpath, siteaddonpath))
                 return 
         else:
             # all set
-            print '%s %sallready a link to%s %s' % (siteaddonpath,bcolors.WARNING, bcolors.ENDC, dbsiteaddonpath)
+            print('%s %sallready a link to%s %s' % (siteaddonpath,bcolors.WARNING, bcolors.ENDC, dbsiteaddonpath))
             return
     if (not os.path.exists(dbsiteaddonpath)) and os.path.exists(siteaddonpath):
         if os.path.isdir(siteaddonpath):
@@ -75,11 +75,11 @@ def main(opts):
             try:
                 shutil.move(siteaddonpath, dbsiteaddonpath)
             except:
-                print (bcolors.FAIL + 'could not move %s to %s' + bcolors.ENDC) % (siteaddonpath, dbsiteaddonpath)
+                print((bcolors.FAIL + 'could not move %s to %s' + bcolors.ENDC) % (siteaddonpath, dbsiteaddonpath))
                 return
     # now we create a link
     os.symlink(dbsiteaddonpath, siteaddonpath)
-    print '%s %snow is a link to%s %s' % (siteaddonpath, bcolors.WARNING, bcolors.ENDC, dbsiteaddonpath)
+    print('%s %snow is a link to%s %s' % (siteaddonpath, bcolors.WARNING, bcolors.ENDC, dbsiteaddonpath))
         
         
 

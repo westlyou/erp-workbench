@@ -18,4 +18,4 @@ for container in containers:
         pid = info['State']['Pid']
         cpu,l = get_cpu_times(pid)
         s = 'name:%s, state:%s, pid:%s, cpu:%s, %s'
-        print s % (container.get('Names')[0], container.get('State'), pid, cpu, l)
+        print(s % (container.get('Names')[0], container.get('State'), pid, cpu, l))

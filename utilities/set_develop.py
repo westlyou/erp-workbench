@@ -30,31 +30,31 @@ def main(opts):
     datapath = BASE_INFO['odoo_server_data_path']
     site_name = opts.name
     if not site_name:
-        print bcolors.WARNING + 'sitename needed' + bcolors.ENDC
+        print(bcolors.WARNING + 'sitename needed' + bcolors.ENDC)
         return
     if not SITES.get(site_name):
-        print '%s is not a known site' % site_name
+        print('%s is not a known site' % site_name)
         return
     
     sitepath = '%s/%s/%s' % (projpath, site_name, site_name)
     siteaddonpath = '%s/%s/%s/%s_addons' % (projpath, site_name, site_name, site_name)
     if not os.path.exists(sitepath):
-        print 'site %s is not yet created. Please create it with\nbin/c -c %s' % (site_name, site_name)
+        print('site %s is not yet created. Please create it with\nbin/c -c %s' % (site_name, site_name))
         return
     addon = opts.addon
     addonspath = '%s/%s/addons' % (datapath, site_name)
     if opts.list:
-        print addonspath
-        print bcolors.OKBLUE
+        print(addonspath)
+        print(bcolors.OKBLUE)
         for f in os.listdir(addonspath):
-            print f
-        print bcolors.ENDC
+            print(f)
+        print(bcolors.ENDC)
         return
     if not addon:
-        print bcolors.WARNING + 'addon needed' + bcolors.ENDC
+        print(bcolors.WARNING + 'addon needed' + bcolors.ENDC)
         return
     if not os.path.exists(addonspath):
-        print '%s does not exist' % addonspath
+        print('%s does not exist' % addonspath)
         return
     stop = opts.stop
     target_path = '%s/%s' % (siteaddonpath, addon)
@@ -64,18 +64,18 @@ def main(opts):
         target_path
         try:
             shutil.rmtree(target_path)
-            print bcolors.OKGREEN, '%s removed' % target_path, bcolors.ENDC
+            print(bcolors.OKGREEN, '%s removed' % target_path, bcolors.ENDC)
         except:
-            print bcolors.FAIL, 'Could not remove:%s' % target_path, bcolors.ENDC
+            print(bcolors.FAIL, 'Could not remove:%s' % target_path, bcolors.ENDC)
     else:
         apath = '%s/%s' % (addonspath, addon)
         if os.path.exists(target_path):
-            print '%s allready exists' % target_path
+            print('%s allready exists' % target_path)
         if os.path.exists(apath):
             shutil.move(apath, siteaddonpath)
-            print bcolors.OKGREEN, 'moved %s to %s' % (addon, siteaddonpath), bcolors.ENDC
+            print(bcolors.OKGREEN, 'moved %s to %s' % (addon, siteaddonpath), bcolors.ENDC)
         else:
-            print bcolors.FAIL, '%s not found' % apath, bcolors.ENDC
+            print(bcolors.FAIL, '%s not found' % apath, bcolors.ENDC)
             
 
 if __name__ == '__main__':

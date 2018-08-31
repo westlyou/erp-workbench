@@ -1,6 +1,6 @@
 
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+
 
 import datetime
 import os
@@ -76,7 +76,7 @@ class ReadYamlBankHandler(BaseHandler):
             # using ('Filial-ID', 'BCNr neu' or 'BCNr') is a key
             # line -> [u'01', u'100  ', u'0000', u'     ', u'001008', u'100  ', u'1', u'20170911', u'1', u'3', u'1', u'SNB            ', u'Schweizerische Nationalbank                                 ', u'B\xf6rsenstrasse 15                   ', u'Postfach 2800                      ', u'8022      ', u'Z\xfcrich                             ', u'058 631 00 00     ', u'                  ', u'     ', u'  ', u'30-5-5      ', u'SNBZCHZZXXX   ']
 
-            line = [(str(l).strip() + u'') for l in first_sheet.row_values(l_index)]
+            line = [(str(l).strip() + '') for l in first_sheet.row_values(l_index)]
             bdic_index = (line[hd['Filial-ID']], (line [hd['BCNr neu']].strip() or line[hd['BCNr']].strip()))
             banks_dic[
                 bdic_index
@@ -108,7 +108,7 @@ class ReadYamlBankHandler(BaseHandler):
         hd = HEADER_DIC
         # we need to create n bank objects
         if not self._test_mode:
-            for yaml_bank in yaml_data.get('values', {}).get('banks', {}).values():
+            for yaml_bank in list(yaml_data.get('values', {}).get('banks', {}).values()):
                 swift = [yaml_bank.get('swift', ''), 'SWIFT', '', 'bic']
                 bcnr = [yaml_bank.get('bcnr', ''), 'BCNr neu', 'BCNr', 'clearing']
                 postac = [yaml_bank.get('postac', ''), 'Postkonto', '', 'ccp']
@@ -123,8 +123,8 @@ class ReadYamlBankHandler(BaseHandler):
                     if what[0]:
                         fitting = {
                             b_item[0] : b_item[1] 
-                            for b_item in banks_dic.items() 
-                            if (str(what[0]) + u'') == (
+                            for b_item in list(banks_dic.items()) 
+                            if (str(what[0]) + '') == (
                                 # if what[2] has a value we must OR two posible fields
                                 what[2] and (b_item[1][hd[what[2]]] or b_item[1][hd[what[1]]])
                                 or
@@ -133,7 +133,7 @@ class ReadYamlBankHandler(BaseHandler):
                         }
                 if fitting:
                     found_existing = False
-                    for b_item in fitting.items():
+                    for b_item in list(fitting.items()):
                         # we search an existing bank, which normaly sould yield
                         search_list = []
                         for what in [swift, bcnr, postac, city, zip_, street]:
@@ -161,7 +161,7 @@ class ReadYamlBankHandler(BaseHandler):
                         new_id = Model.create(new_vals)
                         yaml_bank['new_object_id'] = new_id
                         self._run_handler_end()
-                    except Exception, e:
+                    except Exception as e:
                         self._run_handler_end()
                         print(bcolors.FAIL)
                         print('*' * 80)

@@ -5,13 +5,13 @@
 from docker import Client
 from config import SITES, BASE_INFO, GLOBALDEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
 #from config.handlers import InitHandler, DBUpdater
-from create_handler import InitHandler
-from update_local_db import DBUpdater
+from .create_handler import InitHandler
+from .update_local_db import DBUpdater
 import os
 import re
 import sys
 import shutil
-from utilities import get_remote_server_info, bcolors
+from .utilities import get_remote_server_info, bcolors
 from scripts.messages import *
 import docker
 import datetime
@@ -28,9 +28,9 @@ class DockerHandler(InitHandler, DBUpdater):
         try:
             from docker import Client
         except ImportError:
-            print '*' * 80
-            print 'could not import docker'
-            print 'please run bin/pip install -r install/requirements.txt'
+            print('*' * 80)
+            print('could not import docker')
+            print('please run bin/pip install -r install/requirements.txt')
             return
         cli = self.default_values.get('docker_client')
         self.url = url
@@ -61,7 +61,7 @@ class DockerHandler(InitHandler, DBUpdater):
         else:
             return # either db container was missing or some other problem
         # the ip address to access the db container
-        self.docker_db_ip = db_container[u'NetworkSettings'][u'Networks']['bridge']['IPAddress']
+        self.docker_db_ip = db_container['NetworkSettings']['Networks']['bridge']['IPAddress']
         # the db container allows access to the postgres server running within
         # trough a port that has been defined when the container has been created
         self.postgres_port = BASE_INFO.get('docker_postgres_port')
@@ -161,13 +161,13 @@ class DockerHandler(InitHandler, DBUpdater):
             else:
                 if required:
                     if name == 'db':
-                        print DOCKER_DB_MISSING
+                        print(DOCKER_DB_MISSING)
                         return
                     raise ValueError('required container:%s does not exist' % name)
         else:
             if required:
                 if name == 'db':
-                    print DOCKER_DB_MISSING
+                    print(DOCKER_DB_MISSING)
                     return
                 raise ValueError('required container:%s does not exist' % name)
         self.default_values['docker_registry'] = registry
@@ -190,7 +190,7 @@ class DockerHandler(InitHandler, DBUpdater):
         server_type  = site_info.get('server_type')
         docker = site_info.get('docker')
         if not docker or not docker.get('container_name'):
-            print 'the site description for %s has no docker description or no container_name' % opts.name
+            print('the site description for %s has no docker description or no container_name' % opts.name)
             return
         # collect info on database container which allways is named 'db'
         self.update_docker_info(self.db_container_name, required=True) 
@@ -279,11 +279,11 @@ class DockerHandler(InitHandler, DBUpdater):
             container_name = docker_info['container_name']
             odoo_port = docker_info['odoo_port']
             if odoo_port == '??':
-                print DOCKER_INVALID_PORT % (name, name)
+                print(DOCKER_INVALID_PORT % (name, name))
                 return()
             long_polling_port = docker_info.get('odoo_longpoll')
             if long_polling_port == '??':
-                print DOCKER_INVALID_PORT % (name, name)
+                print(DOCKER_INVALID_PORT % (name, name))
                 return()
             if not long_polling_port:
                 long_polling_port = int(odoo_port) + 10000
@@ -344,11 +344,11 @@ class DockerHandler(InitHandler, DBUpdater):
                 # we need a postgres version
                 pg_version = self.opts.set_postgers_version
                 if not pg_version:
-                    print bcolors.FAIL
-                    print '*' * 80
-                    print 'you must define a postgres version with option -dcdbPG'
-                    print '*' * 80
-                    print bcolors.ENDC
+                    print(bcolors.FAIL)
+                    print('*' * 80)
+                    print('you must define a postgres version with option -dcdbPG')
+                    print('*' * 80)
+                    print(bcolors.ENDC)
                     sys.exit()
                 
                 # here we need to decide , whether we run flectra or odoo
@@ -363,10 +363,10 @@ class DockerHandler(InitHandler, DBUpdater):
                 except:
                     pass # did exist allready ??
             if self.opts.verbose:
-                print docker_template
+                print(docker_template)
         else:
             if self.opts.verbose:
-                print 'container %s allready running' % name
+                print('container %s allready running' % name)
 
     def pull_image(self, imagename):
         """
@@ -376,9 +376,9 @@ class DockerHandler(InitHandler, DBUpdater):
         """
         try:
             self.default_values['docker_client'].pull(imagename)
-            print DOCKER_IMAGE_PULLED % (imagename, self.site_name)
+            print(DOCKER_IMAGE_PULLED % (imagename, self.site_name))
         except docker.errors.NotFound:
-            print DOCKER_IMAGE_PULL_FAILED % (imagename, self.site_name)
+            print(DOCKER_IMAGE_PULL_FAILED % (imagename, self.site_name))
 
     def push_image(self):
         """
@@ -404,11 +404,11 @@ class DockerHandler(InitHandler, DBUpdater):
                 if found:
                     break
         if not found:
-            print DOCKER_IMAGE_NOT_FOUND % image
+            print(DOCKER_IMAGE_NOT_FOUND % image)
         self.dockerhub_login()
         result = client.push(image, stream=True)
         for line in result:
-            print line
+            print(line)
         
 
     def dockerhub_login(self):
@@ -420,7 +420,7 @@ class DockerHandler(InitHandler, DBUpdater):
             raise ValueError('only docker_hub is suported when login in')
         hub_info = site['docker_hub'].get(hname)
         if not hub_info:
-            print DOCKER_IMAGE_PUSH_MISING_HUB_INFO % self.site_name
+            print(DOCKER_IMAGE_PUSH_MISING_HUB_INFO % self.site_name)
         user = hub_info.get('user')
         pw = hub_info.get('docker_hub_pw')
         try:
@@ -437,7 +437,7 @@ class DockerHandler(InitHandler, DBUpdater):
         if self.opts.use_collect_sites:
             version = self.version
             more_sites = []
-            for k, v in self.sites.items():
+            for k, v in list(self.sites.items()):
                 if v.get('odoo_version') == version:
                     more_sites.append(k)
         else:
@@ -454,7 +454,7 @@ class DockerHandler(InitHandler, DBUpdater):
                 continue
             site = self.sites.get(s)
             if not site:
-                print(SITE_NOT_EXISTING % s)
+                print((SITE_NOT_EXISTING % s))
                 continue
             apt_list += site.get('extra_libs', {}).get(APT_COMMAND, [])
             pip_list += site.get('extra_libs', {}).get(PIP_COMMAND, [])
@@ -467,11 +467,11 @@ class DockerHandler(InitHandler, DBUpdater):
         if pip_list:
             pip_list = list(set(pip_list))
         if self.opts.verbose:
-            print bcolors.WARNING
-            print '*' * 80
-            print 'apt_list:%s' % apt_list
-            print 'pip_list:%s' % pip_list
-            print bcolors.ENDC
+            print(bcolors.WARNING)
+            print('*' * 80)
+            print('apt_list:%s' % apt_list)
+            print('pip_list:%s' % pip_list)
+            print(bcolors.ENDC)
         return apt_list, pip_list
          
     def build_image(self):
@@ -495,19 +495,19 @@ class DockerHandler(InitHandler, DBUpdater):
         # do we have a dockerhub user?
         hub_name  = docker_info.get('hub_name', '')
         if not hub_name:
-            print DOCKER_IMAGE_CREATE_MISING_HUB_INFO % self.site_name
+            print(DOCKER_IMAGE_CREATE_MISING_HUB_INFO % self.site_name)
             return
         dockerhub_user = self.site.get('docker_hub', {}).get(hub_name, {}).get('user')
         dockerhub_user_pw = self.site.get('docker_hub', {}).get(hub_name, {}).get('docker_hub_pw')
         if not dockerhub_user or not dockerhub_user_pw:
-            print DOCKER_IMAGE_CREATE_MISING_HUB_USER % self.site_name
+            print(DOCKER_IMAGE_CREATE_MISING_HUB_USER % self.site_name)
             return
         
         # copy files from the official odoo docker file to the sites data directory
         # while doing so adapt the dockerfile to pull all needed elements
         odoo_version = self.site['odoo_version']
-        if not odoo_version in ODOO_VERSIONS.keys():
-            print ODOO_VERSION_BAD % (self.site_name, self.site['odoo_version'])
+        if not odoo_version in list(ODOO_VERSIONS.keys()):
+            print(ODOO_VERSION_BAD % (self.site_name, self.site['odoo_version']))
             return
         docker_source_path = '%s/docker/docker/%s/' % (self.default_values['odoo_server_data_path'], odoo_version)
         # get path to where we want to write the docker file
@@ -562,7 +562,7 @@ class DockerHandler(InitHandler, DBUpdater):
             if not os.path.exists(fp):
                 open(fp, 'w').write(f[1])
             else:
-                print '%s\n%s\n%snot overwitten %s' % (bcolors.WARNING, '-'*80, fp, bcolors.ENDC)
+                print('%s\n%s\n%snot overwitten %s' % (bcolors.WARNING, '-'*80, fp, bcolors.ENDC))
         # check out odoo source
         act = os.getcwd()
         os.chdir(docker_target_path)
@@ -584,7 +584,7 @@ class DockerHandler(InitHandler, DBUpdater):
                 #result.write( pref + pip_line.strip() + ' '  + ' '.join([p.strip() for p in pip_list]) + '\n')
             #else:
                 #result.write( line ) 
-        print DOCKER_IMAGE_CREATE_PLEASE_WAIT
+        print(DOCKER_IMAGE_CREATE_PLEASE_WAIT)
         tag = docker_info['odoo_image_version']
         try:
             result = self.default_values['docker_client'].build(
@@ -595,25 +595,25 @@ class DockerHandler(InitHandler, DBUpdater):
                 line = eval(line)
                 if isinstance(line, dict):
                     if line.get('errorDetail'):
-                        print DOCKER_IMAGE_CREATE_ERROR % (self.site_name, self.site_name, line.get('errorDetail'))
+                        print(DOCKER_IMAGE_CREATE_ERROR % (self.site_name, self.site_name, line.get('errorDetail')))
                         return
                     status = line.get('status')
                     if status:
-                        print line['status'].strip()
+                        print(line['status'].strip())
                         continue
                     sl = line.get('stream')
                     if not sl:
-                        print DOCKER_IMAGE_CREATE_ERROR % (
+                        print(DOCKER_IMAGE_CREATE_ERROR % (
                             self.site_name, 
                             self.site_name, 
-                            'no stream element found processing Dockerfile')
-                    print line['stream'].strip()
+                            'no stream element found processing Dockerfile'))
+                    print(line['stream'].strip())
         except docker.errors.NotFound:
-            print DOCKER_IMAGE_CREATE_FAILED % (self.site_name, self.site_name)
+            print(DOCKER_IMAGE_CREATE_FAILED % (self.site_name, self.site_name))
         else:
             # the last line is something like:
             # {"stream":"Successfully built 97cea8884220\n"}
-            print DOCKER_IMAGE_CREATE_DONE % (line['stream'].strip().split(' ')[-1], tag, tag)                
+            print(DOCKER_IMAGE_CREATE_DONE % (line['stream'].strip().split(' ')[-1], tag, tag))                
 
     def rename_container(self, name, new_name):
         """
@@ -621,9 +621,9 @@ class DockerHandler(InitHandler, DBUpdater):
         try:
             self.default_values['docker_client'].stop(name)
             self.default_values['docker_client'].rename(name, new_name)
-            print 'rename %s to %s' % (name, new_name)
+            print('rename %s to %s' % (name, new_name))
         except:
-            print 'container %s nicht gefunden' % name
+            print('container %s nicht gefunden' % name)
 
     def stop_container(self, name=''):
         """
@@ -631,11 +631,11 @@ class DockerHandler(InitHandler, DBUpdater):
         if not name:
             name = self.site_name
         try:
-            print 'stoping container %s' % name
+            print('stoping container %s' % name)
             self.default_values['docker_client'].stop(name)
-            print 'stopped %s' % name
+            print('stopped %s' % name)
         except docker.errors.NotFound:
-            print 'container %s nicht gefunden' % name
+            print('container %s nicht gefunden' % name)
             
         
 
@@ -644,18 +644,18 @@ class DockerHandler(InitHandler, DBUpdater):
         """
         if not name:
             name = self.site_name
-        print 'starting container %s' % name
+        print('starting container %s' % name)
         self.default_values['docker_client'].start(name)
-        print 'started %s' % name
+        print('started %s' % name)
 
     def restart_container(self, name=''):
         """
         """
         if not name:
             name = self.site_name
-        print 'restarting container %s' % name
+        print('restarting container %s' % name)
         self.default_values['docker_client'].restart(name)
-        print 'restarted %s' % name
+        print('restarted %s' % name)
 
     def doTransfer(self):
         """
@@ -690,19 +690,19 @@ class DockerHandler(InitHandler, DBUpdater):
         remote_data_path = server_dic['remote_data_path']
         dumper_image = BASE_INFO.get('docker_dumper_image')
         if not dumper_image:
-            print bcolors.FAIL + \
+            print(bcolors.FAIL + \
                   'the %s image is not available. please create it first. ' \
                   'insturctions on how to do it , you find in %s/dumper' % (
                       dumper_image,
-                      self.default_values['sites_home'] + bcolors.ENDC)
+                      self.default_values['sites_home'] + bcolors.ENDC))
         if not self.checkImage(dumper_image):
             self.createDumperImage()
             if not self.checkImage(dumper_image):
-                print bcolors.FAIL + \
+                print(bcolors.FAIL + \
                       'the %s image is not available. please create it first. ' \
                       'insturctions on how to do it , you find in %s/dumper' % (
                           dumper_image,
-                          self.default_values['sites_home'] + bcolors.ENDC)
+                          self.default_values['sites_home'] + bcolors.ENDC))
                 return
 
         #mp = self.default_values.get('docker_path_map')
@@ -730,9 +730,9 @@ class DockerHandler(InitHandler, DBUpdater):
         docker_info = self.default_values['docker_registry'].get(self.site_name)
         db_info = self.default_values['docker_registry'].get(self.site_name)
         if not db_info:
-            print bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC
+            print(bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC)
             if self.opts.docker_start_container:
-                print bcolors.WARNING + 'it will be created' + bcolors.ENDC
+                print(bcolors.WARNING + 'it will be created' + bcolors.ENDC)
                 self.check_and_create_container()
                 self.update_container_info()
             else:
@@ -746,7 +746,7 @@ class DockerHandler(InitHandler, DBUpdater):
     # in a docker container
     def run_shell(self):
         container_name = self.opts.shell
-        print 'docker exec -it %s bash' % container_name
+        print('docker exec -it %s bash' % container_name)
         os.system('docker exec -it %s bash' % container_name)
         return
 
@@ -771,7 +771,7 @@ class DockerHandler(InitHandler, DBUpdater):
         # this places info about the running container into the default_values
         docker_info = self.default_values['docker_registry'].get(self.site_name)
         if not docker_info:
-            print bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC
+            print(bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC)
             return
         # the docker id is used to access the running container
         container_id = docker_info['Id']
@@ -815,7 +815,7 @@ class DockerHandler(InitHandler, DBUpdater):
         try:
             key_pub = open(os.path.expanduser('~/.ssh/id_rsa.pub'), 'r').read()
         except:
-            print bcolors.FAIL, 'could not read %s' % os.path.expanduser('~/.ssh/id_rsa.pub'), bcolors.ENDC
+            print(bcolors.FAIL, 'could not read %s' % os.path.expanduser('~/.ssh/id_rsa.pub'), bcolors.ENDC)
             return
         cmds = [
             ['/usr/bin/apt', 'update'],
@@ -849,55 +849,55 @@ class DockerHandler(InitHandler, DBUpdater):
         # this places info about the running container into the default_values
         docker_info = self.default_values['docker_registry'].get(self.site_name)
         if not docker_info:
-            print bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC
+            print(bcolors.FAIL + 'no docker container %s running' % self.site_name + bcolors.ENDC)
             return
         # the docker id is used to access the running container
         indent = '    '
         if what == 'base':
             name = docker_info['Name']
-            print '-' * len(name)
-            print name
-            print '-' * len(name)
+            print('-' * len(name))
+            print(name)
+            print('-' * len(name))
             
             running = docker_info['State']['Running']
             
-            print 'running:', running and bcolors.OKGREEN, running, bcolors.ENDC
+            print('running:', running and bcolors.OKGREEN, running, bcolors.ENDC)
             if running:
-                print indent, 'Pid:', docker_info['State']['Pid']
-                print indent, 'StartedAt:', docker_info['State']['StartedAt']
-            print 'Network settings'
-            print '----------------'
+                print(indent, 'Pid:', docker_info['State']['Pid'])
+                print(indent, 'StartedAt:', docker_info['State']['StartedAt'])
+            print('Network settings')
+            print('----------------')
             for n in ['IPAddress','Gateway']:
-                print indent, n, ':', docker_info['NetworkSettings'][n]
-            print 'Ports'
-            print '-----'
-            for k,v in docker_info['NetworkSettings']['Ports'].items():
-                print indent, k, ':', v
-            print 'Volumes'
-            print '-------'
+                print(indent, n, ':', docker_info['NetworkSettings'][n])
+            print('Ports')
+            print('-----')
+            for k,v in list(docker_info['NetworkSettings']['Ports'].items()):
+                print(indent, k, ':', v)
+            print('Volumes')
+            print('-------')
             for v in docker_info['Mounts']:
-                print indent, v['Destination']
-                print indent * 2, v['Source']
+                print(indent, v['Destination'])
+                print(indent * 2, v['Source'])
                 
 
         else:
             if what != 'all':
                 what = what.split[',']
-            for k,v in docker_info.items():
+            for k,v in list(docker_info.items()):
                 if what != 'all' or not k in what:
-                    print k, ':'
-                    if isinstance(v, (basestring, int)):
-                        print indent, v
+                    print(k, ':')
+                    if isinstance(v, (str, int)):
+                        print(indent, v)
                     elif isinstance(v, (tuple, list)):
                         for elem in v:
-                            if isinstance(elem, basestring):
-                                print indent * 2, elem
+                            if isinstance(elem, str):
+                                print(indent * 2, elem)
                             elif isinstance(elem, dict):
-                                for kk,vv in elem.items():
-                                    print indent * 2, kk, ':', vv
-                                print indent * 2, '-' * 10
+                                for kk,vv in list(elem.items()):
+                                    print(indent * 2, kk, ':', vv)
+                                print(indent * 2, '-' * 10)
                     elif isinstance(v, dict):
-                        for kk,vv in v.items():
-                            print indent * 2, kk, ':', vv
-                        print indent * 2, '-' * 10
+                        for kk,vv in list(v.items()):
+                            print(indent * 2, kk, ':', vv)
+                        print(indent * 2, '-' * 10)
         

@@ -11,7 +11,7 @@ sys.path.insert(0, '%s/extra_scripts' % os.path.split(os.path.split(os.path.real
 from create_membership_invoices import OdooHandler
 def run(self, **kw_args):
     odoo = self.get_odoo()
-    print '-------------------------->', odoo
-    print self
+    print('-------------------------->', odoo)
+    print(self)
     handler = OdooHandler(opts=None, odoo=odoo)
     handler.list_invoices()

@@ -97,7 +97,7 @@ class GitTestCase(GitBaseTestCase):
 
         self.assertTrue(os.path.isdir(target_dir))
         with open(os.path.join(target_dir, 'tracked')) as f:
-            self.assertEquals(f.read().strip(), 'last')
+            self.assertEqual(f.read().strip(), 'last')
 
         self.assertEqual(repo.get_current_remote_fetch(), self.src_repo)
 
@@ -125,7 +125,7 @@ class GitTestCase(GitBaseTestCase):
         archive_dir = os.path.join(self.dst_dir, "archive directory")
         repo.archive(archive_dir)
         with open(os.path.join(archive_dir, 'tracked')) as f:
-            self.assertEquals(f.readlines()[0].strip(), 'last')
+            self.assertEqual(f.readlines()[0].strip(), 'last')
 
     def test_clean(self):
         target_dir = os.path.join(self.dst_dir, "My clone")
@@ -147,9 +147,9 @@ class GitTestCase(GitBaseTestCase):
                 f.write('content')
         repo.clean()
         for path in dirty_files:
-            self.failIf(os.path.exists(path),
+            self.assertFalse(os.path.exists(path),
                         "Untracked file should have been removed")
-        self.failIf(os.path.exists(dirty_dir),
+        self.assertFalse(os.path.exists(dirty_dir),
                     "Untracked dir should have been removed")
 
     def test_clone_on_sha(self):
@@ -418,7 +418,7 @@ class GitBranchTestCase(GitBaseTestCase):
         # switch to the remote branch and check tracked file has been updated
         branch("remotebranch")
         with open(os.path.join(target_dir, 'tracked')) as f:
-            self.assertEquals(f.read().strip(), "last after remote branch")
+            self.assertEqual(f.read().strip(), "last after remote branch")
 
     def test_switch_remote_branch_depth(self):
         """Switch to a branch created after the clone.

@@ -55,10 +55,10 @@ for s in SERVERS:
         
         #and then check the response...
         if response == 0:
-            print hostname, 'is up!'
+            print(hostname, 'is up!')
             ip = socket.gethostbyname(hostname)
             hname = socket.gethostbyaddr(ip)[0]
-            print hname
+            print(hname)
             ipl = ipDic.get(hname, [])
             if not hostname in ipl:
                 ipl.append(hostname)
@@ -67,7 +67,7 @@ for s in SERVERS:
                 result += ' -d %s' % hostname
                 apache += VHOST % hostname
         else:
-            print hostname, 'is down!'
+            print(hostname, 'is down!')
         #if s == 'brun-del-re.ch':
             #print ip
             #import sys
@@ -75,8 +75,8 @@ for s in SERVERS:
             #xx
             
 
-print result
-print pprint(ipDic)
+print(result)
+print(pprint(ipDic))
 open('vhost.txt', 'w').write(apache)
 
 # --test-cert --staging \

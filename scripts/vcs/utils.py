@@ -156,8 +156,8 @@ def check_output(*popenargs, **kwargs):
         # in python 2.6, CalledProcessError.__init__ does not have output kwarg
         exc = subprocess.CalledProcessError(retcode, cmd)
         exc.output = output
-        print '*' * 80
-        print os.getcwd()
+        print('*' * 80)
+        print(os.getcwd())
         raise exc
     return output
 

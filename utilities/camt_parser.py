@@ -122,10 +122,10 @@ class AccountBankStatementImport(object):
             transactions.append({
                 'date': date,
                 'ref': '',
-                'name': u'%s | %s' % (partner_name, label),
+                'name': '%s | %s' % (partner_name, label),
                 'amount': amount,
                 'unique_import_id':
-                u'%s-%s-%s-%s' % (date, amount, partner_name, label),
+                '%s-%s-%s-%s' % (date, amount, partner_name, label),
                 })
             end_balance += amount
 
@@ -165,7 +165,7 @@ class AccountBankStatementImport(object):
 
 f_name = len(sys.argv) > 1 and sys.argv[1]
 if not f_name:
-    print 'no database name provided'
+    print('no database name provided')
     sys.exit()
 
 handler = AccountBankStatementImport(f_name)
