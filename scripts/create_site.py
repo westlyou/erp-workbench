@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from argparse import RawTextHelpFormatter
 import readline, glob
@@ -32,9 +32,9 @@ banner = colors.red + r"""
                       @@@@@                                     @@@@%      
                      @@@@@                                       @@@@@     
                     @@@@@@@                  @                  @@@@@@@    
-                    @(@@@@@@@%            @@@@@@@            &@@@@@@@@@    
-                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    
-                     @@*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@     
+                    @(@@@@@@@%            REDO2OO            &@@@@@@@@@    
+                    @@@@@@@@@@@@@@@@@@@@@@@ ERP @@@@@@@@@@@@@@@@@@@@@@@    
+                     @@*@@@@@@@@@@@@@@@@ WORKBENCH @@@@@@@@@@@@@@@*@@     
                        @@@( @@@@@#@@@@@@@@@*@@@,@@@@@@@@@@@@@@@  @@@       
                            @@@@@@ .@@@/@@@@@@@@@@@@@/@@@@ @@@@@@           
                                   @@@   @@@@@@@@@@@   @@@                  
@@ -45,7 +45,8 @@ banner = colors.red + r"""
                                        @@@@@@@@@@@@@                       
                                        @@   @@@   @@                       
                                        @@ @@@@@@@ @@                       
-                                         @@% @  @@ 
+                                         @@% @ %@@
+                                           @@@@@
 """  + colors.normal              
 
 # """+'\n' \
@@ -67,7 +68,7 @@ banner = colors.red + r"""
 class tabCompleter(object):
 
     def pathCompleter(self,text,state):
-        line   = readline.get_line_buffer().split()
+        line = readline.get_line_buffer().split()
 
         return [x for x in glob.glob(text+'*')][state]
 
@@ -132,7 +133,7 @@ def parse_args():
 
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter, description=\
 
-    "Usage: python brutespray.py <OPTIONS> \n")
+    "Usage: bin/c <OPTIONS> \n")
 
     menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
 

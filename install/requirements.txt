@@ -42,4 +42,5 @@ flake8
 colored
 pyyaml
 future
+argcomplete
 # deasy # a odoo handler to handle databases

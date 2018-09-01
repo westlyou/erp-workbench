@@ -11,7 +11,7 @@ The installation of erp-workbench hast the following major steps:
     mkvirtualenv -a . -p python3 workbench
     (cd bin; ln -s $(which python))
     (cd bin; ln -s $(which pip))
-    bin/pip install -r install /requirements.txt
+    bin/pip install -r install/requirements.txt
     (cd help; make html)
     (echo $'\n''alias  wb="workon workbench"' >> ~/.bash_aliases)
 
