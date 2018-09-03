@@ -7,19 +7,7 @@ MIGRATE_FOLDER = '%s/upgrade/' % BASE_PATH
 BASE_INFO = {}
 import getpass
 ACT_USER = getpass.getuser()
-# some formatting colors
-class bcolors:
-    """
-    """
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+from scripts.bcolors import bcolors
 BASEINFO_CHANGED = """
 %s--------------------------------------------------
 The structure of the config files have changed.
@@ -33,39 +21,40 @@ BASE_DEFAULTS = {
     #name, explanation, default
     'sitesinfo_path' : (
         'sitesinfo path',                 # display
-        'path to the folder where sites.py and sites_local.py is found\nThis folder should be maintained by git',    # help
+        """path to the folder where sites.py and sites_local.py is found
+        This folder should be maintained by git""",    # help
         '%s/sites_list/' % BASE_PATH  # default
     ),
     'sitesinfo_url' : (
         'sitesinfo url',                 # display
-        'url to the repository where sites.py and sites_local.py is maintained.\nIf it is localhost it will be created for you but not added to a repo',    # help
-        'https://gitlab.redcor.ch/redcor_customers/sites_list.git'   # default
+        """url to the repository where sites.py and sites_local.py is maintained.
+        If it is localhost it will be created for you but not added to a repo'""", # help
+        'localhost',
+        # 'https://gitlab.redcor.ch/redcor_customers/sites_list.git'   # default
     ),
     'project_path' : (
         'project path',                 # display
-        'path to the projects\nHere a structure for each odoo site is created to build and run odoo servers',         # help
+        """path to the projects
+        Here a structure for each odoo site is created to build and run odoo servers""", # help
         '%s/projects' % user_home  # default
     ),
     'odoo_server_data_path' : (
         'server data path',              # display
-        'path to server data. Here for every site a set of folders is created\nthat will contain the servers config filestore, log- and dump-files.',          # help
-        '%s/odoo_instances' % user_home  # default
+        """path to server data. Here for every site a set of folders is created
+        that will contain the servers config filestore, log- and dump-files.""", # help
+        BASE_PATH  # default
     ),
-    #'docker_path_map' : (
-        #'docker path map. use , to separate parts',              # display
-        #'docker volume mappings when docker is run locally.', # help
-        #ACT_USER == 'root' and () or ('%s/' % user_home, '/root/')
-    #),
     'docker_dumper_image' : (
         'Image to be used to create a dumper container',              # display
-        'When transfering data between sites we need a helper docker container that can access the database and dump the data into a file', # help
+        """When transfering data between sites we need a helper docker container
+        that can access the database and dump the data into a file""", # help
         'robertredcor/dumper',
     ),
     'repo_mapper' : (
         'Access Urls to the source code repositories',              # display
-        'What is the urls to use when accesing github or gitlab.\n'\
-        'provide a comma separated list of repository=url pairs\n'\
-        'default "gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/"',
+        """What is the urls to use when accesing github or gitlab.
+        provide a comma separated list of repository=url pairs
+        default "gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/""", # help
         'gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/',
     ),
     'local_user_mail' : (
@@ -75,7 +64,7 @@ BASE_DEFAULTS = {
     )
 }
 try:
-    from base_info import base_info as BASE_INFO
+    from .base_info import base_info as BASE_INFO
     NEED_BASEINFO = False
     # check whether BASE_DEFAULTS has new keys
     for k in list(BASE_DEFAULTS.keys()):
@@ -94,7 +83,7 @@ BASE_INFO_FILENAME = '%s/config/%s.py' % (BASE_PATH, BASE_INFO_NAME)
 PROJECT_DEFAULTS = {
     #name, explanation, default
     'projectname' : ('project name', 'what is the project name', 'projectname'),
-    'odoo_version' : ('odoo version', 'version of odoo', '10'),
+    'odoo_version' : ('odoo version', 'version of odoo', '12'),
     'odoo_minor' : ('minor part of odoo version', 'minor part version of odoo', '.0'),
     'flectra_version' : ('odoo version', 'version of flectra', '1.1'),
     'flectra_minor' : ('minor part of flectra version', 'minor part version of flectra', '.4'),
@@ -111,20 +100,25 @@ try:
     # MARKER is used to mark the position in sites.py to add a new site description
     MARKER = sites_handler.marker # from messages.py
     try:
-        from localdata import REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD
+        from config.localdata import REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD
     except ImportError:
         print('please create config/localdata.py')
         print('it must have values for REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL')
         print('use template/localdata.py as template')
-        sys.exit()
-    except SyntaxError:
-        print('please edit config/localdata.py')
+        DB_USER = ACT_USER
+        DB_PASSWORD = 'admin'
+        DB_PASSWORD_LOCAL = 'admin'
+        raise ImportError
+        #sys.exit()
+    except SyntaxError as e:
+        print('please edit config/localdata.py. It seems to have a syntax error\n' + str(e) )
     os.chdir(pwd)
-except ImportError:
+except ImportError as e:
     APACHE_PATH = ''
     SITES, SITES_LOCAL = {},{}
     MARKER = ''
     sites_handler = None
+    print(str(e))
 except OSError:
     # we probably runing from within docker
     print('-------------------------------------->>>>', os.getcwd())
@@ -136,8 +130,8 @@ except OSError:
 # try to get also NGINX_PATH
 # if not possible, provide warning and assume standard location
 try:
-    from localdata import NGINX_PATH
-except ImportError:
+    from config.localdata import NGINX_PATH
+except ImportError as e:
     print(bcolors.WARNING + '*' * 80)
     print('could not read nginx path from config.localdata')
     print('assuming it is: /etc/nginx/')
@@ -145,9 +139,11 @@ except ImportError:
     print("and adding: NGINX_PATH = '/etc/nginx/'")
     print('*' * 80 + bcolors.ENDC)
     NGINX_PATH = '/etc/nginx/'
+except Exception as e:
+    pass
     
 try:
-    from localdata import DB_PASSWORD_LOCAL
+    from config.localdata import DB_PASSWORD_LOCAL
 except ImportError:
     # BBB
     DB_PASSWORD_LOCAL = 'admin'
@@ -170,7 +166,7 @@ try:
     from .version_info import *
 except:
     version_info = None
-    
+
 #p =  ''#os.path.split(os.path.realpath(__file__))[0]
 if not os.path.exists('%s/config/globaldefaults.py' % BASE_PATH):
     ## silently copy the defualts file
@@ -266,22 +262,18 @@ ODOO_VERSIONS_ = {
     '7.0' : { # elfero
         'python_ver' : 'python2',
         'python_path' : '/usr/bin/python2',
-        'buildout_recipe_link' : "git+https://github.com/archetipo/anybox.recipe.odoo@fix_for_odoo10#egg=a.r.odoo",
-    }, 
+    },
     '9.0' : {
         'python_ver' : 'python2',
         'python_path' : '/usr/bin/python2',
-        'buildout_recipe_link' : "git+https://github.com/archetipo/anybox.recipe.odoo@fix_for_odoo10#egg=a.r.odoo",
-    }, 
+    },
     '10.0' : {
         'python_ver' : 'python2',
         'python_path' : '/usr/bin/python2',
-        'buildout_recipe_link' : "git+https://github.com/archetipo/anybox.recipe.odoo@fix_for_odoo10#egg=a.r.odoo",
     },
     '11.0' : {
         'python_ver' : 'python3',
         'python_path' : '/usr/bin/python3',
-        'buildout_recipe_link' : "git+https://github.com/robertrottermann/anybox.recipe.odoo@master#egg=a.r.odoo",
     },
 }
 ODOO_VERSIONS = {
@@ -299,11 +291,6 @@ ODOO_VERSIONS = {
     },
 }
 
-#DOCKER_FILES = {
-    #'9.0' : ['entrypoint.sh',  'openerp-server.conf'],
-    #'10.0' : ['entrypoint.sh',  'odoo.conf'],
-    #'11.0' : ['entrypoint.sh',  'odoo.conf'],
-#}
 # commands to use within a dockerfile to pull aditional libraries
 APT_COMMAND = 'apt'
 PIP_COMMAND = 'pip'

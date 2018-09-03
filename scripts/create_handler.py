@@ -28,7 +28,6 @@ from pprint import pformat
 from scripts.update_local_db import DBUpdater
 from scripts.utilities import collect_options, _construct_sa, bcolors, find_addon_names
 from scripts.messages import *
-from sets import Set
 import shutil
 
 # tool to check and fix site structure
@@ -265,13 +264,13 @@ class RPC_Mixin(object):
 
     @property
     def rpc_host(self):
-        return self.rpchost
+        return self._rpc_host
 
     @property
     def rpc_port(self):
         if self.parsername == 'docker':
             return self.docker_rpc_port
-        return self.rpcport
+        return self._rpc_port
 
     @property
     def rpc_user(self):
@@ -312,26 +311,25 @@ class InitHandler(RPC_Mixin):
     need_login_info = True
     docker_registry = None
 
-    def __init__(self, opts, sites=SITES):
+    def __init__(self, opts, sites=SITES, parsername=''):
         if opts.name:
             self.site_names = [opts.name]
         else:
             self.site_names = []
         self.opts = opts
-        # make sure they are structured according to version
-        self.sites = fixup_sites(SITES, VERSION)
+        self.sites = sites
         self.default_values = {}
-        self.check_name(no_completion=True, must_match=True)
+        #self.check_name(no_completion=True, must_match=True)
         # resolve inheritance within sites
-        self.flatten_sites(self.sites)
+        self.flatten_sites(sites)
         # collect info on what parser and what options are selected
         parsername, selected, options = collect_options(opts)
         self.selections = selected
-        if not self.site_name and self.name_needed():
-            result = self._complete_selection(parsername, list(self.sites.keys(
-            )) + ['all'], results_only=True, prompt='sitename ?')
-            if result:
-                self.site_names = [result]
+        #if not self.site_name and self.name_needed():
+            #result = self._complete_selection(parsername, list(self.sites.keys(
+            #)) + ['all'], results_only=True, prompt='sitename ?')
+            #if result:
+                #self.site_names = [result]
         if not selected:
             self._complete_selection(
                 parsername, options, prompt='%s-options ?' % parsername)
@@ -341,28 +339,31 @@ class InitHandler(RPC_Mixin):
         self.selections = selected
         self.login_info = {}
         # now we can really check whether name is given and valid
-        self.check_name()
+        # while converting to workbench: I think wemake all options check 
+        # themselfs whether they need a name
+        # self.check_name()
         # when we want to drop the site, nothing more needs to be done
-        if opts.drop_site:
-            return
-        if self.site_name:
-            # construct default values like list of target directories
-            self.construct_defaults(self.site_name)
-            self.default_values['current_user'] = ACT_USER
-            self.default_values['foldernames'] = FOLDERNAMES
-            # make sure also freshly introduced variables do not create an error 
-            if 'odoo_nightly' not in self.default_values:
-                 self.default_values['odoo_nightly'] = self.default_values['odoo_version'] 
-             
-            # construct path to datafolder odoo_server_data_path
-            if self.need_login_info:
-                self._create_login_info(self.login_info)
-            #             # the following three values will be overruled by the docker registry
-            # created using docker_handler.update_container_info
-            # when we deal with a docker instance
-            self.rpchost = opts.rpchost or 'localhost'
-            self.rpcport = opts.rpcport or '8069'
-            self.dbhost = self.opts.dbhost or 'localhost'
+        if 'drop_site' in vars(opts):
+            if opts.drop_site:
+                return
+        #if self.site_name:
+        # construct default values like list of target directories
+        self.construct_defaults(self.site_name)
+        self.default_values['current_user'] = ACT_USER
+        self.default_values['foldernames'] = FOLDERNAMES
+        # make sure also freshly introduced variables do not create an error 
+        if 'odoo_nightly' not in self.default_values:
+            self.default_values['odoo_nightly'] = self.default_values['odoo_version']
+
+        # construct path to datafolder odoo_server_data_path
+        if self.need_login_info:
+            self._create_login_info(self.login_info)
+        #             # the following three values will be overruled by the docker registry
+        # created using docker_handler.update_container_info
+        # when we deal with a docker instance
+        self._rpc_host = opts.rpc_host or 'localhost'
+        self._rpc_hostport = opts.rpc_port or '8069'
+        self._db_host = self.opts.db_host or 'localhost'
         # starting with odoo 11 we need to check what python version to use
         if self.version:
             try:
@@ -441,11 +442,11 @@ class InitHandler(RPC_Mixin):
                     sys.exit()
             login_info['user'] = ACT_USER
             # access to the local database
-            login_info['db_password'] = self.opts.dbpw or DB_PASSWORD_LOCAL
-            login_info['db_user'] = self.opts.dbuser or DB_USER
+            login_info['db_password'] = self.opts.db_password or DB_PASSWORD_LOCAL
+            login_info['db_user'] = self.opts.db_user or DB_USER
             # access to the locally running odoo
-            login_info['rpc_user'] = self.opts.rpcuser
-            login_info['rpc_pw'] = self.opts.rpcpw
+            login_info['rpc_user'] = self.opts.rpc_user
+            login_info['rpc_pw'] = self.opts.rpc_password
             # access to the local docker
             # -----------------
             # remote
@@ -456,11 +457,16 @@ class InitHandler(RPC_Mixin):
             login_info['remote_user'] = server.get('remote_user') or ''
             login_info['remote_user_pw'] = self.site and server.get(
                 'remote_pw') or ''
-            login_info['remote_db_password'] = self.opts.dbpw or DB_PASSWORD
-            login_info['remote_db_user'] = self.opts.dbuser or DB_USER
+            login_info['remote_db_password'] = self.opts.db_password or DB_PASSWORD
+            login_info['remote_db_user'] = self.opts.db_user or DB_USER
             # docker
-            login_info['remote_docker_db_user'] = self.opts.remotedockerdbuser
-            login_info['remote_docker_db_pw'] = self.opts.remotedockerdbpw
+            # while docker opts are not yet loaded
+            try:
+                login_info['remote_docker_db_user'] = self.opts.remotedockerdbuser
+                login_info['remote_docker_db_pw'] = self.opts.remotedockerdbpw
+            except:
+                login_info['remote_docker_db_user'] = ''
+                login_info['remote_docker_db_pw'] = ''
 
     def running_remote(self):
         # we to replace values that should be different when running remotely
@@ -587,7 +593,7 @@ class InitHandler(RPC_Mixin):
 
     @property
     def projectname(self):
-        return self.site.get('projectname', self.site['site_name'])
+        return self.site.get('projectname', self.site.get('site_name', ''))
 
     @property
     def is_local(self):
@@ -604,13 +610,24 @@ class InitHandler(RPC_Mixin):
 
     @property
     def site(self, site_name=''):
+        """return a dictonary with a site description
+        
+        Keyword Arguments:
+            site_name {str} -- name of the site to loock up (default: {''})
+        
+        Returns:
+            dict -- dictionary with the site description
+        """
+
         if site_name:
             name = site_name
         else:
             name = self.site_name
         if name:
             return self.sites.get(name, {})
-
+        else:
+            return {}
+        
     @property
     def site_name(self):
         return self.site_names and self.site_names[0] or ''
@@ -625,6 +642,12 @@ class InitHandler(RPC_Mixin):
 
     @property
     def version(self):
+        """return the value of the version key of the site description
+        
+        Returns:
+            string -- version of the erp system
+        """
+
         if self.site:
             return self.site.get('odoo_version', self.default_values['odoo_version'])
 
@@ -770,7 +793,7 @@ class InitHandler(RPC_Mixin):
                     name = name[:-1]
                 site_names = [name]
 
-            opts._o.__dict__['name'] = name
+            opts.name = name
             # if not isinstance(opts, basestring):
             #     if opts.add_site:
             #         return name
@@ -790,7 +813,7 @@ class InitHandler(RPC_Mixin):
                 if not matches:
                     print(
                         bcolors.WARNING + ('%s does not match any site name, discarded!' % name) + bcolors.ENDC)
-                    opts._o.__dict__['name'] = ''
+                    opts.name = ''
                     return ''
                 if name:
                     self.site_names = [name]
@@ -803,7 +826,7 @@ class InitHandler(RPC_Mixin):
             return
         done = False
         cmpl = SimpleCompleter('', options=list(SITES.keys(
-        )), default=name or opts.sitename or '', prompt='please provide valid site name:')
+        )), default=name or '', prompt='please provide valid site name:')
         while not done:
             _name = cmpl.input_loop()
             if _name is None:
@@ -821,7 +844,7 @@ class InitHandler(RPC_Mixin):
                 print(
                     '%s is not defined in sites.py. you can add it with option --add-site' % _name)
             if done:
-                opts._o.__dict__['name'] = _name
+                opts.name = _name
                 self.site_names = [_name]
                 return _name
 
@@ -938,7 +961,7 @@ class InitHandler(RPC_Mixin):
         default_values['sites_home'] = BASE_PATH
         # first set default values that migth get overwritten
         # local sites are defined in local_sites and are not added to the repository
-        is_local = not(SITES_LOCAL.get(site_name) is None)
+        is_local = site_name and not(SITES_LOCAL.get(site_name) is None)
         default_values['is_local'] = is_local
         default_values['db_user'] = self.db_user
         # sites_home is odoo_instnces is installed
@@ -948,7 +971,7 @@ class InitHandler(RPC_Mixin):
         default_values.update(BASE_INFO)
         if isinstance(site_name, str) and SITES.get(site_name):
             if opts:
-                if (not opts.add_site) and (not opts.add_site_local) and (not opts.listmodules):
+                if (not opts.add_site) and (not opts.add_site_local):
                     if site_name:
                         default_values.update(SITES.get(site_name))
             else:
@@ -1005,14 +1028,20 @@ class InitHandler(RPC_Mixin):
                     v = v % self.default_values
                     self.default_values[k] = v
                     counter += 1  # avoid endless loop
-        self.default_values['odoo_version'] = self.opts.odoo_version
-
+        if not self.default_values.get('odoo_version'):
+            if 'odoo_version' in vars(self.opts).keys():
+                odoo_version = self.opts.odoo_version
+            else:
+                from config.globaldefaults import GLOBALDEFAULTS
+                odoo_version = GLOBALDEFAULTS.get('odoo_version', '12.0')
+            self.default_values['odoo_version'] = odoo_version
+        
     # -------------------------------------------------------------------
     # name_needed
-    # check if name neede
+    # check if name needed
     # or needed at all
     # @opts otion namespace
-    # @optin : option to check
+    # @option : option to check
     #          if not provided check what option user has selected
     # -------------------------------------------------------------------
     def name_needed(self, option=None):
@@ -1045,8 +1074,8 @@ class InitHandler(RPC_Mixin):
             if option in need_name:
                 return True
         # no decision could be made so far, check the options
-        nn = [n for n in need_name if opts._o.__dict__.get(n)]
-        nnn = [n for n in no_need_name if opts._o.__dict__.get(n)]
+        nn = [n for n in need_name if opts.__dict__.get(n)]
+        nnn = [n for n in no_need_name if opts.__dict__.get(n)]
         if not nn:
             # nothing found that needs a name so far
             if nnn:
@@ -1153,6 +1182,9 @@ class InitHandler(RPC_Mixin):
         path_name = path to parent folder. create if it does not exist
         """
         errors = False
+        if not self.site_name:
+            # we need a site to construct a data folder
+            return
         if quiet is None:
             quiet = not self.opts.verbose
         if not path_name:
@@ -1899,19 +1931,11 @@ class InitHandler(RPC_Mixin):
 
     def add_aliases(self):
         """
+        construct aliases to access the workbenchdirectories easily
         """
-        # # check if project exists
-        # inner = default_values['inner']
-        # if not os.path.exists(inner):
-        #     # project does not yet exist, just return
-        #     return
-        # # remember where we came from
-        # adir = os.getcwd()
-        # os.chdir('%s' % inner)
-        # p = subprocess.Popen(['bin/python', 'alias.py'],
-        #                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # out, err = p.communicate()
-        # return True
+        if not self.site_name:
+            # we need a sitename to do anything sensible
+            return
         opts = self.opts
         default_values = self.default_values
         pp = BASE_INFO['odoo_server_data_path']
@@ -2199,8 +2223,6 @@ class InitHandler(RPC_Mixin):
             except Exception as e:
                 if self.opts.verbose:
                     print(str(e))
-
-
 class SiteCreator(InitHandler, DBUpdater):
 
     def __init__(self, opts, sites=SITES):
@@ -2232,22 +2254,24 @@ class SiteCreator(InitHandler, DBUpdater):
         config_info = self.get_config_info()
         # check if the project in the project folder defined in the configuration exists
         # if not create the project structure and copy all files from the skeleton folder
-        existed = self.check_project_exists()
-        # construct list of addons read from site
-        open(LOGIN_INFO_FILE_TEMPLATE % self.default_values['inner'], 'w').write(
-            config_info % self.default_values)
-        # overwrite requrements.txt with values from systes.py
-        data = open(REQUIREMENTS_FILE_TEMPLATE %
-                    self.default_values['inner'], 'r').read()
-        # we want to preserve changes in the requirements.txt
-        data = '\n'.join(list(dict(enumerate([d for d in data.split('\n') if d] +
-                                        self.default_values['pip_modules'].split('\n'))).values()))
-        # MODULES_TO_ADD_LOCALLY are allways added to a local installation
-        # these are tools to help testing and such
-        s = data.split('\n') + (MODULES_TO_ADD_LOCALLY and MODULES_TO_ADD_LOCALLY or [])
-        s = Set(s)
-        open(REQUIREMENTS_FILE_TEMPLATE % self.default_values['inner'], 'w').write(
-            '\n'.join(s))  # 25.7.17 robert % self.default_values)
+        existed = False
+        if self.site_name:
+            existed = self.check_project_exists()
+            # construct list of addons read from site
+            open(LOGIN_INFO_FILE_TEMPLATE % self.default_values['inner'], 'w').write(
+                config_info % self.default_values)
+            # overwrite requrements.txt with values from systes.py
+            data = open(REQUIREMENTS_FILE_TEMPLATE %
+                        self.default_values['inner'], 'r').read()
+            # we want to preserve changes in the requirements.txt
+            data = '\n'.join(list(dict(enumerate([d for d in data.split('\n') if d] +
+                                            self.default_values['pip_modules'].split('\n'))).values()))
+            # MODULES_TO_ADD_LOCALLY are allways added to a local installation
+            # these are tools to help testing and such
+            s = data.split('\n') + (MODULES_TO_ADD_LOCALLY and MODULES_TO_ADD_LOCALLY or [])
+            s = set(s)
+            open(REQUIREMENTS_FILE_TEMPLATE % self.default_values['inner'], 'w').write(
+                '\n'.join(s))  # 25.7.17 robert % self.default_values)
         return existed
 
     def remove_virtual_env(self, site_name):
@@ -2286,21 +2310,24 @@ class SiteCreator(InitHandler, DBUpdater):
             cmd = ['/bin/bash', '-c', 'echo $(which virtualenvwrapper.sh)']
             p = subprocess.Popen(cmd, stdout=PIPE)
             virtualenvwrapper = p.communicate()[0].strip()
-            commands = """
-            export WORKON_HOME=%(home)s/.virtualenvs
-            export PROJECT_HOME=/home/robert/Devel
-            source %(virtualenvwrapper)s
-            mkvirtualenv -a %(inner)s -p %(python_version)s %(site_name)s       
-            """ % {
-                'home': os.path.expanduser("~"),
-                'virtualenvwrapper': virtualenvwrapper,
-                'inner': self.default_values['inner'],
-                'python_version': python_version,
-                'site_name': self.site_name
-            }
+            virtualenvwrapper = virtualenvwrapper.decode()
+            os.chdir(self.default_values['inner'])
+            cmd_list = [
+                'export WORKON_HOME=%s/.virtualenvs' % os.path.expanduser("~"),
+                'export PROJECT_HOME=/home/robert/Devel',
+                'source %s' % virtualenvwrapper,
+                'mkvirtualenv -a . -p %s %s' % (
+                    
+                    python_version,
+                    self.site_name
+                )
+            ]
+            commands = b'$$'.join([e.encode() for e in cmd_list])
+            commands = commands.replace(b'$$', b'\n')
+            #p = subprocess.call(commands, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
             p = subprocess.Popen(
-                '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            out, err = p.communicate(commands)
+                '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=os.environ.copy())
+            out, err = p.communicate(input=commands)
             print(out)
             print(err)
         else:
@@ -2322,7 +2349,7 @@ class SiteCreator(InitHandler, DBUpdater):
         default_values = self.default_values
         default_values['projectname'] = self.projectname
         # only set when creating or editing the site
-        default_values['odoo_version'] = self.site['odoo_version']
+        default_values['odoo_version'] = self.site.get('odoo_version', '')
         # read the login_info.py.in
         # in this file, all variables are of the form $(VARIABLENAME)$
         # replace_dic is constructed in get_user_info_base->build_replace_info
@@ -2337,23 +2364,25 @@ class SiteCreator(InitHandler, DBUpdater):
         opts = self.opts
         default_values = self.default_values
         existed = True
-        # check if project exists
-        skeleton_path = default_values['skeleton']
-        outer_path = default_values['outer']
-        inner_path = default_values['inner']
-        if not os.path.exists(inner_path):
-            self.create_new_project()
-            existed = False
-        self.do_copy(skeleton_path, outer_path, inner_path)
-        # make sure virtual env exist
-        python_version = 'python2.7'
-        st = self.site.get('server_type', 'odoo')
-        if st == 'odoo':
-            if float(self.version) > 10:
+        # we only create a site, if we have a site_name
+        if self.site_name:
+            # check if project exists
+            skeleton_path = default_values['skeleton']
+            outer_path = default_values['outer']
+            inner_path = default_values['inner']
+            if not os.path.exists(inner_path):
+                self.create_new_project()
+                existed = False
+            self.do_copy(skeleton_path, outer_path, inner_path)
+            # make sure virtual env exist
+            python_version = 'python2.7'
+            st = self.site.get('server_type', 'odoo')
+            if st == 'odoo':
+                if float(self.version) > 10:
+                    python_version = 'python3'
+            elif st == 'flectra':
                 python_version = 'python3'
-        elif st == 'flectra':
-            python_version = 'python3'
-        self.create_virtual_env(inner_path, python_version=python_version)
+            self.create_virtual_env(inner_path, python_version=python_version)
         return existed
 
     def create_new_project(self):

@@ -6,15 +6,15 @@ import sys
 import subprocess
 from subprocess import PIPE
 import re
-from pprint import pprint
+from pprint import pprint, pformat
 from io import StringIO
 from copy import deepcopy
 import psutil
 from scripts.messages import *
-from .bcolors import bcolors
-from .vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
-from .vcs.svn import SvnCheckout
-from .vcs.base import UpdateError
+from bcolors import bcolors
+from vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
+from vcs.svn import SvnCheckout
+from vcs.base import UpdateError
 try:
     from git import Repo
 except ImportError as e:
@@ -109,8 +109,8 @@ def collect_options(opts):
     """
     # return list of posible suboptions
     # and if a valid otion is selected
-    actual = opts._o.subparser_name
-    _o = opts._o._get_kwargs()
+    actual = opts.subparser_name
+    _o = opts._get_kwargs()
     skip = [
         'name',
         'subparser_name',
@@ -124,7 +124,7 @@ def collect_options(opts):
         'rpcuser',
         'rpcpw']
     keys = [k[0] for k in _o if k[0] not in skip]
-    is_set = [k for k in _o if k[1] and (k[0] not in skip)]
+    is_set = [k for k in _o if not (k[1] is False) and (k[0] not in skip)]
     return actual, is_set, keys
 
 
@@ -190,6 +190,9 @@ def create_server_config(handler):
     """
     from templates.openerp_cfg_defaults import CONFIG_DEFAULTS
     name = handler.site_name
+    if not name:
+        # we need a site name to create a server config
+        return
     server_type = handler.site.get('server_type', 'odoo')
     config_name = CONFIG_NAME[server_type]['config']
     odoo_admin_pw = handler.site.get('odoo_admin_pw', '')
@@ -253,7 +256,7 @@ def get_single_value(
 
 def set_base_info(info_dic, filename):
     "write base info back to the config folder"
-    info = 'base_info = %s' % info_dic
+    info = 'base_info = %s' % pformat(info_dic)
     open(filename, 'w').write(info)
 
 
@@ -617,6 +620,9 @@ def checkout_sa(opts):
     get addons from repository
     @opts   : options as entered by the user
     """
+    if not opts.name:
+        # need a  site_name to do anythin sensible
+        return
     from .git_check import gitcheck, argopts
     result = {'failed': [], 'need_reload': []}
     site_addons = []

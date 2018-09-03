@@ -1,5 +1,5 @@
 GLOBALDEFAULTS = {
-    # the name of the containe in which all database are created
+    # the name of the container in which the database is created
     'dockerdb_container_name' : 'db',
     # dockerdbuser is used to access the database  in the database container
     'dockerdbuser'      : 'odoo',
@@ -11,4 +11,5 @@ GLOBALDEFAULTS = {
     # this is in most cases NOT 'admin'
     # you can overrule it with -ddbpw
     'dockerrpcuserpw'   : 'admin',
+    'odoo_version' : '12.0',
 }

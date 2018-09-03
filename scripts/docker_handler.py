@@ -5,13 +5,13 @@
 from docker import Client
 from config import SITES, BASE_INFO, GLOBALDEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
 #from config.handlers import InitHandler, DBUpdater
-from .create_handler import InitHandler
-from .update_local_db import DBUpdater
+from create_handler import InitHandler
+from update_local_db import DBUpdater
 import os
 import re
 import sys
 import shutil
-from .utilities import get_remote_server_info, bcolors
+from utilities import get_remote_server_info, bcolors
 from scripts.messages import *
 import docker
 import datetime

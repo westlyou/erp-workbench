@@ -1,19 +1,8 @@
 # -*- encoding: utf-8 -*-
-class bcolors:
-    """
-    """
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+from scripts.bcolors import bcolors
 MARKER = '# ---------------- marker ----------------'
 
-SITE_EXISTED ="""------------------------------------------------
+SITE_EXISTED = """------------------------------------------------
 To use the new settings (if any) execute
 cd %s
 or by executing
@@ -23,7 +12,7 @@ bin/dosetup_odoo
 bin/buildout
 ------------------------------------------------
 """
-SITE_NEW ="""------------------------------------------------
+SITE_NEW = """------------------------------------------------
 An alias %%s has been created for you.
 In a %snew%s shell you can execute
 %%sw
@@ -304,7 +293,7 @@ ALIASOO = """
 alias  ooinw="ooin; source python/bin/activate"
 """
 ALIAS_LINE = 'alias  %(sname)s="cd %(path)s"\n'
-AMARKER = '##-----alias-marker %s-----##'
+AMARKER = '##-----wb alias-marker %s-----##'
 ABLOCK = """%(aliasmarker_start)s
 # please do not change the lines between the two markers
 # they are managed by the odooMaker scripts

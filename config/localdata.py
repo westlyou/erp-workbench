@@ -6,6 +6,7 @@ DB_PASSWORD = 'odoo' # for docker
 DB_PASSWORD_LOCAL = 'admin' # when used whitout docker
 # apache_pathis used to create virtual sites
 APACHE_PATH = '/etc/apache2'
+NGINX_PATH = '/etc/nginx/'
 # remote_user_dic is used to access the remote server to update the local db
 # it is a dic with the ip of the remote server as key
 # which ip to use is read from sytes.py
@@ -59,3 +60,4 @@ REMOTE_USER_DIC = {
         'local_user_email' : 'user_to_use@please set in local data',
     },
 }
+

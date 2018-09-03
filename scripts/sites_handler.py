@@ -109,20 +109,36 @@ class SitesHandler(object):
                 os.makedirs(p1)
                 # add __init__.py
                 open('%s/__init__.py' % p1, 'a').close()
+                template = open('%s/templates/newsite.py' % self.base_path, 'r').read()
+                template = template.replace('xx.xx.xx.xx', 'localhost')
+                # default values for the demo sites
+                defaults = {
+                    'site_name' : 'demo_global', 
+                    'marker' : self.marker,
+                    'base_sites_home' : '/home/%s/odoo_instances' % ACT_USER,
+                    'odoo_version' : '12',
+                    'base_url' : 'demo_global',
+                    'local_user_mail' : 'mail@localhost.com',
+                    'remote_server' : 'localhost',
+                    'docker_port' : 8800,
+                    'docker_long_poll_port' : 18800,
+                }                
+                # create global sites
                 os.mkdir('%s/sites_global' % p1)
                 __ini__data = open('%s/templates/sites_list__init__.py' % self.base_path).read()
                 open('%s/sites_global/__init__.py' % p1, 'w').write(__ini__data)
-                template = open('%s/templates/newsite.py' % self.base_path, 'r').read()
-                remote_url = opts.use_ip or 'xx.xx.xx.xx'
-                template = template.replace('xx.xx.xx.xx', 'localhost')
-                # create global sites
                 open('%s/sites_global/demo_global.py' % p1, 'w').write(SITES_GLOBAL_TEMPLATE % (
-                    'demo_global', template % {'site_name' : 'demo_global', 'marker' : self.marker, 
-                                               'base_sites_home' : '/home/%s/odoo_instances' % ACT_USER}))
+                    'demo_global', template % defaults))
+                # create local sites
+                os.mkdir('%s/sites_local' % p1)
+                __ini__data = __ini__data.replace('SITES_G', 'SITES_L')
+                open('%s/sites_local/__init__.py' % p1, 'w').write(__ini__data)
+                defaults['site_name'] = 'demo_local'
                 open('%s/sites_local/demo_local.py' % p1, 'w').write(SITES_GLOBAL_TEMPLATE % (
-                    'demo_global', template % {'site_name' : 'demo_local', 'marker' : self.marker, 
-                                               'base_sites_home' : '/home/%s/odoo_instances' % ACT_USER}))
-                print(LOCALSITESLIST_CREATED % (os.path.normpath('%s/sites_global/demo_global.py' % p1), os.path.normpath('%s/sites_local/demo_local.py' % p1)))
+                    'demo_local', template % defaults))
+                print(LOCALSITESLIST_CREATED % (
+                    os.path.normpath('%s/sites_global/demo_global.py' % p1), 
+                    os.path.normpath('%s/sites_local/demo_local.py' % p1)))
                 sys.exit()
         elif not os.path.exists(sites_list_path):
             # try to git clone sites_list_url
@@ -161,8 +177,17 @@ class SitesHandler(object):
                 parts = [p for p in parts if p]
                 sites_list_path = '/' + '/'.join(parts[:-1])
             sys.path.insert(0, os.path.normpath(sites_list_path))
-        from sites_list.sites_local import SITES_L
-        from sites_list.sites_global import SITES_G
+        try:
+            from sites_list.sites_local import SITES_L
+            from sites_list.sites_global import SITES_G
+        except ImportError:
+            from bcolors import bcolors
+            print(bcolors.FAIL)
+            print('*' * 80)
+            print('could not import sites list')
+            print(bcolors.ENDC)
+            return [], []
+            
         # -------------------------------------------------------------
         # test code from prakash to set the local sites value to true
         #------------------------------------------------------------

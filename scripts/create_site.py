@@ -1,73 +1,72 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from argparse import RawTextHelpFormatter
+from argparse import RawTextHelpFormatter, ArgumentParser
 import readline, glob
 import sys, time, os
 import subprocess
-import xml.dom.minidom
+#import xml.dom.minidom
 import re
 import argparse
 import argcomplete
-import threading
-import itertools
-import tempfile
-import shutil
-from multiprocessing import Process
+from bcolors import bcolors
+from banner import BANNER_HEAD, BANNER_TEXT
 
-services = {}
-loading = False
+# robert
+# make sure at least the base config is accessible
+#try:
+    ##from ruamel.std.argparse import ArgumentParser, set_default_subparser
+    #from ruamel.std.argparse import set_default_subparser
+    ##import argparse
+#except ImportError:
+    #print('*' * 80)
+    #print(bcolors.WARNING + bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC)
+    #print('could not install ruamel.std.argparse')
+    #print('*' * 80)
+    #sys.exit()
 
-class colors:
-    white = "\033[1;37m"
-    normal = "\033[0;00m"
-    red = "\033[1;31m"
-    blue = "\033[1;34m"
-    green = "\033[1;32m"
-    lightblue = "\033[0;34m"
+sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
+from scripts.messages import *
+from config import NEED_BASEINFO, BASE_INFO_FILENAME, BASE_DEFAULTS
 
-banner = colors.red + r"""
-                              #@                           @/              
-                           @@@                               @@@           
-                        %@@@                                   @@@.        
-                      @@@@@                                     @@@@%      
-                     @@@@@                                       @@@@@     
-                    @@@@@@@                  @                  @@@@@@@    
-                    @(@@@@@@@%            REDO2OO            &@@@@@@@@@    
-                    @@@@@@@@@@@@@@@@@@@@@@@ ERP @@@@@@@@@@@@@@@@@@@@@@@    
-                     @@*@@@@@@@@@@@@@@@@ WORKBENCH @@@@@@@@@@@@@@@*@@     
-                       @@@( @@@@@#@@@@@@@@@*@@@,@@@@@@@@@@@@@@@  @@@       
-                           @@@@@@ .@@@/@@@@@@@@@@@@@/@@@@ @@@@@@           
-                                  @@@   @@@@@@@@@@@   @@@                  
-                                 @@@@*  ,@@@@@@@@@(  ,@@@@                 
-                                 @@@@@@@@@@@@@@@@@@@@@@@@@                 
-                                  @@@.@@@@@@@@@@@@@@@ @@@                  
-                                    @@@@@@ @@@@@ @@@@@@                    
-                                       @@@@@@@@@@@@@                       
-                                       @@   @@@   @@                       
-                                       @@ @@@@@@@ @@                       
-                                         @@% @ %@@
-                                           @@@@@
-"""  + colors.normal              
+from scripts.utilities import update_base_info, \
+     create_server_config, checkout_sa, \
+     list_sites
 
-# """+'\n' \
-# + r"""
-#         ██████╗ ██████╗ ██╗   ██╗████████╗███████╗███████╗██████╗ ██████╗  █████╗ ██╗   ██╗
-#         ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
-#         ██████╔╝██████╔╝██║   ██║   ██║   █████╗  ███████╗██████╔╝██████╔╝███████║ ╚████╔╝ 
-#         ██╔══██╗██╔══██╗██║   ██║   ██║   ██╔══╝  ╚════██║██╔═══╝ ██╔══██╗██╔══██║  ╚██╔╝  
-#         ██████╔╝██║  ██║╚██████╔╝   ██║   ███████╗███████║██║     ██║  ██║██║  ██║   ██║   
-#         ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
-                                                                                   
-# """+'\n' \
-# + '\n brutespray.py v1.6.4' \
-# + '\n Created by: Shane Young/@x90skysn3k && Jacob Robles/@shellfail' \
-# + '\n Inspired by: Leon Johnson/@sho-luv' \
-# + '\n Credit to Medusa: JoMo-Kun / Foofus Networks <jmk@foofus.net>\n' + colors.normal
+if NEED_BASEINFO:
+    update_base_info(BASE_INFO_FILENAME, BASE_DEFAULTS)
+    sys.exit()
+
+try:
+    from config import SITES, SITES_LOCAL
+except ImportError:
+    from config import sites_handler
+    sites_handler.check_and_create_sites_repo()
+    from config import SITES, SITES_LOCAL
+    
+from config import ACT_USER, BASE_PATH, NEED_BASEINFO, FOLDERNAMES, \
+    BASE_INFO_FILENAME, BASE_DEFAULTS, BASE_INFO, MARKER, \
+    APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, \
+    REQUIREMENTS_FILE_TEMPLATE, GLOBALDEFAULTS
+
+from config.handlers import SiteCreator
+from config.handlers import DockerHandler
+from config.handlers import SupportHandler
+from config.handlers import RemoteHandler
+from config.handlers import MailHandler
+
+# get config options
+from scripts.options_create import add_options_create
+from scripts.options_parent import add_options_parent
+from scripts.options_rpc import add_options_rpc
+from scripts.options_support import add_options_support
+
+banner = bcolors.red + BANNER_HEAD  + bcolors.normal + BANNER_TEXT
+
 #ascii art by: Cara Pearson
-
+colors = bcolors
 class tabCompleter(object):
 
-    def pathCompleter(self,text,state):
+    def pathCompleter(self, text, state):
         line = readline.get_line_buffer().split()
 
         return [x for x in glob.glob(text+'*')][state]
@@ -129,26 +128,6 @@ def interactive():
 
     print(colors.normal)
 
-def parse_args():
-
-    parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter, description=\
-
-    "Usage: bin/c <OPTIONS> \n")
-
-    menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
-
-    menu_group.add_argument('-f', '--file', help="GNMAP or XML file to parse", required=False, default=None)
-    menu_group.add_argument('-o', '--output', help="Directory containing successful attempts", default="brutespray-output")
-    menu_group.add_argument('-s', '--service', help="specify service to attack", default="all")
-    menu_group.add_argument('-t', '--threads', help="number of medusa threads", default="2")
-    menu_group.add_argument('-T', '--hosts', help="number of hosts to test concurrently", default="1")
-    menu_group.add_argument('-U', '--userlist', help="reference a custom username file", default=None)
-    menu_group.add_argument('-P', '--passlist', help="reference a custom password file", default=None)
-    menu_group.add_argument('-u', '--username', help="specify a single username", default=None)
-    menu_group.add_argument('-p', '--password', help="specify a single password", default=None)
-    menu_group.add_argument('-c', '--continuous', help="keep brute-forcing after success", default=False, action='store_true')
-    menu_group.add_argument('-i', '--interactive', help="interactive mode", default=False, action='store_true')    
-    menu_group.add_argument('-m', '--modules', help="dump a list of available modules to brute", default=False, action='store_true')    
 
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
@@ -157,75 +136,332 @@ def parse_args():
         parser.error("argument -f/--file is required")
     return args
 
-if __name__ == "__main__":
-    print(banner)
-    args = parse_args()
+#https://stackoverflow.com/questions/6365601/default-sub-command-or-handling-no-sub-command-with-argparse
+def set_default_subparserXX(self, name, args=None, positional_args=0):
+    """default subparser selection. Call after setup, just before parse_args()
+    name: is the name of the subparser to call by default
+    args: if set is the argument list handed to parse_args()
 
-    supported = ['ssh','ftp','telnet','vnc','mssql','mysql','postgresql','rsh',
-                'imap','nntp','pcanywhere','pop3',
-                'rexec','rlogin','smbnt','smtp',
-                'svn','vmauthd','snmp']
-    #temporary directory for ip addresses
-
-    if args.modules is True:
-        print(colors.lightblue + "Supported Services:\n" + colors.green)
-        print(('\n'.join(supported)))
-        print(colors.normal + "\n") 
-    try:
-        tmppath = tempfile.mkdtemp(prefix="brutespray-tmp")
-    except:
-        sys.stderr.write("\nError while creating brutespray temp directory.")
-        exit(4)
-
-    if not os.path.exists(args.output):
-        os.mkdir(args.output)
-
-    if os.system("command -v medusa > /dev/null") != 0:
-        sys.stderr.write("Command medusa not found. Please install medusa before using brutespray")
-        exit(3)
-
-    if args.file is None:
-        sys.exit(0)
-
-    if args.passlist and not os.path.isfile(args.passlist):
-        sys.stderr.write("Passlist given does not exist. Please check your file or path\n")
-        exit(3)
-
-    if args.userlist and not os.path.isfile(args.userlist):
-        sys.stderr.write("Userlist given does not exist. Please check your file or path\n")
-        exit(3)
-
-    if os.path.isfile(args.file):        
-        try:
-            t = threading.Thread(target=loading)
-            t.start()
-            doc = xml.dom.minidom.parse(args.file)
-            make_dic_xml()
-        except:
-            make_dic_gnmap()
-
-        if args.interactive is True:
-            interactive()
-
-        animate()
-
-        if services == {}:
-            print("\nNo brutable services found.\n Please check your Nmap file.")
+    , tested with 2.7, 3.2, 3.3, 3.4
+    it works with 2.6 assuming argparse is installed
+    """
+    subparser_found = False
+    existing_default = False # check if default parser previously defined
+    for arg in sys.argv[1:]:
+        if arg in ['-h', '--help']:  # global help if no subparser
+            break
     else:
-        print("\nError loading file, please check your filename.")
+        for x in self._subparsers._actions:
+            if not isinstance(x, argparse._SubParsersAction):
+                continue
+            for sp_name in x._name_parser_map.keys():
+                if sp_name in sys.argv[1:]:
+                    subparser_found = sp_name
+                if sp_name == name: # check existance of default parser
+                    existing_default = sp_name
+        #if not subparser_found:
+            ## If the default subparser is not among the existing ones,
+            ## create a new parser.
+            ## As this is called just before 'parse_args', the default
+            ## parser created here will not pollute the help output.
 
-    to_scan = args.service.split(',')
-    for service in services:
-        if service in to_scan or to_scan == ['all']:
-            for port in services[service]:
-                fname = tmppath + '/' +service + '-' + port
-                iplist = services[service][port]
-                f = open(fname, 'w+')
-                for ip in iplist:
-                    f.write(ip + '\n')
-                f.close()
-                brute_process = Process(target=brute, args=(service,port,fname,args.output))
-                brute_process.start()
+            #if not existing_default:
+                #for x in self._subparsers._actions:
+                    #if not isinstance(x, argparse._SubParsersAction):
+                        #continue
+                    #x.add_parser(name)
+                    #break # this works OK, but sho
+    return existing_default or subparser_found
 
-    #need to wait for all of the processes to run...
-    #shutil.rmtree(tmppath, ignore_errors=False, onerror=None)
+def set_default_subparser(self, name, args=None):
+    """default subparser selection. Call after setup, just before parse_args()
+    name: is the name of the subparser to call by default
+    args: if set is the argument list handed to parse_args()
+
+    , tested with 2.7, 3.2, 3.3, 3.4
+    it works with 2.6 assuming argparse is installed
+    """
+    subparser_found = False
+    name_to_return = ''
+    for arg in sys.argv[1:]:
+        if arg in ['-h', '--help']:  # global help if no subparser
+            break
+    else:
+        for x in self._subparsers._actions:
+            if not isinstance(x, argparse._SubParsersAction):
+                continue
+            for sp_name in x._name_parser_map.keys():
+                if sp_name in sys.argv[1:]:
+                    subparser_found = True
+                    name_to_return = sp_name
+        if not subparser_found:
+            # insert default in first position, this implies no
+            # global options without a sub_parsers specified
+            if args is None:
+                sys.argv.insert(1, name)
+            else:
+                args.insert(0, name)
+            name_to_return = name
+    return name_to_return
+
+
+
+def main(opts, parsername):
+    """
+    """
+    default_handler = SiteCreator
+    opts.subparser_name = parsername
+    if parsername == 'create':
+        handler = SiteCreator(opts, SITES)
+    elif parsername == 'support':
+        handler = SupportHandler(opts, SITES)
+    elif parsername == 'remote':
+        handler = RemoteHandler(opts, SITES)
+    elif parsername == 'docker':
+        handler = DockerHandler(opts, SITES)
+    elif parsername == 'mail':
+        handler = MailHandler(opts, SITES)
+    else:
+        handler = SiteCreator(opts, SITES)
+        
+    
+    # ----------------------
+    # create commands
+    # ----------------------
+    if parsername == 'create':
+        # create
+        # ------
+        # builds or updates a server structure
+        # to do so, it does a number of steps
+        #   - creates the needed folders in $ODOO_SERVER_DATA
+        #   - creates a build structure in $PROJECT_HOME/$SITENAME/$SITENAME
+        #     where $PROJECT_HOME is read from the config file.
+        #   - copies and sets up all files from skeleton directory to the build structure
+        #     this is done executing create_new_project and do_copy
+        #   - builds a virtualenv environment in the build structure
+        #   - prepares to builds an odoo server within the build structure by
+        #     execution  bin/build_odoo within the build structure.
+        #     Within this bild environment odoos module path will be set
+        #     that it points to the usual odoo directories within the build substructure
+        #     and also to the directories within odoo_instances as dictated by the
+        #     various modules installed from interpreting the site declaration
+        #     in sites.py
+        #   - add a "private" addons folder within the build structure called
+        #     $SITENAME_addons. This folder is also added to odoos addon path.
+        #   - set the data_dir to point to $ODOO_SERVER_DATA/$SITENAME/filestore
+        #
+        # modules_update
+        # -------------
+        if opts.create  or opts.modules_update or opts.module_update:
+            if opts.create:
+                existed = handler.create_or_update_site()
+                if existed:
+                    print()
+                    print('%s site allredy existed' % handler.site_name)
+                    print(SITE_EXISTED % (handler.default_values['inner'], handler.site_name))
+                else:
+                    if handler.site_name:
+                        print()
+                        print('%s site created' % handler.site_name)
+                        print(SITE_NEW % (handler.site_name, handler.site_name, handler.default_values['inner']))
+            # create the folder structure within the datafoler defined in the config
+            # this also creates the config file used by a docker server within the
+            # newly created folders
+            handler.create_folders(quiet=True)
+            create_server_config(handler)
+            did_run_a_command = True
+    
+            # make sure project was added to bash_aliases
+            handler.add_aliases()
+            # checkout repositories
+            checkout_sa(opts)
+            
+        # list_sites
+        # ----------
+        # list_sites lists all existing sites both from global and local sites
+        if opts.list_sites:
+            list_sites(SITES)
+            did_run_a_command = True
+            return
+        
+        
+    # ----------------------
+    # support commands
+    # ----------------------
+    if parsername == 'support':
+    
+        # edit_site, edit_server
+        # ----------------------
+        # Lets the user edit the content of config/localdat.py to edit a server
+        # description, or change the server description in LOCALDATA['sitesinfo_path']
+        # add_site_local adds a site description to the sites_local.py file
+        if opts.edit_site or opts.edit_server:
+            if opts.edit_site:
+                handler.check_name(must_match=True)
+            handler.edit_site_or_server()
+            did_run_a_command = True
+            return
+    
+def parse_args():
+    argparse.ArgumentParser.set_default_subparser = set_default_subparser
+    usage = ""
+
+    # -----------------------------------------------
+    # parent parser holds arguments, that are used for all subparsers 
+    parent_parser = ArgumentParser(usage=usage, add_help=False)
+    # set options for parent_parser
+    add_options_parent(parent_parser)
+    # parser_rpc is also used in several parsers to provide default values
+    parser_rpc = ArgumentParser(add_help=False)
+    # set options for parser_rpc
+    add_options_rpc(parser_rpc)
+
+
+    # parser is the main parser
+    parser = ArgumentParser()
+    subparser_help = """
+    erp workbench provides commands to manage erp sites.
+    These commands ares grouped into several groups of subcommands.
+    use {SUBCOMMAND} --help to see the subcommans options.
+    """
+    subparsers = parser.add_subparsers(help=subparser_help)
+
+    # -----------------------------------------------
+    # create commands
+    parser_manage = subparsers.add_parser(
+        'create',
+        help="""
+        create is used to manage local and remote sites by reading 
+        site descrition created using the sites command set
+        """,
+        parents=[parser_rpc, parent_parser],
+        #prog='PROG',
+        usage='%(prog)s [options]')
+    # -----------------------------------------------
+    # support commands
+    parser_support = subparsers.add_parser(
+        'support', 
+        help="""
+        support provides commands to handle site descriptions from which sites are constructed
+        and other support commands.
+        """, 
+        parents=[parent_parser])
+    add_options_support(parser)
+    # -----------------------------------------------
+    # manage docker
+    parser_docker = subparsers.add_parser(
+        'docker',
+        help='docker provides commands to handle docker containers',
+        parents=[parent_parser])
+    # -----------------------------------------------
+    # manage remote server (can be localhost)
+    parser_remote = subparsers.add_parser(
+        'remote',
+        help='remote provides commands to manage elements of the remote server.',
+        parents=[parent_parser])
+    # -----------------------------------------------
+    # manage mails
+    parser_mail = subparsers.add_parser(
+        'mail',
+        help='mail provides commands to manage mail accounts.',
+        parents=[parent_parser])
+
+    # -----------------------------------------------
+    # manage sites create and update sites
+    # -----------------------------------------------
+    #http://stackoverflow.com/questions/10448200/how-to-parse-multiple-sub-commands-using-python-argparse
+    #parser_site_s = parser_site.add_subparsers(title='manage sites', dest="site_creation_commands")
+    add_options_create(parser_manage)
+
+    # -----------------------------------------------
+    # support commands
+    # -----------------------------------------------
+    #parser_manage_s = parser_manage.add_subparsers(title='manage sites', dest="site_manage_commands")
+    parser_support.add_argument(
+        "--add-site",
+        action="store_true", dest="add_site", default=False,
+        help='add site description to sites.py from template. Name must be provided'
+    )
+    parser_support.add_argument(
+        "--add-site-local",
+        action="store_true", dest="add_site_local", default=False,
+        help='add site description to sites_local.py from template. Name must be provided'
+    )
+    parser_support.add_argument(
+        "--edit-site",
+        action="store_true", 
+        dest="edit_site", 
+        default=False,
+        help='edit site. name must be provided'
+    )
+    parser_support.add_argument(
+        "--edit-server",
+        action="store_true", dest="edit_server", default=False,
+        help='edit local data with server info'
+    )
+
+    # -----------------------------------------------
+    # manage docker
+    # -----------------------------------------------
+    #parser_support_s = parser_support.add_subparsers(title='docker commands', dest="docker_commands")
+    parser_docker.add_argument(
+        "-dassh", "--docker-add_ssh",
+        action="store_true", dest="docker_add_ssh", default=False,
+        help = 'add ssh to a docker container'
+    )
+
+    # -----------------------------------------------
+    # manage remote server (can be localhost)
+    # -----------------------------------------------
+    #parser_docker_s = parser_docker.add_subparsers(title='remote commands', dest="remote_commands")
+    parser_remote.add_argument(
+        "--add-apache",
+        action="store_true", dest="add_apache", default=False,
+        help = 'add apache.conf to the apache configuration. Name must be provided'
+    )
+    # -----------------------------------------------
+    # manage mails
+    # -----------------------------------------------
+    
+    sub_parser = parser.set_default_subparser('create')
+    args, unknownargs = parser.parse_known_args()
+    command_line = ' '.join(sys.argv)
+    args.command_line = command_line
+    unknownargs = [a for a in unknownargs if a and a[0] != '-']
+    if not args.name:
+        if unknownargs:
+            args.name = unknownargs[0]
+        else:
+            args.name = ''
+    return args, sub_parser
+    
+    
+    opts = OptsWrapper(args)
+    opts.command_line = command_line # so we can reexecute
+    if not opts.name and unknownargs:
+        unknownargs = [a for a in unknownargs if a and a[0] != '-']
+        if unknownargs:
+            opts._o.__dict__['name'] = unknownargs[0]
+
+
+if __name__ == '__main__':
+    #print(banner)
+    args, sub_parser_name = parse_args()
+
+
+    #(opts, args) = parser.parse_args()
+
+    # --------------------------------------------------------
+    # set a marker, so we can check if any command was executed
+    # --------------------------------------------------------
+    did_run_a_command = False
+
+    main(args, sub_parser_name) #opts.noinit, opts.initonly)
+
+    if 0: #not did_run_a_command:
+        print(bcolors.FAIL)
+        print('*' * 80)
+        print('it looks as if no valid comand was executed')
+        print('*' * 80)
+        print(bcolors.ENDC)
+        

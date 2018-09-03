@@ -1,6 +1,9 @@
 # robert
 *.bak
-
+sites_list
+.vscode
+*.swp
+*.save
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

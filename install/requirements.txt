@@ -12,7 +12,8 @@ imagesize
 jinja2
 docker-py
 pycrypto
-psycopg2
+#psycopg2
+psycopg2-binary
 odoorpc
 ruamel.std.argparse
 bgtunnel
