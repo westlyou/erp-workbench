@@ -361,9 +361,9 @@ class InitHandler(RPC_Mixin):
         #             # the following three values will be overruled by the docker registry
         # created using docker_handler.update_container_info
         # when we deal with a docker instance
-        self._rpc_host = opts.rpc_host or 'localhost'
-        self._rpc_hostport = opts.rpc_port or '8069'
-        self._db_host = self.opts.db_host or 'localhost'
+        self._rpc_host = opts.__dict__.get('rpc_host', 'localhost')
+        self._rpc_hostport = opts.__dict__.get('rpc_port', '8069')
+        self._db_host = opts.__dict__.get('db_host','localhost')
         # starting with odoo 11 we need to check what python version to use
         if self.version:
             try:
@@ -692,7 +692,7 @@ class InitHandler(RPC_Mixin):
     def db_user(self):
         if self.parsername == 'docker':
             return self.docker_db_admin
-        return self.login_info.get('db_user') or self.opts.db_user or DB_USER
+        return self.login_info.get('db_user') or self.opts.__dict__.get('db_user', DB_USER)
 
     @property
     def db_host(self):
@@ -855,8 +855,8 @@ class InitHandler(RPC_Mixin):
     # @SITES            : the global list of sites
     def flatten_sites(self, sites=SITES):
         """
-        sites can inherit settings fro other sites
-        flatten_sites resolfes this inheritance tree
+        sites can inherit settings from other sites
+        flatten_sites resolves this inheritance tree
         @SITES            : the global list of sites
         """
         # we allow only one inheritance level

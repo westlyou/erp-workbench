@@ -5,6 +5,7 @@ os.chdir(__path__[0])
 files = os.listdir('.')
 sys.path.insert(0, '.')
 SITES_G = {}
+importlib.invalidate_caches()
 for file_name in files:
     try:
         n, e = file_name.split('.')

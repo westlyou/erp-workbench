@@ -223,8 +223,7 @@ def main(opts, parsername):
         handler = MailHandler(opts, SITES)
     else:
         handler = SiteCreator(opts, SITES)
-        
-    
+
     # ----------------------
     # create commands
     # ----------------------
@@ -289,7 +288,6 @@ def main(opts, parsername):
     # support commands
     # ----------------------
     if parsername == 'support':
-    
         # edit_site, edit_server
         # ----------------------
         # Lets the user edit the content of config/localdat.py to edit a server

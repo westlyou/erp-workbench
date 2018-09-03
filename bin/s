@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $1 ]; then
-   bin/c support $1 $2 $3
+   bin/_c support $1 $2 $3
 else
-   bin/c support --help
+   bin/_c support --help
 fi

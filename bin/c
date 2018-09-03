@@ -1,1 +1,6 @@
-../scripts/create_site.py
+#!/bin/bash
+if [ $1 ]; then
+   bin/_c create $1 $2 $3
+else
+   bin/_c create --help
+fi

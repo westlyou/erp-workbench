@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $1 ]; then
-   bin/c docker $1 $2 $3
+   bin/_c docker $1 $2 $3
 else
-   bin/c docker --help
+   bin/_c docker --help
 fi

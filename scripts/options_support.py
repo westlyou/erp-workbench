@@ -35,7 +35,7 @@ def add_options_support(parser):
     parser_support.add_argument(
         "--docker-port",
         action="store", dest="docker_port",
-        help = 'provide docker post to new server.  To ckeck for availability use option -lp --list-port'
+        help = 'provide docker port to new server.  To ckeck for availability use option -lp --list-port'
     )
     parser_support.add_argument(
         "--remote-server",
@@ -43,9 +43,19 @@ def add_options_support(parser):
         help = 'provide docker post to new server.  To ckeck for availability use option -lp --list-port'
     )
     parser_support.add_argument(
+        "--edit-site",
+        action="store_true", dest="edit_site", default=False,
+        help = 'edit site. name must be provided'
+    )
+    parser_support.add_argument(
         "--edit-site-preset",
         action="store_true", dest="edit_site_preset", default=False,
         help = 'edit preset values for site. name must be provided'
+    )
+    parser_support.add_argument(
+        "--edit-server",
+        action="store_true", dest="edit_server", default=False,
+        help = 'edit local data with server info'
     )
     parser_support.add_argument(
         "-a", "--alias",

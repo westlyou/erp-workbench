@@ -37,7 +37,9 @@ class UpdateError(subprocess.CalledProcessError):
 # -------------------------------------------------------------
 # defined in messages.py
 #MARKER = '# ---------------- marker ----------------'
-
+SITES_LIST_INI ="""from .sites_local import SITES_L
+from .sites_global import SITES_G
+"""
 class SitesHandler(object):
     def __init__(self, base_path, template_name='', preset_values=''):
         self.base_path = base_path
@@ -106,9 +108,9 @@ class SitesHandler(object):
                 print(LOCALSITESLIST_BASEPATH_MISSING % bp)
             p1 = sites_list_path
             if not os.path.exists(p1):
-                os.makedirs(p1)
+                os.makedirs(p1, exist_ok=True)
                 # add __init__.py
-                open('%s/__init__.py' % p1, 'a').close()
+                open('%s/__init__.py' % p1, 'w').write(SITES_LIST_INI)
                 template = open('%s/templates/newsite.py' % self.base_path, 'r').read()
                 template = template.replace('xx.xx.xx.xx', 'localhost')
                 # default values for the demo sites
@@ -178,8 +180,8 @@ class SitesHandler(object):
                 sites_list_path = '/' + '/'.join(parts[:-1])
             sys.path.insert(0, os.path.normpath(sites_list_path))
         try:
-            from sites_list.sites_local import SITES_L
-            from sites_list.sites_global import SITES_G
+            from sites_list import SITES_G, SITES_L
+            #from sites_list.sites_local import SITES_L
         except ImportError:
             from bcolors import bcolors
             print(bcolors.FAIL)
