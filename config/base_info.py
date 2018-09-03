@@ -4,4 +4,5 @@ base_info = {'docker_dumper_image': 'robertredcor/dumper',
  'project_path': '/home/robert/projects',
  'repo_mapper': 'gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/',
  'sitesinfo_path': '/home/robert/workbench/sites_list/',
- 'sitesinfo_url': 'localhost'}
+ 'sitesinfo_url': 'localhost',
+ 'editor' : 'code'}

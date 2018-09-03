@@ -442,11 +442,11 @@ class InitHandler(RPC_Mixin):
                     sys.exit()
             login_info['user'] = ACT_USER
             # access to the local database
-            login_info['db_password'] = self.opts.db_password or DB_PASSWORD_LOCAL
-            login_info['db_user'] = self.opts.db_user or DB_USER
+            login_info['db_password'] = self.opts.__dict__.get('db_password', DB_PASSWORD_LOCAL)
+            login_info['db_user'] = self.opts.__dict__.get('db_user', DB_USER)
             # access to the locally running odoo
-            login_info['rpc_user'] = self.opts.rpc_user
-            login_info['rpc_pw'] = self.opts.rpc_password
+            login_info['rpc_user'] = self.opts.__dict__.get('rpc_user', DB_USER)
+            login_info['rpc_pw'] = self.opts.__dict__.get('rpc_password', DB_PASSWORD_LOCAL)
             # access to the local docker
             # -----------------
             # remote
@@ -457,8 +457,8 @@ class InitHandler(RPC_Mixin):
             login_info['remote_user'] = server.get('remote_user') or ''
             login_info['remote_user_pw'] = self.site and server.get(
                 'remote_pw') or ''
-            login_info['remote_db_password'] = self.opts.db_password or DB_PASSWORD
-            login_info['remote_db_user'] = self.opts.db_user or DB_USER
+            login_info['remote_db_password'] = self.opts.__dict__.get('db_password', DB_PASSWORD)
+            login_info['remote_db_user'] = self.opts.__dict__.get('db_user', DB_USER)
             # docker
             # while docker opts are not yet loaded
             try:
