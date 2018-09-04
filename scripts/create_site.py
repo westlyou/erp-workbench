@@ -11,19 +11,6 @@ import argcomplete
 from bcolors import bcolors
 from banner import BANNER_HEAD, BANNER_TEXT
 
-# robert
-# make sure at least the base config is accessible
-#try:
-    ##from ruamel.std.argparse import ArgumentParser, set_default_subparser
-    #from ruamel.std.argparse import set_default_subparser
-    ##import argparse
-#except ImportError:
-    #print('*' * 80)
-    #print(bcolors.WARNING + bcolors.FAIL + 'please run bin/pip install -r install/requirements.txt' + bcolors.ENDC)
-    #print('could not install ruamel.std.argparse')
-    #print('*' * 80)
-    #sys.exit()
-
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from scripts.messages import *
 from config import NEED_BASEINFO, BASE_INFO_FILENAME, BASE_DEFAULTS
@@ -137,42 +124,6 @@ def interactive():
     return args
 
 #https://stackoverflow.com/questions/6365601/default-sub-command-or-handling-no-sub-command-with-argparse
-def set_default_subparserXX(self, name, args=None, positional_args=0):
-    """default subparser selection. Call after setup, just before parse_args()
-    name: is the name of the subparser to call by default
-    args: if set is the argument list handed to parse_args()
-
-    , tested with 2.7, 3.2, 3.3, 3.4
-    it works with 2.6 assuming argparse is installed
-    """
-    subparser_found = False
-    existing_default = False # check if default parser previously defined
-    for arg in sys.argv[1:]:
-        if arg in ['-h', '--help']:  # global help if no subparser
-            break
-    else:
-        for x in self._subparsers._actions:
-            if not isinstance(x, argparse._SubParsersAction):
-                continue
-            for sp_name in x._name_parser_map.keys():
-                if sp_name in sys.argv[1:]:
-                    subparser_found = sp_name
-                if sp_name == name: # check existance of default parser
-                    existing_default = sp_name
-        #if not subparser_found:
-            ## If the default subparser is not among the existing ones,
-            ## create a new parser.
-            ## As this is called just before 'parse_args', the default
-            ## parser created here will not pollute the help output.
-
-            #if not existing_default:
-                #for x in self._subparsers._actions:
-                    #if not isinstance(x, argparse._SubParsersAction):
-                        #continue
-                    #x.add_parser(name)
-                    #break # this works OK, but sho
-    return existing_default or subparser_found
-
 def set_default_subparser(self, name, args=None):
     """default subparser selection. Call after setup, just before parse_args()
     name: is the name of the subparser to call by default
@@ -299,6 +250,25 @@ def main(opts, parsername):
             handler.edit_site_or_server()
             did_run_a_command = True
             return
+
+        # show config
+        # -----------
+        # list_sites lists all existing sites both from global and local sites
+        # if we have an option that needs a name ..
+        if opts.show:
+            handler.show_config()
+            did_run_a_command = True
+            return
+    
+        # set config
+        # -----------
+        # list_sites lists all existing sites both from global and local sites
+        # if we have an option that nees a name ..
+        if opts.set_config:
+            handler.set_config()
+            did_run_a_command = True
+            return
+
     
 def parse_args():
     argparse.ArgumentParser.set_default_subparser = set_default_subparser
@@ -344,7 +314,7 @@ def parse_args():
         and other support commands.
         """, 
         parents=[parent_parser])
-    add_options_support(parser)
+    add_options_support(parser_support)
     # -----------------------------------------------
     # manage docker
     parser_docker = subparsers.add_parser(
@@ -375,28 +345,6 @@ def parse_args():
     # support commands
     # -----------------------------------------------
     #parser_manage_s = parser_manage.add_subparsers(title='manage sites', dest="site_manage_commands")
-    parser_support.add_argument(
-        "--add-site",
-        action="store_true", dest="add_site", default=False,
-        help='add site description to sites.py from template. Name must be provided'
-    )
-    parser_support.add_argument(
-        "--add-site-local",
-        action="store_true", dest="add_site_local", default=False,
-        help='add site description to sites_local.py from template. Name must be provided'
-    )
-    parser_support.add_argument(
-        "--edit-site",
-        action="store_true", 
-        dest="edit_site", 
-        default=False,
-        help='edit site. name must be provided'
-    )
-    parser_support.add_argument(
-        "--edit-server",
-        action="store_true", dest="edit_server", default=False,
-        help='edit local data with server info'
-    )
 
     # -----------------------------------------------
     # manage docker
