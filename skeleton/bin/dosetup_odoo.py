@@ -96,8 +96,8 @@ def collect_tags(tags_dic, _tags=TAGS):
                 # if last_tag is set, we must handle it
                 if last_tag:
                     """addons_path =
-                        local psytex_addons/
-                        local /home/robert/odoo_instances/psytex/addons
+                        local %%(PROJECT_NAME)s_addons/
+                        local %%(BASE_PATH)s/odoo_instances/%%(PROJECT_NAME)s/addons
                     """
                     tag_line = ''
                     for tag_part in tag_parts:
