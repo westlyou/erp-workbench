@@ -77,7 +77,7 @@ to do:
 - option to only update changed modules (like -c but without creating the site)
 - change dosetup to be an option of create, make dosetup.py in the projects
   folders bin to be able
-  to collect its data from odoo_instances/sites.py ..
+  to collect its data from erp_workbench/sites.py ..
 
 refresh:
 - there should be an option -M that runs bin/dosetup.py -f and recreates

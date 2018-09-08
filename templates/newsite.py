@@ -115,7 +115,7 @@
         },
         'remote_server': {
             'remote_url': '%(remote_server)s',  # please adapt
-            'remote_data_path': '/root/odoo_instances',
+            'remote_data_path': '/root/erp_workbench',
             'remote_user': 'root',
             # where is sites home on the remote server for non root users
             'remote_sites_home': '%(base_sites_home)s',
@@ -215,7 +215,7 @@
                 # a good place would be the
                 # SITENAME_addons folder created  in
                 # every buildout folder created by
-                # odoo_instances
+                # erp_workbench
                 # ***********************************
                 'type': 'local',
                 'url': '',

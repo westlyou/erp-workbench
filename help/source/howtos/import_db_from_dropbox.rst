@@ -11,7 +11,7 @@ Instructions to recreate afbstest::
 
     # first you have to refresh things:
     ooli; git pull
-    ooin; git pull
+    wwb; git pull
 
     # purge all elements of an existing installation
     # this you only need to do if approriate
@@ -25,9 +25,9 @@ Instructions to recreate afbstest::
                         # this will also create odoo's config file
     bin/odoo    # this will start odoo
     
-    # then back to odoo_instances in a second bash shell
+    # then back to erp_workbench in a second bash shell
     d # this will deactivate an active virtual env
-    ooin # cd into the odoo_instances folder
+    wwb # cd into the erp_workbench folder
     bin/c -uo all afbstest  # install/update all addons 
                             # defined for afbstest
                             # now you have an empty database 
@@ -54,7 +54,7 @@ steps to provision the afbssite database with data from a running system::
     
     # now you have to read in the data:
     # first make sure afbstest is running!
-    ooin # to make sure we are in the rigth place
+    wwb # to make sure we are in the rigth place
     bin/c -uu afbstest  -N  # this kills the running odoo, but remembers 
                             # where it has been running
                             # the -N option instructs the process to use existing data, 
@@ -81,7 +81,7 @@ no own addons block in its site description. Therefore we must add it.
 
 to add the new addon execute the following::
 
-    ooin
+    wwb
     bin/e afbstest # this will start an editor with the afbstest site description
     # i this description add the following block
     # if unsure where to add it, loock at afbs.py in the same folder as afbstest.py
@@ -112,7 +112,7 @@ Now odoo has access to the new module, so we can install it. To do so, the afbst
 
 Steps to install the new addons with all its dependencies::
 
-    ooin # change to odoo_instances
+    wwb # change to erp_workbench
     bin/c -uo all afbstest # this install all new addons, and updates the existing ones
     # alternatively, we can also just install the newly added addon like so:
     bin/c -uo l10n_ch_payment_fix_pos afbstest

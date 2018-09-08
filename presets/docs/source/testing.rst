@@ -10,7 +10,7 @@ To create this testsite follow these steps
 
     Create local site::
 
-        ooin 
+        wwb 
         bin/s --add-site-local presettest
         bin/c -c presettest
 

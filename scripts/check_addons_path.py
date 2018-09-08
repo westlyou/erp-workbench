@@ -77,5 +77,5 @@ def check_addons_paths(cfg_path, path_mapping=[], verbose=False, create=False):
 
 if __name__ == '__main__':
     check_addons_paths('/home/robert/projects/afbstest/afbstest/etc', verbose=True)
-    mapping = ('/mnt/extra-addons', '/home/robert/odoo_instances')
-    check_addons_paths('/home/robert/odoo_instances/afbstest/etc/openerp-server.conf', verbose=True, path_mapping=mapping)
+    mapping = ('/mnt/extra-addons', '/home/robert/erp_workbench')
+    check_addons_paths('/home/robert/erp_workbench/afbstest/etc/openerp-server.conf', verbose=True, path_mapping=mapping)

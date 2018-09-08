@@ -193,7 +193,7 @@ def main(opts, parsername):
         #     execution  bin/build_odoo within the build structure.
         #     Within this bild environment odoos module path will be set
         #     that it points to the usual odoo directories within the build substructure
-        #     and also to the directories within odoo_instances as dictated by the
+        #     and also to the directories within erp_workbench as dictated by the
         #     various modules installed from interpreting the site declaration
         #     in sites.py
         #   - add a "private" addons folder within the build structure called

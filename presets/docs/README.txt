@@ -4,10 +4,10 @@ README.txt
         start virtualenv:
             ooinw
         cd into presets/docs folder:
-            ooin
+            wwb
             cd presets/docs
         run build process:
             make html
     Use help:
-        ooin
+        wwb
         presets/help

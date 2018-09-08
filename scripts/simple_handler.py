@@ -33,7 +33,7 @@ ODOO_ADMIN_PW = 'admin'
 DB_PASSWORD = 'odoo'
 
 # path to the site description
-SITE_DESCRIPTION = '/home/robert/odoo_instances/sites_list/sites_global/afbs.py'
+SITE_DESCRIPTION = '/home/robert/erp_workbench/sites_list/sites_global/afbs.py'
 
 # SERVER_CONFIG is near the end of the file !!
 class bcolors:

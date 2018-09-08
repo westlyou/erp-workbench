@@ -30,7 +30,7 @@ Creating a docker image consist of several steps:
 
 This process is done semiautomatically by running the following command::
 
-    ooin
+    wwb
     bin/d -dbi SITENAME -dbiC # where SITENAME could be afbstest
 
 

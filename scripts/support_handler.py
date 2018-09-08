@@ -198,9 +198,9 @@ class SupportHandler(InitHandler):
             print(SITE_CREATED_SERVER_BAD_IP % opts.add_server)
             return
         if server_info[0] == 'root':
-            remote_data_path = '/root/odoo_instances'
+            remote_data_path = '/root/erp_workbench'
         else:
-            remote_data_path = '/home/%s/odoo_instances' % server_info[0]
+            remote_data_path = '/home/%s/erp_workbench' % server_info[0]
         self.default_values['remote_user'] = server_info[0]
         self.default_values['use_ip'] = server_info[1]
         self.default_values['remote_data_path'] = remote_data_path

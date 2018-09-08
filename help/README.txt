@@ -1,16 +1,16 @@
 README.txt
 ----------
 This explains how to create the doc files for
-odoo workbench (aka odoo_instances)
+odoo workbench (aka erp_workbench)
 
     Create help:
         start virtualenv:
             ooinw
         cd into help folder:
-            ooin
+            wwb
             cd help
         run build process:
             make html
     Use help:
-        ooin
+        wwb
         bin/help

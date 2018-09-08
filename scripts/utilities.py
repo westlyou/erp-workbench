@@ -154,7 +154,7 @@ def collect_addon_paths(handler):
 
 # ----------------------------------
 # create_server_config
-# create server config file in odoo_instances/SITENAME/openerp.conf
+# create server config file in erp_workbench/SITENAME/openerp.conf
 # @default_values   : default value
 # @foldernames      : list of folders to create within the site foler
 # ----------------------------------

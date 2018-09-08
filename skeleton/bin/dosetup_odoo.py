@@ -25,7 +25,7 @@ PROJECT_LIST_DIR = os.path.split(os.path.split(PROJECT_HOME)[0])[0]
 
 # the LOGIN_FILE is a config file skeleton that was used for creating
 # a buildout.cfg file
-# It is created by ooin's bin/c -c PROJECT_NAME
+# It is created by wwb's bin/c -c PROJECT_NAME
 # and contains lines like
 # odoo_version = 1.1.0
 # db_name = psytex
@@ -97,7 +97,7 @@ def collect_tags(tags_dic, _tags=TAGS):
                 if last_tag:
                     """addons_path =
                         local %%(PROJECT_NAME)s_addons/
-                        local %%(BASE_PATH)s/odoo_instances/%%(PROJECT_NAME)s/addons
+                        local %%(BASE_PATH)s/erp_workbench/%%(PROJECT_NAME)s/addons
                     """
                     tag_line = ''
                     for tag_part in tag_parts:

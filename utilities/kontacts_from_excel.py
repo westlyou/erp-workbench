@@ -1020,7 +1020,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-f", "--file-path",
         action="store", dest="path",
-        default = os.path.expanduser('~/odoo_instances/customers/leanbi/excelfiles/'),
+        default = os.path.expanduser('~/erp_workbench/customers/leanbi/excelfiles/'),
         help = 'path to the excel files'
     )
     parser.add_argument(

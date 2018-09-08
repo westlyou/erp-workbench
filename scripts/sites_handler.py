@@ -117,7 +117,7 @@ class SitesHandler(object):
                 defaults = {
                     'site_name' : 'demo_global', 
                     'marker' : self.marker,
-                    'base_sites_home' : '/home/%s/odoo_instances' % ACT_USER,
+                    'base_sites_home' : '/home/%s/erp_workbench' % ACT_USER,
                     'odoo_version' : '12',
                     'base_url' : 'demo_global',
                     'local_user_mail' : 'mail@localhost.com',
@@ -290,7 +290,7 @@ class SitesHandler(object):
         """
 
         self.handler = handler
-        handler.default_values['base_sites_home'] = '/root/odoo_instances' 
+        handler.default_values['base_sites_home'] = '/root/erp_workbench' 
         handler.default_values['base_url'] = ('%s.ch' % handler.site_name)
         template = ''
         remote_url = handler.opts.use_ip or 'xx.xx.xx.xx'
@@ -310,7 +310,7 @@ class SitesHandler(object):
 
     def add_site_local(self, handler, template_name = ''):
         self.handler = handler
-        handler.default_values['base_sites_home'] = '/home/%s/odoo_instances' % ACT_USER
+        handler.default_values['base_sites_home'] = '/home/%s/erp_workbench' % ACT_USER
         handler.default_values['base_url'] = ('%s.ch' % handler.site_name)
         template = ''
         if template_name:

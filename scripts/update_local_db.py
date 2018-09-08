@@ -90,7 +90,7 @@ def which(file):
 # #1676  rsync -z --delete -av root@144.76.184.20:/opt/odoo/.local/share/Odoo/filestore/redproducts/ /home/robert/projects/redproducts/redproducts/parts/filestore/redproducts/
 #     "breitschtraeff" : {
 #         'servename' : '144.76.184.20',
-#         'remote_data_path' : '/root/odoo_instances',
+#         'remote_data_path' : '/root/erp_workbench',
 #         'remote_user' : 'root'
 #     },
 
@@ -345,11 +345,11 @@ class DBUpdater(object):
             #!/bin/sh
             # updatedb.sh executes the script dodump.sh on a remote server
             # dodump.sh creates a temporary docker container that dumps a servers database
-            # into this servers data folder within odoo_instances
+            # into this servers data folder within erp_workbench
             # parameters:
             # $1 : site name
             # $2 : server url
-            # $3 : remote_data_path like /root/odoo_instances
+            # $3 : remote_data_path like /root/erp_workbench
             # $4 : login name on remote server
             # $5 : local path to odo server data
             # $6 : local path to odo_instances
@@ -370,7 +370,7 @@ class DBUpdater(object):
             """
             #!/bin/sh
             # dodump.sh dumps a site's database into its folder
-            # the folder is /root/odoo_instances/$1/dump where $1 represents the site's name
+            # the folder is /root/erp_workbench/$1/dump where $1 represents the site's name
             # dodump creates a temporary docker container that dumps a servers database
             # it is called by updatedb.sh and executed on the remote computer
             # $1 : name of the server                     updatedb.$1
@@ -410,31 +410,31 @@ class DBUpdater(object):
                 Assuming that the remote server is:
                     82.220.39.73
                 Assuming that the remote data is at:
-                    /root/odoo_instances
+                    /root/erp_workbench
                 the local user loggs in to the remote server as:
                     odooprojects
                 the remote user has its odoo data in:
-                    /home/odooprojects/odoo_instances
+                    /home/odooprojects/erp_workbench
                 the server name for which we want to copy the data is:
                     afbstest
                 then on the REMOTE server we have to execute the following commands:
-                    rsync -av /root/odoo_instances/afbstest/filestore/ /home/odooprojects/odoo_instances/afbstest/filestore/
-                    rsync -av /root/odoo_instances/afbstest/dump/ /home/odooprojects/odoo_instances/afbstest/dump/
-                    chmod a+rw /home/odooprojects/odoo_instances/afbstest/* -R
+                    rsync -av /root/erp_workbench/afbstest/filestore/ /home/odooprojects/erp_workbench/afbstest/filestore/
+                    rsync -av /root/erp_workbench/afbstest/dump/ /home/odooprojects/erp_workbench/afbstest/dump/
+                    chmod a+rw /home/odooprojects/erp_workbench/afbstest/* -R
                 the above commands will be executed on the REMOTE machine by calling:
                     #sudo $5/scripts/site_syncer.py $1 $2 $3 $4 $5
-                    sudo /root/odoo_sites/scripts/site_syncer.py afbstest 82.220.39.73 /home/odoprojects/odoo_instances odoprojects /root/odoo_sites
+                    sudo /root/odoo_sites/scripts/site_syncer.py afbstest 82.220.39.73 /home/odoprojects/erp_workbench odoprojects /root/odoo_sites
 
                 #!/bin/sh
                 # dodump_remote.sh rsyncs a remote site in /root/odoo_sites/SITENAME
                 # to /home/someuser/odoo_sites/SITENAME, so we can rsync it from there
-                # the folder is /root/odoo_instances/$1/dump where $1 represents the site's name
+                # the folder is /root/erp_workbench/$1/dump where $1 represents the site's name
                 # parameters:
                 # $1 : site name
                 # $2 : server url
                 # $3 : remote_data_path to the server data like /root/odoo_server_data
                 # $4 : login name on remote server
-                # $5 : path to roots instance home on the remote server (/root/odoo_instances)
+                # $5 : path to roots instance home on the remote server (/root/erp_workbench)
                 echo sudo $5/scripts/site_syncer.py $1 $2 $3 $4 $5
                 sudo $5/scripts/site_syncer.py $1 $2 $3 $4 $5
                 """
@@ -455,11 +455,11 @@ class DBUpdater(object):
             #!/bin/sh
             # updatedb.sh executes the script dodump on a remote server
             # dodump creates a temporary docker container that dumps a servers database
-            # into this servers data folder within odoo_instances
+            # into this servers data folder within erp_workbench
             # parameters:
             # $1 : site name
             # $2 : server url
-            # $3 : remote_data_path like /root/odoo_instances
+            # $3 : remote_data_path like /root/erp_workbench
             # $4 : login name on remote server
             # $5 : odoo_server_data_path
             # $6 : target site name
@@ -830,7 +830,7 @@ class DBUpdater(object):
             master_remote_data_path = server_dic.get('remote_data_path')
             # update local master file, but not local database
             self.doUpdate(db_update=False, names=[master_name])
-            # rsync -avzC --delete /home/robert/odoo_instances/afbs/filestore/afbs/ /home/robert/odoo_instances/afbstest/filestore/afbstest/
+            # rsync -avzC --delete /home/robert/erp_workbench/afbs/filestore/afbs/ /home/robert/erp_workbench/afbstest/filestore/afbstest/
             ddiC = {
                 'base_path': self.default_values['sites_home'],
                 'master_name': master_name,

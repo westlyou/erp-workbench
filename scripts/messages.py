@@ -65,9 +65,9 @@ in %%s
 and add a remote block like 
         'remote_server' : {
             'remote_url'    : 'localhost', #, please adapt
-            'remote_data_path'   : '/root/odoo_instances',
+            'remote_data_path'   : '/root/erp_workbench',
             'remote_user'   : 'root',
-            'remote_sites_home'    : '/home/robert/odoo_instances',
+            'remote_sites_home'    : '/home/robert/erp_workbench',
             'redirect_emil_to' : '', # redirect all outgoing mail to this account
                                      # needs red_override_email_recipients installed
         },
@@ -264,7 +264,7 @@ alias  drop="cd %(user_home)s/Dropbox"
 """
 OOIN = """
 # odoo
-alias  ooin="cd %s"
+alias  wwb="cd %s"
 """
 OOLI = """
 # sites-list
@@ -290,7 +290,7 @@ ALIASC = """
 alias  do_checkit="for x in *; do echo ----------; echo \$x; echo ----------; ( cd \$x; git status; ) ; done"
 """
 ALIASOO = """
-alias  ooinw="ooin; source python/bin/activate"
+alias  ooinw="wwb; source python/bin/activate"
 """
 ALIAS_LINE = 'alias  %(sname)s="cd %(path)s"\n'
 AMARKER = '##-----wb alias-marker %s-----##'
@@ -477,7 +477,7 @@ MODULE_MISSING ="""%s------------------------------------------------
 %%s could not be loaded.
 
 To install it, please execute following commands:
-ooin;bin/pip install -r install/requirements.txt
+wwb;bin/pip install -r install/requirements.txt
 ------------------------------------------------%s
 """ % (bcolors.FAIL, bcolors.ENDC)
 

@@ -113,9 +113,9 @@ def main():
         ru = args.remote_user
         # we could reed the following from the config files
         if ru == 'root':
-            home = '/root/odoo_instances/'
+            home = '/root/erp_workbench/'
         else:
-            home = os.path.expanduser('~/odoo_instances/')
+            home = os.path.expanduser('~/erp_workbench/')
         target_d = os.path.normpath('%s@%s:%s%s/dump/%s.dmp' % (ru, rh, home, target, target_name))
         target_f = os.path.normpath('%s@%s:%s%s/filestore/%s' % (ru, rh, home, target, target_name))
         cmd_lines = [

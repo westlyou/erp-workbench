@@ -5,7 +5,7 @@ You can remome all locally installed elements of a workbench project.
 This will erase the followin elements:
 
     - $HOME/projects/$SITENAME
-    - $OODA/$SITENAME # this $OODA is normaly the erp-workbench foler (odoo_instances)
+    - $OODA/$SITENAME # this $OODA is normaly the erp-workbench folder (erp_workbench)
     - drop database $SITENAME
     - remove virtualenv $SITENAME
 

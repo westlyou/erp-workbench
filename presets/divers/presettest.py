@@ -114,10 +114,10 @@ presettest = {
         },
         'remote_server': {
             'remote_url': 'localhost',  # please adapt
-            'remote_data_path': '/root/odoo_instances',
+            'remote_data_path': '/root/erp_workbench',
             'remote_user': 'root',
             # where is sites home on the remote server for non root users
-            'remote_sites_home': '/home/robert/odoo_instances',
+            'remote_sites_home': '/home/robert/erp_workbench',
             'redirect_emil_to': '',  # redirect all outgoing mail to this account
             # needs red_override_email_recipients installed
         },
