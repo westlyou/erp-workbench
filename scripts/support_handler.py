@@ -383,9 +383,9 @@ class SupportHandler(InitHandler):
 
         # finaly we have to copy the filestore from the old to the new site
         lfst_path = '%s/%s/filestore/%s' % (
-            BASE_INFO['odoo_server_data_path'], self.site_name, self.site_name)
+            BASE_INFO['erp_server_data_path'], self.site_name, self.site_name)
         rfst_path = '%s/%s/filestore/%s' % (
-            BASE_INFO['odoo_server_data_path'], target_site, target_site)
+            BASE_INFO['erp_server_data_path'], target_site, target_site)
         cmdline = 'rsync -av %s/ %s/ --delete' % (lfst_path, rfst_path)
         self.run_upgrade(cmdline)
         print(bcolors.OKGREEN)

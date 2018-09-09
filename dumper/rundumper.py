@@ -26,7 +26,7 @@ except:
     print('trying to import base_info from %s/config failed' % SITES_HOME)
     sys.exit()
 
-DATA_HOME = BASE_INFO['odoo_server_data_path']
+DATA_HOME = BASE_INFO['erp_server_data_path']
 #docker run -it -v /home/robert/odoo_projects_data:/mnt/sites -v /home/robert/erp_workbench/dumper/:/mnt/sites/dumper  --rm=true --link db:db  dbdumper -s
 dd = {
     'data_home' : DATA_HOME,

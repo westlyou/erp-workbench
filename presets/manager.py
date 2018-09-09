@@ -195,7 +195,7 @@ class Manager(object):
             site_name {string} -- name of the site for which we handle the data
         """
         data_folder = '%s/%s/presets' % (
-            BASE_INFO['odoo_server_data_path'], site_name)
+            BASE_INFO['erp_server_data_path'], site_name)
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
         return data_folder

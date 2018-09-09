@@ -7,7 +7,7 @@
 # $2 : server url
 # $3 : remote_data_path like /root/erp_workbench
 # $4 : login name on remote server
-# $5 : local odoo_server_data_path
+# $5 : local erp_server_data_path
 # $6 : target site name
 # echo ssh $4@$2 'bash -s' < scripts/dodump.sh $1
 # ssh $4@$2 'bash -s' < scripts/dodump.sh $1 '/root/erp_workbench'

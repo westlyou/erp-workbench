@@ -224,7 +224,7 @@ class DockerHandler(InitHandler, DBUpdater):
             'container_name' : info_dic['container_name'],
             'remote_data_path' : info_dic['remote_data_path'],
             'odoo_image_version' : info_dic['odoo_image_version'],
-            'odoo_server_data_path' : info_dic['odoo_server_data_path'],
+            'erp_server_data_path' : info_dic['erp_server_data_path'],
         }
         docker_template = docker_template % docker_info
         mp = self.default_values.get('docker_path_map')
@@ -303,7 +303,7 @@ class DockerHandler(InitHandler, DBUpdater):
         if os.geteuid() == 0:
             # cd to the site folder, preserve old folder
             act_pwd = os.getcwd()
-            t_folder = os.path.normpath('%s/%s' % (BASE_INFO['odoo_server_data_path'], name))
+            t_folder = os.path.normpath('%s/%s' % (BASE_INFO['erp_server_data_path'], name))
             try:
                 os.chdir(t_folder)
                 user_and_group =  docker_info.get('external_user_group_id', '104:107')
@@ -327,7 +327,7 @@ class DockerHandler(InitHandler, DBUpdater):
             'container_name' : container_name,
             'remote_data_path' : self.site and self.site.get('remote_server', {}).get('remote_data_path', '') or '',
             'odoo_image_version' : docker_info['odoo_image_version'],
-            'odoo_server_data_path' : BASE_INFO['odoo_server_data_path'],           
+            'erp_server_data_path' : BASE_INFO['erp_server_data_path'],           
         }
         if update_container:
             # create a container that runs etc/odoorunner.sh as entrypoint
@@ -509,7 +509,7 @@ class DockerHandler(InitHandler, DBUpdater):
         if not odoo_version in list(ODOO_VERSIONS.keys()):
             print(ODOO_VERSION_BAD % (self.site_name, self.site['odoo_version']))
             return
-        docker_source_path = '%s/docker/docker/%s/' % (self.default_values['odoo_server_data_path'], odoo_version)
+        docker_source_path = '%s/docker/docker/%s/' % (self.default_values['erp_server_data_path'], odoo_version)
         # get path to where we want to write the docker file
         docker_target_path = '%s/docker/' % self.default_values['data_dir']
         if not os.path.exists(docker_target_path):

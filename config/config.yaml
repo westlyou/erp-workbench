@@ -56,3 +56,4 @@ BASE_DEFAULTS:
   # this setting is only used when rederict_emil is installed
   local_user_mail: 'info@company.com'
 
+

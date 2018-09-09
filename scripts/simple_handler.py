@@ -128,7 +128,7 @@ class Handler(object):
         
     def create_server_config(self):
         """
-        create server config file in $odoo_server_data_path$/SITENAME/openerp.conf
+        create server config file in $erp_server_data_path$/SITENAME/openerp.conf
         """
         opts = self.opts
         name = self.site_name

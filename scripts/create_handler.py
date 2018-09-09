@@ -355,7 +355,7 @@ class InitHandler(RPC_Mixin):
         if 'odoo_nightly' not in self.default_values:
             self.default_values['odoo_nightly'] = self.default_values['odoo_version']
 
-        # construct path to datafolder odoo_server_data_path
+        # construct path to datafolder erp_server_data_path
         if self.need_login_info:
             self._create_login_info(self.login_info)
         #             # the following three values will be overruled by the docker registry
@@ -600,9 +600,9 @@ class InitHandler(RPC_Mixin):
         return self.default_values.get('is_local')
 
     @property
-    def odoo_server_data_path(self):
-        return BASE_INFO['odoo_server_data_path']
-    data_path = odoo_server_data_path
+    def erp_server_data_path(self):
+        return BASE_INFO['erp_server_data_path']
+    data_path = erp_server_data_path
 
     @property
     def sitesinfo_path(self):
@@ -984,7 +984,7 @@ class InitHandler(RPC_Mixin):
         # /home/robert/projects/afbsecure/afbsecure/parts/odoo
         default_values['base_path'] = site_base_path
         default_values['data_dir'] = "%s/%s" % (
-            self.odoo_server_data_path, self.site_name)
+            self.erp_server_data_path, self.site_name)
         default_values['db_name'] = site_name
         default_values['outer'] = '%s/%s' % (
             BASE_INFO['project_path'], site_name)
@@ -1195,7 +1195,7 @@ class InitHandler(RPC_Mixin):
             os.mkdir(self.data_path)
         elif not os.path.isdir(self.data_path):
             print(bcolors.FAIL + '%s exists but is not a folder. Plese eiter remove it, or set'
-                  'new folder using option -set odoo_server_data_path:/NEWPATH' + bcolors.ENDC)
+                  'new folder using option -set erp_server_data_path:/NEWPATH' + bcolors.ENDC)
         for pn in [''] + foldernames:
             try:
                 pp = '%s/%s' % (p, pn)
@@ -1938,7 +1938,7 @@ class InitHandler(RPC_Mixin):
             return
         opts = self.opts
         default_values = self.default_values
-        pp = BASE_INFO['odoo_server_data_path']
+        pp = BASE_INFO['erp_server_data_path']
         oop = BASE_PATH
         marker_start = AMARKER % 'start'
         marker_end = AMARKER % 'end'
@@ -2026,7 +2026,7 @@ class InitHandler(RPC_Mixin):
         # wwb cd to erp_workbench
         result += OOIN % BASE_PATH
         result += OOLI % BASE_INFO['sitesinfo_path']
-        result += OODA % BASE_INFO['odoo_server_data_path']
+        result += OODA % BASE_INFO['erp_server_data_path']
         result += DOCKER_CLEAN
         result += DOC_ET_ALL % {'user_home': os.path.expanduser("~/")}
         result += ALIASC

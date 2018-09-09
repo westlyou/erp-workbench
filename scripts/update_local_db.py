@@ -120,7 +120,7 @@ class DBUpdater(object):
     # is returned
     # """
     #opts = self.opts
-    #home = self.BASE_INFO['odoo_server_data_path']
+    #home = self.BASE_INFO['erp_server_data_path']
     #dirs = [d for d in os.listdir(home) if os.path.isdir('%s/%s' % (home, d))]
     #result = {}
     # for d in dirs:
@@ -137,7 +137,7 @@ class DBUpdater(object):
         opts = self.opts
         dbname = self.site_name
         dpath = ''
-        dpath = '%s/%s/dump' % (BASE_INFO['odoo_server_data_path'], dbname)
+        dpath = '%s/%s/dump' % (BASE_INFO['erp_server_data_path'], dbname)
         print(bcolors.WARNING)
         print('*' * 80)
         # step one, create local dump
@@ -197,17 +197,17 @@ class DBUpdater(object):
             remote_user = server_dic['remote_user']
             # we have to copy the local filestore to the remote filestore
             lfst_path = '%s/%s/filestore/%s' % (
-                BASE_INFO['odoo_server_data_path'], dbname, dbname)
+                BASE_INFO['erp_server_data_path'], dbname, dbname)
             rfst_path = '%s/%s/filestore/%s' % (
                 remote_data_path, target_site_name, target_site_name)
             ipt = opts.use_ip_target
             if ipt in ['localhost', '127.0.0.1']:
                 rfst_path = '%s/%s/filestore/%s' % (
-                    BASE_INFO['odoo_server_data_path'], target_site_name, target_site_name)
+                    BASE_INFO['erp_server_data_path'], target_site_name, target_site_name)
                 dpath = '%s/%s/dump' % (
-                    BASE_INFO['odoo_server_data_path'], dbname)
+                    BASE_INFO['erp_server_data_path'], dbname)
                 target = '%s/%s/dump' % (
-                    BASE_INFO['odoo_server_data_path'], target_site_name)
+                    BASE_INFO['erp_server_data_path'], target_site_name)
                 print('*' * 80)
                 print('will copy the site data to %s' % rfst_path)
                 cmdline = 'rsync -av %s/ %s/ --delete' % (lfst_path, rfst_path)
@@ -221,7 +221,7 @@ class DBUpdater(object):
                 # now copy dumped db
                 local_dump = '%s/%s.dmp' % (dpath, dbname)
                 remote_dump = '%s/%s/dump/%s.dmp' % (
-                    BASE_INFO['odoo_server_data_path'], target_site_name, target_site_name)
+                    BASE_INFO['erp_server_data_path'], target_site_name, target_site_name)
                 cmdline = 'rsync -av %s %s' % (local_dump, remote_dump)
                 p = subprocess.Popen(
                     cmdline, stdout=subprocess.PIPE, shell=True)
@@ -398,7 +398,7 @@ class DBUpdater(object):
                 remote_url,                        # param 2
                 remote_data_path,                   # param 3
                 remote_user,                       # param 4
-                self.odoo_server_data_path,        # param 5
+                self.erp_server_data_path,        # param 5
                 self.sites_home,                   # param 6
                 verbose,                           # param 7
             ))
@@ -461,7 +461,7 @@ class DBUpdater(object):
             # $2 : server url
             # $3 : remote_data_path like /root/erp_workbench
             # $4 : login name on remote server
-            # $5 : odoo_server_data_path
+            # $5 : erp_server_data_path
             # $6 : target site name
             echo ssh $4@$2 'bash -s' < scripts/dodump.sh $1
             ssh $4@$2 'bash -s' < scripts/dodump.sh $1
@@ -480,7 +480,7 @@ class DBUpdater(object):
                 remote_url,
                 remote_data_path,
                 remote_user,
-                BASE_INFO['odoo_server_data_path'],
+                BASE_INFO['erp_server_data_path'],
                 use_site_name,
             ))
             if not os.path.exists(dpath):
@@ -514,12 +514,12 @@ class DBUpdater(object):
             if whered:
                 cmd_lines_docker = [
                     ['%s/docker run -v %s:/mnt/sites  -v %s/dumper/:/mnt/sites/dumper --rm=true --link db:db  -it %s -r %s' %
-                     (whered, BASE_INFO['odoo_server_data_path'], BASE_PATH, dumper_image_name, use_site_name)]
+                     (whered, BASE_INFO['erp_server_data_path'], BASE_PATH, dumper_image_name, use_site_name)]
                 ]
             else:
                 cmd_lines_docker = [
                     ['docker run -v %s:/mnt/sites  -v %s/dumper/:/mnt/sites/dumper --rm=true --link db:db  -it %s -r %s' %
-                     (BASE_INFO['odoo_server_data_path'], BASE_PATH, dumper_image_name, use_site_name)]
+                     (BASE_INFO['erp_server_data_path'], BASE_PATH, dumper_image_name, use_site_name)]
                 ]
             # if we know admins password, we set it
             # for non docker pw is usualy admin, so we do not use it
@@ -543,11 +543,11 @@ class DBUpdater(object):
             ]
             cmd_lines = [
                 {'cmd_line': ['chmod', 'a+rw', '%s/%s/filestore' % (
-                    BASE_INFO['odoo_server_data_path'], use_site_name)], 'is_builtin': True},
+                    BASE_INFO['erp_server_data_path'], use_site_name)], 'is_builtin': True},
                 {'cmd_line': ['chmod', 'a+rw', '%s/%s/filestore/' % (
-                    BASE_INFO['odoo_server_data_path'], use_site_name), '-R'], 'is_builtin': True},
+                    BASE_INFO['erp_server_data_path'], use_site_name), '-R'], 'is_builtin': True},
                 {'cmd_line': ['chmod',  'a+rw', '%s/%s/log' % (
-                    BASE_INFO['odoo_server_data_path'], use_site_name)], 'is_builtin': True},
+                    BASE_INFO['erp_server_data_path'], use_site_name)], 'is_builtin': True},
             ]
 
             if self.opts.dataupdate_docker or self.opts.transferdocker:
@@ -791,7 +791,7 @@ class DBUpdater(object):
             remote_user = server_dic.get('remote_user')
             remote_data_path = server_dic.get('remote_data_path')
             dpath = '%s/%s/dump/%s.dmp' % (
-                BASE_INFO['odoo_server_data_path'], site_name, site_name)
+                BASE_INFO['erp_server_data_path'], site_name, site_name)
 
             # get info about main site
             if opts.transferdocker:

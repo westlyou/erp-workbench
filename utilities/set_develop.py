@@ -27,7 +27,7 @@ import argparse
 def main(opts):
     # make sure project folder exists in Dropbox
     projpath = BASE_INFO['project_path']
-    datapath = BASE_INFO['odoo_server_data_path']
+    datapath = BASE_INFO['erp_server_data_path']
     site_name = opts.name
     if not site_name:
         print(bcolors.WARNING + 'sitename needed' + bcolors.ENDC)

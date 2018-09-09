@@ -44,7 +44,7 @@ before changing anythin with an existing container, please check wher its data i
 docker_db_template::
 
     docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo \
-    -v %(odoo_server_data_path)s/database/data:/var/lib/postgresql/data --name db --restart always \
+    -v %(erp_server_data_path)s/database/data:/var/lib/postgresql/data --name db --restart always \
     -p 55432:5432 postgres:%(postgres_version)s
 
 

@@ -4,13 +4,13 @@
 # --------------------------------------------------
 docker_template = """
 docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 --restart always \
-    -v %(odoo_server_data_path)s/%(site_name)s/etc:/etc/odoo \
-    -v %(odoo_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
-    -v %(odoo_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
-    -v %(odoo_server_data_path)s/%(site_name)s/dump:/mnt/dump \
-    -v %(odoo_server_data_path)s/%(site_name)s/filestore:/var/lib/odoo/filestore \
-    -v %(odoo_server_data_path)s/%(site_name)s/:/var/lib/odoo/ \
-    -v %(odoo_server_data_path)s/%(site_name)s/log:/var/log/odoo \
+    -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/odoo \
+    -v %(erp_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
+    -v %(erp_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
+    -v %(erp_server_data_path)s/%(site_name)s/dump:/mnt/dump \
+    -v %(erp_server_data_path)s/%(site_name)s/filestore:/var/lib/odoo/filestore \
+    -v %(erp_server_data_path)s/%(site_name)s/:/var/lib/odoo/ \
+    -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/odoo \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
     --name %(container_name)s -d --link db:db -t %(odoo_image_version)s
@@ -22,13 +22,13 @@ docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 -
 docker_template_update = """
 docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 --rm \
     --entrypoint /etc/odoo/runodoo.sh \
-    -v %(odoo_server_data_path)s/%(site_name)s/etc:/etc/odoo \
-    -v %(odoo_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
-    -v %(odoo_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
-    -v %(odoo_server_data_path)s/%(site_name)s/dump:/mnt/dump \
-    -v %(odoo_server_data_path)s/%(site_name)s/filestore:/var/lib/odoo/filestore \
-    -v %(odoo_server_data_path)s/%(site_name)s/:/var/lib/odoo/ \
-    -v %(odoo_server_data_path)s/%(site_name)s/log:/var/log/odoo \
+    -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/odoo \
+    -v %(erp_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
+    -v %(erp_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
+    -v %(erp_server_data_path)s/%(site_name)s/dump:/mnt/dump \
+    -v %(erp_server_data_path)s/%(site_name)s/filestore:/var/lib/odoo/filestore \
+    -v %(erp_server_data_path)s/%(site_name)s/:/var/lib/odoo/ \
+    -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/odoo \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
     --name %(container_name)s_tmp --link db:db -t %(odoo_image_version)s
@@ -36,7 +36,7 @@ docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 -
 
 docker_db_template = """
     docker run -d -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo \
-    -v %(odoo_server_data_path)s/database/data:/var/lib/postgresql/data --name db --restart always \
+    -v %(erp_server_data_path)s/database/data:/var/lib/postgresql/data --name db --restart always \
     -p 55432:5432 postgres:%(postgres_version)s
 """
 
@@ -125,12 +125,12 @@ setup(
 # --------------------------------------------------
 flectra_docker_template = """
 docker run -p 127.0.0.1:%(odoo_port)s:7073 -p 127.0.0.1:%(odoo_longpoll)s:7072 --restart always \
-    -v %(odoo_server_data_path)s/%(site_name)s/etc:/etc/flectra \
-    -v %(odoo_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
-    -v %(odoo_server_data_path)s/%(site_name)s/dump:/mnt/dump \
-    -v %(odoo_server_data_path)s/%(site_name)s/filestore:/var/lib/flectra/filestore \
-    -v %(odoo_server_data_path)s/%(site_name)s/:/var/lib/flectra/ \
-    -v %(odoo_server_data_path)s/%(site_name)s/log:/var/log/flectra \
+    -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/flectra \
+    -v %(erp_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
+    -v %(erp_server_data_path)s/%(site_name)s/dump:/mnt/dump \
+    -v %(erp_server_data_path)s/%(site_name)s/filestore:/var/lib/flectra/filestore \
+    -v %(erp_server_data_path)s/%(site_name)s/:/var/lib/flectra/ \
+    -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/flectra \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
     --name %(container_name)s -d --link db:db -t %(odoo_image_version)s

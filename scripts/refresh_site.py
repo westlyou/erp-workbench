@@ -12,7 +12,7 @@ SITES_HOME = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
 sys.path.insert(0, SITES_HOME)
 from config import SITES, BASE_INFO
 
-DATA_HOME = BASE_INFO['odoo_server_data_path']
+DATA_HOME = BASE_INFO['erp_server_data_path']
 #docker run -it -v /home/robert/odoo_projects_data:/mnt/sites -v /home/robert/erp_workbench/dumper/:/mnt/sites/dumper  --rm=true --link db:db  dbdumper -s
 #dd = {
     #'data_home' : DATA_HOME,
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     if not SITES.get(site_name):
         '%s is not a know site' % site_name
         sys.exit()
-    pp = os.path.normpath('%s/%s' % (BASE_INFO.get('odoo_server_data_path'), site_name))
+    pp = os.path.normpath('%s/%s' % (BASE_INFO.get('erp_server_data_path'), site_name))
     if not os.path.exists(pp) and os.path.isdir(pp):
         print('%s does not point to a valid site sctructure' % pp)
         sys.exit()

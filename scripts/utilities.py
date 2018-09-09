@@ -92,11 +92,11 @@ def get_process_id(name, path):
 
 def check_links():
     # there is only one link that must be set
-    # if 'odoo_server_data_path' and BASE_PATH differ
+    # if 'erp_server_data_path' and BASE_PATH differ
     # we must set a link to the dumper folder, so that
     # the dumper docker container finds its content
     return  # not used ...
-    if BASE_INFO['odoo_server_data_path'] != BASE_PATH:
+    if BASE_INFO['erp_server_data_path'] != BASE_PATH:
         actual = os.getcwd()
         os.chdir(BASE_PATH)
         if not os.path.exists('dumper'):
@@ -184,7 +184,7 @@ CONFIG_NAME = {
 
 def create_server_config(handler):
     """
-    create server config file in $odoo_server_data_path$/SITENAME/openerp.conf
+    create server config file in $erp_server_data_path$/SITENAME/openerp.conf
     @default_values   : default value
     @foldernames      : list of folders to create within the site foler
     """
@@ -196,7 +196,7 @@ def create_server_config(handler):
     server_type = handler.site.get('server_type', 'odoo')
     config_name = CONFIG_NAME[server_type]['config']
     odoo_admin_pw = handler.site.get('odoo_admin_pw', '')
-    p = os.path.normpath('%s/%s' % (BASE_INFO['odoo_server_data_path'], name))
+    p = os.path.normpath('%s/%s' % (BASE_INFO['erp_server_data_path'], name))
     collect_addon_paths(handler)
     # now copy a template openerp-server.conf
     handler.default_values['odoo_admin_pw'] = odoo_admin_pw
@@ -458,10 +458,10 @@ def _construct_sa(site_name, site_addons, skip_list):
             ap = a.get('add_path')
             if ap:
                 p = os.path.normpath(
-                    '%s/%s/addons/%s' % (BASE_INFO['odoo_server_data_path'], site_name, ap))
+                    '%s/%s/addons/%s' % (BASE_INFO['erp_server_data_path'], site_name, ap))
             else:
                 p = os.path.normpath(
-                    '%s/%s/addons' % (BASE_INFO['odoo_server_data_path'], site_name))
+                    '%s/%s/addons' % (BASE_INFO['erp_server_data_path'], site_name))
             if p not in added:
                 added.append(p)
     return '\n'.join(['    local %s' % a for a in added])
@@ -681,7 +681,7 @@ def checkout_sa(opts):
         temp_target = os.path.normpath(
             '%s/%s/%s/%s_addons/%%s' % (BASE_INFO['project_path'], opts.name, opts.name, opts.name))
         target = os.path.normpath(
-            '%s/%s/addons' % (BASE_INFO['odoo_server_data_path'], opts.name))
+            '%s/%s/addons' % (BASE_INFO['erp_server_data_path'], opts.name))
         # when we have a folder full of addons, as it is the case with OCA modules
         # they will be downloaded to download_target
         download_target = ''

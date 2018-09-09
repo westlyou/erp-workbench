@@ -80,8 +80,7 @@ except ImportError as e:
     print(str(e))
 except OSError:
     # we probably runing from within docker
-    print('-------------------------------------->>>>', os.getcwd())
-    BASE_INFO['odoo_server_data_path'] = '/mnt/sites'
+    BASE_INFO['erp_server_data_path'] = '/mnt/sites'
     if os.getcwd() == '/mnt/sites':
         print('------------------------------')
         raise ImportError()

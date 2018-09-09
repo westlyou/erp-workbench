@@ -18,7 +18,7 @@ def add_options_create(parser):
     parser_manage.add_argument(
         "-D", "--directories",
         action="store_true", dest="directories", default=False,
-        help = 'create local directories for site %s. option -n must be set and valid. This option is seldomly needed. Normaly directories are created when needed'  % BASE_INFO.get('odoo_server_data_path', BASE_PATH)
+        help = 'create local directories for site %s. option -n must be set and valid. This option is seldomly needed. Normaly directories are created when needed'  % BASE_INFO.get('erp_server_data_path', BASE_PATH)
     )
     parser_manage.add_argument(
         "--DELETELOCAL",
