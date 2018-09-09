@@ -8,8 +8,8 @@ import subprocess
 import re
 import argparse
 import argcomplete
-from bcolors import bcolors
-from banner import BANNER_HEAD, BANNER_TEXT
+from scripts.bcolors import bcolors
+from scripts.banner import BANNER_HEAD, BANNER_TEXT
 
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from scripts.messages import *

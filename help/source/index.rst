@@ -15,6 +15,7 @@ Welcome to ERP Workbench's documentation!
     howtos/index
     presets/index
     install/index
+    docker/index
 
 
 Indices and tables

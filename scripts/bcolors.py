@@ -15,3 +15,4 @@ class bcolors:
     blue = "\033[1;34m"
     green = "\033[1;32m"
     lightblue = "\033[0;34m"
+    

@@ -1,5 +1,30 @@
 INSTALL.txt
 -----------
+----------------------------------------------------------
+Edit the yaml files to setup the erp-workbench environment
+----------------------------------------------------------
+The structure of erp-workbench is defined in a number of yaml files
+you find in the config folder of erp-workbench.
+
+These are:
+
+    - config.yaml
+    - servers.yaml
+
+You have to edit the, to adapt erp-workbench to your environment.
+
+    config.yaml:
+    ------------
+
+        Here we define the local environment.
+
+    servers.yaml:
+    -------------
+
+        Here we define with what remote server erp-workbench is dealing with.
+
+        The only server defined by default, is "localhost" with the ip 127.0.0.1
+
 
 ------------------------
 for the ones in a hurry:

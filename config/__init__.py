@@ -8,6 +8,11 @@ BASE_INFO = {}
 import getpass
 ACT_USER = getpass.getuser()
 from scripts.bcolors import bcolors
+
+# the base info we need to access the various parts of erp-workbench 
+# is in some yaml file in erp-workbench the config folder
+from scripts.construct_defaults import check_and_update_base_defaults
+check_and_update_base_defaults()
 BASEINFO_CHANGED = """
 %s--------------------------------------------------
 The structure of the config files have changed.
@@ -17,52 +22,6 @@ You will be asked to provide some config data again.
 
 # base defaults are the defaults we are using for the base info if they where not set
 user_home = os.path.expanduser('~')
-BASE_DEFAULTS = {
-    #name, explanation, default
-    'sitesinfo_path' : (
-        'sitesinfo path',                 # display
-        """path to the folder where sites.py and sites_local.py is found
-        This folder should be maintained by git""",    # help
-        '%s/sites_list/' % BASE_PATH  # default
-    ),
-    'sitesinfo_url' : (
-        'sitesinfo url',                 # display
-        """url to the repository where sites.py and sites_local.py is maintained.
-        If it is localhost it will be created for you but not added to a repo'""", # help
-        'localhost',
-        # 'https://gitlab.redcor.ch/redcor_customers/sites_list.git'   # default
-    ),
-    'project_path' : (
-        'project path',                 # display
-        """path to the projects
-        Here a structure for each odoo site is created to build and run odoo servers""", # help
-        '%s/projects' % user_home  # default
-    ),
-    'odoo_server_data_path' : (
-        'server data path',              # display
-        """path to server data. Here for every site a set of folders is created
-        that will contain the servers config filestore, log- and dump-files.""", # help
-        BASE_PATH  # default
-    ),
-    'docker_dumper_image' : (
-        'Image to be used to create a dumper container',              # display
-        """When transfering data between sites we need a helper docker container
-        that can access the database and dump the data into a file""", # help
-        'robertredcor/dumper',
-    ),
-    'repo_mapper' : (
-        'Access Urls to the source code repositories',              # display
-        """What is the urls to use when accesing github or gitlab.
-        provide a comma separated list of repository=url pairs
-        default "gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/""", # help
-        'gitlab.redcor.ch=ssh://git@gitlab.redcor.ch:10022/',
-    ),
-    'local_user_mail' : (
-        'mail address of the local user',              # display
-        'mail address of the local user', # help
-        '%s@redo2oo.ch' % ACT_USER,
-    )
-}
 try:
     from .base_info import base_info as BASE_INFO
     NEED_BASEINFO = False

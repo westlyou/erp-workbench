@@ -96,7 +96,7 @@ class Manager(object):
 
     @property
     def base_yaml_path(self):
-        """provide the base_path to wher the datafiles are installed
+        """provide the base_path to where the datafiles are installed
 
         Returns:
             string -- path to the parentfolder of all yaml files
