@@ -15,62 +15,6 @@ def parse_args():
     "**************************\n" \
     "\n-h for help on usage"
     parent_parser = argparse.ArgumentParser(usage=usage, add_help=False)
-    parent_parser.add_argument(
-        "-n", "--name",
-        action="store", dest="name", default=False,
-        help = 'name of the site to create'
-    )
-    parent_parser.add_argument(
-        "-F", "--force",
-        action="store_true", dest="force", default=False,
-        help = """force. this parameter is used to force setting of new keys into the configuration
-            or when copying sitedata without disturbing a running odoo"""
-    )
-    parent_parser.add_argument(
-        "-v", "--verbose",
-        action="store_true", dest="verbose", default=False,
-        help="be verbose")
-
-    parent_parser.add_argument(
-        "-V", "--version",
-        action="store", dest="odoo_version", default='10.0',
-        help="odoo version to use")
-
-    parent_parser.add_argument(
-        "-N", "--norefresh",
-        action="store_true", dest="norefresh", default=False,
-        help = 'do not refresh local data, only update database with existing dump, this is the reverse of -nupdb'
-    )
-    parent_parser.add_argument(
-        "-nupdb", "--noupdatedb",
-        action="store_true", dest="noupdatedb", default=False,
-        help = 'do not update local database, only update local data from remote site, this is the reverse of -N'
-    )
-    parent_parser.add_argument(
-        "-skip", "--skipown",
-        action="store", dest="skipown",
-        help = 'provide a comma separated (no space) list of add ons to skip. used in conjuction with all.'
-    )
-    parent_parser.add_argument(
-        "-show",
-        action="store_true", dest="show", default=False,
-        help = 'show configure settings.'
-    )
-    parent_parser.add_argument(
-        "-set", "--set-config",
-        action="store", dest="set_config",
-        help = 'provide a comma separated (no space) list of key=value pairs to set in the config. if the value is --, the key is removed'
-    )
-    parent_parser.add_argument(
-        "-ip", "--use-ip",
-        action="store", dest="use_ip",
-        help = 'use the ip provided as SOURCE instead of the one found in the site description'
-    )
-    parent_parser.add_argument(
-        "-ipt", "--use-ip-target",
-        action="store", dest="use_ip_target",
-        help = 'use the ip provided to write the TARGET instead of localhost'
-    )    
     parser_rpc = ArgumentParser(add_help=False)
     parser = ArgumentParser(add_help=False)# ArgumentParser(usage=usage)
     parser.add_argument('--help', action=_HelpAction, help='help for help if you need some help')  # add custom help
@@ -114,11 +58,6 @@ def parse_args():
         prog='PROG',
         usage='%(prog)s [options]')
     parser_manage.add_argument(
-        "-c", "--create",
-        action="store_true", dest="create", default=False,
-        help = 'create new site structure in %s. Name must be provided' % BASE_INFO.get('project_path', os.path.expanduser('projects'))
-    )
-    parser_manage.add_argument(
         "-cdb", "--create-db-demo",
         action="store_true", dest="create_db_demo", default=False,
         help = 'create new database with demo data. Name must be provided',
@@ -134,45 +73,9 @@ def parse_args():
         help = 'Set admin password from site description. option -n must be set and valid.',
     )
     parser_manage.add_argument(
-        "-D", "--directories",
-        action="store_true", dest="directories", default=False,
-        help = 'create local directories for site %s. option -n must be set and valid. This option is seldomly needed. Normaly directories are created when needed'  % BASE_INFO.get('odoo_server_data_path', BASE_PATH)
-    )
-    parser_manage.add_argument(
-        "--DELETELOCAL",
-        action="store_true", dest="delete_site_local", default=False,
-        help = """Delete all elements of a locally installed project. Name must be provided.\n
-        This includes (for Proj_Mame):\n
-        - ooda/Proj_NAME folders\n
-        - ~/projecty/Proj_Name folder\n
-        - virtualenv Proj_Name\n
-        - database Proj_Name
-        """
-    )
-    parser_manage.add_argument(
-        "-lo", "--listownmodules",
-        action="store_true", dest="listownmodules", default=False,
-        help = 'list installable modules from sites.py sites description. Name must be provided'
-    )
-    parser_manage.add_argument(
-        "-io", "--installown",
-        action="store_true", dest="installown", default=False,
-        help = 'install all modules listed as addons'
-    )
-    parser_manage.add_argument(
-        "-uo", "--updateown",
-        action="store", dest="updateown", default='',
-        help = 'update modules listed as addons, pass a comma separated list (no spaces) or all'
-    )
-    parser_manage.add_argument(
         "-uiss", "--update-install-serversettings",
         action="store_true", dest="update_install_serversetting", default=False,
         help = 'update serversettings like base url or recaptcha keys'
-    )
-    parser_manage.add_argument(
-        "-ro", "--removeown",
-        action="store", dest="removeown", default='',
-        help = 'remove modules listed as addons, pass a comma separated list (no spaces) or all'
     )
     parser_manage.add_argument(
         "--add-addon",
@@ -181,74 +84,9 @@ def parse_args():
         'of the form url:name;name2;nameX'
     )
     parser_manage.add_argument(
-        "-I", "--installodoomodules",
-        action="store_true", dest="installodoomodules", default=False,
-        help = 'install modules listed as odoo addons'
-    )
-    parser_manage.add_argument(
-        "-ls", "--list",
-        action="store_true", dest="list_sites", default=False,
-        help = 'list available sites'
-    )
-    parser_manage.add_argument(
         "-lm", "--listmodules",
         action="store_true", dest="listmodules", default=False,
         help = 'list installable odoo module sets like CRM ..'
-    )
-    parser_manage.add_argument(
-        "-s", "--single-step",
-        action="store_true", dest="single_step", default=False,
-        help = 'load modules one after the other. MUCH! slower, but problems are easier to spot'
-    )
-    parser_manage.add_argument(
-        "-u", "--dataupdate",
-        action="store_true", dest="dataupdate", default=False,
-        help = 'update local server from remote server. Automatically set local data'
-    )
-    parser_manage.add_argument(
-        "-uu", "--dataupdate-close-conections",
-        action="store_true", dest="dataupdate_close_connections", default=False,
-        help = 'update local server from remote server, Force close of all connection to the db'
-    )
-    parser_manage.add_argument(
-        "-dump", "--dump-local",
-        action="store_true", dest="dump_local", default=False,
-        help = """
-             dump database data into the servers dump folder. does not use docker. \n
-             You can use the option -ipt (ip-target) to dump the site to a remote server.\n
-             Using the option -NTS (new-target-site) you can define to what target site the data is dumped.
-        """
-    )
-    parser_manage.add_argument(
-        "-M", "--module-update",
-        action="store", dest="module_update",
-        help = 'Pull modules listed for a site from the repository. Provide comma separated list, no spaces. Name must be provided'
-    )
-    parser_manage.add_argument(
-        "-m", "--modules-update",
-        action="store_true", dest="modules_update", default=False,
-        help = 'Pull all modules listed for a site from the repository. Name must be provided'
-    )
-    parser_manage.add_argument(
-        "-b", "--use-branch",
-        action="store", dest="use_branch",
-        help = """use branch for addon. pass a comma separated list of addon:branch,addon:branch .. 
-                 use all:.. if you want to use the branch for all modules. 
-                 It will only be applied if the branch exists for the module"""
-    )
-    # options -ip and -ipt moved to parent_parser
-    parser_manage.add_argument(
-        "-NTS", "--new-target-site",
-        action="store", dest="new_target_site",
-        help = """
-           copy the source site identified by name to the TARGET site. 
-           This mainly renames the dump file and the target folder inside filestore.
-           The target site should be existing and running on the target server.
-           The command does not check this!!!!
-           
-           If you want to copy a local site to an other local site do it like this:
-           bin/c -dump SOURCE -NTS TARGET -ipt localhost
-        """
     )
     # temporarily handle preset
     parser_manage.add_argument(
@@ -263,56 +101,6 @@ def parse_args():
     # -----------------------------------------------
     #parser_manage_s = parser_manage.add_subparsers(title='manage sites', dest="site_manage_commands")
     parser_support= parser_s.add_parser('support', help='the option -sites --support has the following subcommands', parents=[parent_parser])
-    parser_support.add_argument(
-        "--add-site",
-        action="store_true", dest="add_site", default=False,
-        help = 'add site description to sites.py from template. Name must be provided'
-    )
-    parser_support.add_argument(
-        "--add-site-local",
-        action="store_true", dest="add_site_local", default=False,
-        help = 'add site description to sites_local.py from template. Name must be provided'
-    )
-    parser_support.add_argument(
-        "--drop-site",
-        action="store_true", dest="drop_site", default=False,
-        help = 'drop site description from sites.py. Name must be provided'
-    )
-    parser_support.add_argument(
-        "--add-server",
-        action="store", dest="add_server",
-        help = 'add server to localdata. server ip and user must be provided in the form user@server_ip'
-    )
-    parser_support.add_argument(
-        "--docker-port",
-        action="store", dest="docker_port",
-        help = 'provide docker post to new server.  To ckeck for availability use option -lp --list-port'
-    )
-    parser_support.add_argument(
-        "--remote-server",
-        action="store", dest="remote_server",
-        help = 'provide docker post to new server.  To ckeck for availability use option -lp --list-port'
-    )
-    parser_support.add_argument(
-        "--edit-site-preset",
-        action="store_true", dest="edit_site_preset", default=False,
-        help = 'edit preset values for site. name must be provided'
-    )
-    parser_support.add_argument(
-        "-a", "--alias",
-        action="store_true", dest="alias", default=False,
-        help = 'add project site structure to aliases. create site will run this automatically'
-    )
-    parser_support.add_argument(
-        "-lp",
-        action="store_true", dest="list_ports", default=False,
-        help = 'list ports used, grouped by server'
-    )
-    parser_support.add_argument(
-        "--upgrade",
-        action="store", dest="upgrade",
-        help = 'upgrade site to new odoo version. Please indicate the name of the new site. The the target version will be read from there'
-    )
     # -----------------------------------------------
     # manage docker
     # -----------------------------------------------

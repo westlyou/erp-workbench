@@ -5,12 +5,12 @@
 # parameters:
 # $1 : site name
 # $2 : server url
-# $3 : remote_data_path like /root/odoo_instances
+# $3 : remote_data_path like /root/erp_workbench
 # $4 : login name on remote server
 # $5 : path to instances home on the remote server (/root/odoo_sites)
     #!/bin/sh
     ## dodump.sh dumps a site's database into its folder
-    ## the folder is /root/odoo_instances/$1/dump where $1 represents the site's name
+    ## the folder is /root/erp_workbench/$1/dump where $1 represents the site's name
     ## dodump creates a temporary docker container that dumps a servers database
     ## it is called by updatedb.sh and executed on the remote computer
     ## $1 : name of the server                     updatedb.$1

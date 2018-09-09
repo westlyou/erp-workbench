@@ -7,6 +7,7 @@ import os
 import logging
 import re
 from glob import glob
+from config import BASE_PATH
 
 #from optparse import OptionParser
 class bcolors:
@@ -161,7 +162,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage=usage, add_help=False)
     parser.add_argument(
         "-p", "--path",
-        action="store", dest="path", default="~/odoo_instances/customers",
+        action="store", dest="path", default="~/%s/customers" % BASE_PATH,
         help = 'name of the site to create'
     )
     args, unknownargs = parser.parse_known_args()

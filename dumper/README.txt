@@ -1,8 +1,8 @@
 # README.txt
 # ----------
 # dbdumper is part of the odoo maker suite found at
-# http://gitlab.redcor.ch/open-source/odoo_instances
-# it can be downloaded from: http://gitlab.redcor.ch:10080/open-source/odoo_instances.git
+# https://github.com/robertrottermann/erp-workbench.git
+# it can be downloaded from: https://github.com/robertrottermann/erp-workbench.git
 
 create dbdumper image:
 ----------------------
@@ -21,9 +21,9 @@ create dbdumper image:
 
         test it:
             dbdumper assumes a directory layout as described under "use dbdumper image:"
-            assuming that your odoo instances are in the folder /root/odoo_instances/root/odoo_instances
+            assuming that your odoo instances are in the folder /root/erp_workbench/root/erp_workbench
             you can run the following command:
-                docker run -v /root/odoo_instances:/mnt/sites --rm=true --link db:db -it dbdumper -h
+                docker run -v /root/erp_workbench:/mnt/sites --rm=true --link db:db -it dbdumper -h
 
 use dbdumper image:
 -------------------
@@ -49,11 +49,11 @@ use dbdumper image:
 create odoo docker container using folder structure:
 ----------------------------------------------------
     to create a docker container "afbstest" using the above lined out folder sturcture
-    BASEDIR is /root/odoo_instances/ in this example:
+    BASEDIR is /root/erp_workbench/ in this example:
     docker run -p 127.0.0.1:8071:8069 \
-        -v /root/odoo_instances/afbstest/etc:/etc/odoo \
-        -v /root/odoo_instances/afbstest/addons:/mnt/extra-addons \
-        -v /root/odoo_instances/afbstest/dump:/mnt/dump \
-        -v /root/odoo_instances/afbstest/filestore:/var/lib/odoo/filestore \
-        -v /root/odoo_instances/afbstest/log:/var/log/odoo \
+        -v /root/erp_workbench/afbstest/etc:/etc/odoo \
+        -v /root/erp_workbench/afbstest/addons:/mnt/extra-addons \
+        -v /root/erp_workbench/afbstest/dump:/mnt/dump \
+        -v /root/erp_workbench/afbstest/filestore:/var/lib/odoo/filestore \
+        -v /root/erp_workbench/afbstest/log:/var/log/odoo \
         --name afbstest -d --link db:db -t odoo:9.0

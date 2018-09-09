@@ -7,7 +7,7 @@ ERP (odoo, flectra, ..) sites.
 
 Objects that are maintained by ERPW are at three different locations:
 
-    - ~/odoo_instances  
+    - ~/erp_workbench  
         that is where ERPW is installed and site-descriptions are maintained
 
     - ~/projects

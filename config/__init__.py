@@ -1,7 +1,7 @@
 #!bin/python
 import os
 import sys
-# BASE_PATH is the home directory of odoo_instances
+# BASE_PATH is the home directory of erp_workbench
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 MIGRATE_FOLDER = '%s/upgrade/' % BASE_PATH
 BASE_INFO = {}

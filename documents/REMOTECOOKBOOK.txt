@@ -2,11 +2,11 @@ REMOTECOOKBOOK.txt
 ------------------
 Receipes to set up createsites.py running on a remote server
 All receipes assume:
-    - odoo_instances are in ~/odoo_instances and projects are in /projects
-    - the alias ooin exists and brings you to ~/odoo_instances
+    - odoo instances are in ~/erp_workbench and projects are in /projects
+    - the alias wwb exists and brings you to ~/erp_workbench
     - you have installed all necessary python modules using
         bin/pip install -r install/requirements.text
-    - you have installed everything like detailed in ~/odoo_instances/install/INSTALL.txt
+    - you have installed everything like detailed in ~/erp_workbench/install/INSTALL.txt
 
 recipies:
     - set up remote transfer user odooprojects

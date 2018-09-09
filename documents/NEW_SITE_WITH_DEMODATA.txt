@@ -14,10 +14,10 @@ For now it is only tested on odoo 10, but is prepared to work also on odoo 11 an
 robert
 
 # refresh everything
-ooin
+wwb
 git pull
 ooli git pull
-ooin
+wwb
 # udate redhelp
 bin/c -c redhelp
 # create new redhelp db

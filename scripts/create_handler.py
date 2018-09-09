@@ -740,7 +740,7 @@ class InitHandler(RPC_Mixin):
 
     @property
     def remote_sites_home(self):
-        return self.site.get('sites_home', '/root/odoo_instances')
+        return self.site.get('sites_home', '/root/erp_workbench')
 
     # the user can start using different paths
     # - without selecting anything:
@@ -965,7 +965,7 @@ class InitHandler(RPC_Mixin):
         default_values['is_local'] = is_local
         default_values['db_user'] = self.db_user
         # sites_home is odoo_instnces is installed
-        # eg ~/odoo_instances
+        # eg ~/erp_workbench
         # the site_name is what the user with option -n and was checked by check_name
         default_values['site_name'] = site_name
         default_values.update(BASE_INFO)
@@ -2014,7 +2014,7 @@ class InitHandler(RPC_Mixin):
             alias_names.append(n[:try_length])
             long_names.append(n)
         result = ALIAS_LINE % {'sname': 'pro', 'path': pp}
-        result += ALIAS_LINE % {'sname': 'ooin', 'path': oop}
+        result += ALIAS_LINE % {'sname': 'wwb', 'path': oop}
         for i in range(len(alias_names)):
             if os.path.exists('%s/%s' % (pp, long_names[i])):
                 result += ALIAS % {
@@ -2023,7 +2023,7 @@ class InitHandler(RPC_Mixin):
                     'ppath': pp,
                     'dpath': dp,
                 }
-        # ooin cd to odoo_instances
+        # wwb cd to erp_workbench
         result += OOIN % BASE_PATH
         result += OOLI % BASE_INFO['sitesinfo_path']
         result += OODA % BASE_INFO['odoo_server_data_path']
@@ -2037,13 +2037,13 @@ class InitHandler(RPC_Mixin):
 
     def do_updates(self):
         """
-        we want to git pull odoo_instances and sites_list
+        we want to git pull erp_workbench and sites_list
         """
-        # first we change to odoo_instances main folder
+        # first we change to erp_workbench main folder
         adir = os.getcwd()
         for t in self.sites_home, self.sitesinfo_path:
             os.chdir(t)
-            # pull odoo_instances
+            # pull erp_workbench
             cmd_line = ['git', 'pull']
             p = subprocess.Popen(cmd_line, stdout=PIPE, stderr=PIPE)
             if self.opts.verbose:

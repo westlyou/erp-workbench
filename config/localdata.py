@@ -1,5 +1,6 @@
 # db_user is used to access the local postgres server
 import getpass
+from config import BASE_PATH, DB_PASSWORD
 DB_USER = getpass.getuser()
 # db_password ist used to login db_userdb_user
 DB_PASSWORD = 'odoo' # for docker
@@ -12,48 +13,9 @@ NGINX_PATH = '/etc/nginx/'
 # which ip to use is read from sytes.py
 
 REMOTE_USER_DIC = {
-# do not remove the marker!    
-# ---------------- marker ----------------    
-    '144.76.184.20' : { # frieda
-        'remote_user' : 'root',
-        ## the remote data path is used to overule the remot_data_path defined
-        ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
-        ## remote_pw is used as credential for the remote user. normaly unset
-        ## to use public keys.
-        'remote_pw' : '',
-    },
-    # as non root user on elsbeth
-    #'82.220.39.73' : { # elsbeth
-    #    'remote_user' : 'odooprojects',
-    #    'remote_data_path' : '/home/odooprojects/odoo_instances',
-    #    # remote_pw is used as credential for the remote user. normaly unset
-    #    # to use public keys.
-    #    'remote_pw' : '',
-    #},
-    '82.220.39.73' : { # elsbeth
-        'remote_user' : 'root',
-        ## the remote data path is used to overule the remote_data_path defined
-        ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
-        ## remote_pw is used as credential for the remote user. normaly unset
-        ## to use public keys.
-        'remote_pw' : '',
-    },
-    '46.4.89.241' : { # salome
-        'remote_user' : 'root',
-        # the remote data path is used to overule the remot_data_path defined
-        ## the remote data path is used to overule the remote_data_path defined
-        ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
-        ## remote_pw is used as credential for the remote user. normaly unset
-        ## to use public keys.
-
-        'remote_pw' : '',
-    },
     'localhost' : {
         'remote_user' : DB_USER,
-        'remote_data_path' : '/home/%s/odoo_instances' % DB_USER,
+        'remote_data_path' : BASE_PATH, 
         # remote_pw is used as credential for the remote user. normaly unset
         # to use public keys.
         'remote_pw' : '',

@@ -18,7 +18,7 @@ create docker image with actual oddo
 ------------------------------------
     A docker image is buildt executing several steps:
     sample is psytec:
-    - mkdir /home/robert/odoo_instances/psytex/docker/
+    - mkdir /home/robert/erp_workbench/psytex/docker/
     - collect extra pyhton and apt libraries
     - construct Dockerfile in in docker folder
     - construct subfolder in docker folder:
@@ -77,7 +77,7 @@ create dbdumper image:
       # employs the same postgres version, as the one running in the container named 'db'
       docker build  -t dbdumper . # this creates the image
       test it:
-          docker run -v /root/odoo_instances:/mnt/sites --rm=true --link db:db -it dbdumper -h
+          docker run -v /root/erp_workbench:/mnt/sites --rm=true --link db:db -it dbdumper -h
 
 
 update docker image:

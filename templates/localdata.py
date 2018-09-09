@@ -17,7 +17,7 @@ REMOTE_USER_DIC = {
         'remote_user' : 'root',
         ## the remote data path is used to overule the remot_data_path defined
         ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
+        'remote_data_path' : '/root/erp_workbench',
         ## remote_pw is used as credential for the remote user. normaly unset
         ## to use public keys.
         'remote_pw' : '',
@@ -25,7 +25,7 @@ REMOTE_USER_DIC = {
     # as non root user on elsbeth
     #'82.220.39.73' : { # elsbeth
     #    'remote_user' : 'odooprojects',
-    #    'remote_data_path' : '/home/odooprojects/odoo_instances',
+    #    'remote_data_path' : '/home/odooprojects/erp_workbench',
     #    # remote_pw is used as credential for the remote user. normaly unset
     #    # to use public keys.
     #    'remote_pw' : '',
@@ -34,7 +34,7 @@ REMOTE_USER_DIC = {
         'remote_user' : 'root',
         ## the remote data path is used to overule the remote_data_path defined
         ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
+        'remote_data_path' : '/root/erp_workbench',
         ## remote_pw is used as credential for the remote user. normaly unset
         ## to use public keys.
         'remote_pw' : '',
@@ -44,7 +44,7 @@ REMOTE_USER_DIC = {
         # the remote data path is used to overule the remot_data_path defined
         ## the remote data path is used to overule the remote_data_path defined
         ## in the sites descrition
-        'remote_data_path' : '/root/odoo_instances',
+        'remote_data_path' : '/root/erp_workbench',
         ## remote_pw is used as credential for the remote user. normaly unset
         ## to use public keys.
 
@@ -52,7 +52,7 @@ REMOTE_USER_DIC = {
     },
     'localhost' : {
         'remote_user' : DB_USER,
-        'remote_data_path' : '/home/%s/odoo_instances' % DB_USER,
+        'remote_data_path' : '/home/%s/erp_workbench' % DB_USER,
         # remote_pw is used as credential for the remote user. normaly unset
         # to use public keys.
         'remote_pw' : '',

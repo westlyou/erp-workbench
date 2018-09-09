@@ -74,7 +74,7 @@ Use the freshly copied data on the remote machine and read it into a docker cont
     - restart the container
     - read the dumped data
 
-    ooin 
+    wwb 
     git pull
     bin/c -m afbstest
     docker restart afbstest

@@ -1,14 +1,14 @@
 #!/bin/sh
 # updatedb.sh executes the script dodump on a remote server
 # dodump creates a temporary docker container that dumps a servers database
-# into this servers data folder within odoo_instances
+# into this servers data folder within erp_workbench
 # parameters:
 # $1 : site name
 # $2 : server url
-# $3 : remote_data_path like /root/odoo_instances
+# $3 : remote_data_path like /root/erp_workbench
 # $4 : login name on remote server
 # $5 : local path to odoo server data
-# $6 : odoo_instances base folder
+# $6 : erp_workbench base folder
 # $7 : vebose flag
 # send dodumb.sh to be executed on remote server
 echo '----------- running updatedb, calling dodump ----------------'

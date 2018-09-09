@@ -1,6 +1,6 @@
 build postgres image
 --------------------
-  - cd ooin/docker/postgres/VERSION
+  - cd wwb/docker/postgres/VERSION
   - compare Dockerfile with newest on
     https://github.com/camptocamp/docker-postgres/blob/master/XX/Dockerfile
   - run . build
@@ -16,8 +16,8 @@ use postgres image to to create db container
 
 setting permissions:
 --------------------
-root@alice2 ~/odoo_instances # find breitschtraeff10/ -type d -exec chmod 777 {} +
-root@alice2 ~/odoo_instances # find breitschtraeff10/ -type f -exec chmod 666 {} +
+root@alice2 ~/erp_workbench # find breitschtraeff10/ -type d -exec chmod 777 {} +
+root@alice2 ~/erp_workbench # find breitschtraeff10/ -type f -exec chmod 666 {} +
 
  4102  chown 999:1000 breitschtraeff10/
  4103  chown 999:1000 breitschtraeff10/* -R
