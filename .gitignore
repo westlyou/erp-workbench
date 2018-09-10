@@ -1,10 +1,12 @@
 # robert
+config/config.yaml
 *.bak
 sites_list
 .vscode
 *.swp
 *.save
 tests/test_data/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

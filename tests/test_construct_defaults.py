@@ -27,28 +27,36 @@ class TestConstructDefault(unittest.TestCase):
                 shutil.rmtree(os.path.join(root, d))        
 
     def test_check_and_update_base_defaults(self):
+        """test overal functionality of check_and_update_base_defaults
+        check_and_update_base_defaults reads a yaml file adapted by the user
+        and creates a importable datastructure out of it
+        The yaml file should only be parsed when it is newer than the importable module
+        """
+
         result = {}
         # when a yaml file with config setting is newer than the coresponding
         # datafile we have to reload the datafile from the result
         must_reload = construct_defaults.check_and_update_base_defaults(
-            self.base_path, 
-            self.user_home, 
-            self.act_user, 
+            self.base_path,
+            self.user_home,
+            self.act_user,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,
-            )], 
+                # defaults are the same
+                '%s/tests/yaml_files/config.yaml' % self.base_path,
+            )],
             result)
         self.assertTrue(must_reload)
         # we repeat the process but now reload must not be set
         must_reload = construct_defaults.check_and_update_base_defaults(
-            self.base_path, 
-            self.user_home, 
-            self.act_user, 
+            self.base_path,
+            self.user_home,
+            self.act_user,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,
-            )], 
+            )],
             result)
         self.assertFalse(must_reload)
 

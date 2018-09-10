@@ -9,7 +9,7 @@ from pprint import pformat
 import subprocess
 from subprocess import PIPE
 from copy import deepcopy
-from config.base_info import base_info as BASE_INFO
+from config.config_data.base_info import base_info as BASE_INFO
 from config import ACT_USER
 from scripts.messages import *
 from scripts import bcolors

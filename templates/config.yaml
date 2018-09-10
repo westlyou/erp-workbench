@@ -14,7 +14,7 @@ BASE_DEFAULTS:
   # the sitesinfo_path points to a folder, where these site descriptions 
   # are kept in several subfolders
   # by default it is kept within the erp-workbench folder
-  # %s(BASE_PATH)s
+  # %(BASE_PATH)s
   sitesinfo_path: '%(BASE_PATH)s/sites_list/'
 
   # sitesinfo_url:
@@ -55,4 +55,5 @@ BASE_DEFAULTS:
   # when you have copied a life server to your local environment
   # this setting is only used when rederict_emil is installed
   local_user_mail: 'info@company.com'
+
 

@@ -9,7 +9,7 @@ import re
 # import socket
 import subprocess
 from subprocess import PIPE
-from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, BASE_INFO_FILENAME, \
+from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, VERSION, NEED_NAME, \
     NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
 from config.localdata import DB_USER, DB_PASSWORD, REMOTE_USER_DIC
@@ -544,6 +544,7 @@ class InitHandler(RPC_Mixin):
             print(bcolors.WARNING + k + bcolors.ENDC, v)
 
     def set_config(self):
+        raise ValueErro('must be reimplemented')
         data = self.opts.set_config
         force = self.opts.force
         changed = False

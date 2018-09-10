@@ -11,10 +11,9 @@ from io import StringIO
 from copy import deepcopy
 import psutil
 from scripts.messages import *
-from bcolors import bcolors
-from vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
-from vcs.svn import SvnCheckout
-from vcs.base import UpdateError
+from scripts.bcolors import bcolors
+from scripts.vcs.git import GitRepo, BUILDOUT_ORIGIN, logging
+from scripts.vcs.base import UpdateError
 try:
     from git import Repo
 except ImportError as e:

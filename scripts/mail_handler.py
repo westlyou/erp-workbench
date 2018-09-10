@@ -3,10 +3,10 @@
 
 from config import SITES #, BASE_INFO, GLOBALDEFAULTS
 #from config.handlers import InitHandler, DBUpdater
-from create_handler import InitHandler
+from scripts.create_handler import InitHandler
 import os
 import sys
-from utilities import bcolors
+from scripts.utilities import bcolors
 from scripts.messages import *
 import datetime
 #from froxlor.wrapper import DatabaseObject, PanelCustomer, PanelDomain

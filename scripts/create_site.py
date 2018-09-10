@@ -13,15 +13,10 @@ from scripts.banner import BANNER_HEAD, BANNER_TEXT
 
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from scripts.messages import *
-from config import NEED_BASEINFO, BASE_INFO_FILENAME, BASE_DEFAULTS
 
 from scripts.utilities import update_base_info, \
      create_server_config, checkout_sa, \
      list_sites
-
-if NEED_BASEINFO:
-    update_base_info(BASE_INFO_FILENAME, BASE_DEFAULTS)
-    sys.exit()
 
 try:
     from config import SITES, SITES_LOCAL
@@ -30,16 +25,16 @@ except ImportError:
     sites_handler.check_and_create_sites_repo()
     from config import SITES, SITES_LOCAL
     
-from config import ACT_USER, BASE_PATH, NEED_BASEINFO, FOLDERNAMES, \
-    BASE_INFO_FILENAME, BASE_DEFAULTS, BASE_INFO, MARKER, \
+from config import ACT_USER, BASE_PATH, FOLDERNAMES, \
+    BASE_INFO, MARKER, \
     APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, \
     REQUIREMENTS_FILE_TEMPLATE, GLOBALDEFAULTS
 
-from config.handlers import SiteCreator
-from config.handlers import DockerHandler
-from config.handlers import SupportHandler
-from config.handlers import RemoteHandler
-from config.handlers import MailHandler
+from config.config_data.handlers import SiteCreator
+from config.config_data.handlers import DockerHandler
+from config.config_data.handlers import SupportHandler
+from config.config_data.handlers import RemoteHandler
+from config.config_data.handlers import MailHandler
 
 # get config options
 from scripts.options_create import add_options_create

@@ -10,8 +10,8 @@ from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, ACT_USER, APACHE_PATH, NGINX_PATH, MARKER, bcolors
 from copy import deepcopy
 
-from create_handler import InitHandler
-from utilities import collect_options
+from scripts.create_handler import InitHandler
+from scripts.utilities import collect_options
 HA = """
     %s
     """

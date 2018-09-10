@@ -8,7 +8,7 @@ from optparse import OptionParser
 import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, BASE_INFO, BASE_PATH, SITES_HOME
-from utilities import get_process_id
+from scripts.utilities import get_process_id
 import psutil
 import time
 
@@ -28,7 +28,7 @@ PROCESS_NAMES_DIC = {'odoo': 'odoo_bin',
                      'flectra': 'flectra_bin', 'start_openerp': ''}
 PROCESS_NAMES = list(PROCESS_NAMES_DIC.keys())
 #sys.path.insert(0, SITES_HOME)
-from utilities import get_remote_server_info, bcolors, SITES
+from scripts.utilities import get_remote_server_info, bcolors, SITES
 
 # to find executable python
 

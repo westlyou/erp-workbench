@@ -9,35 +9,52 @@ import getpass
 ACT_USER = getpass.getuser()
 from scripts.bcolors import bcolors
 
+# first thing we do, is make sure there is a config.yaml file
+# if it does not exist, we copy it from config.yaml.in
+config_yaml = '%s/config/config.yaml' % BASE_PATH
+data_path = os.path.normpath('%s/config_data' % BASE_PATH)
+user_home = os.path.expanduser('~')
+if not os.path.exists(config_yaml):
+    from shutil import copyfile
+    copyfile('%s.in' % config_yaml, config_yaml)
+
 # the base info we need to access the various parts of erp-workbench 
 # is in some yaml file in erp-workbench the config folder
 from scripts.construct_defaults import check_and_update_base_defaults
-check_and_update_base_defaults()
+construct_result = {}
+must_reload = check_and_update_base_defaults(
+    BASE_PATH,
+    user_home,
+    ACT_USER,
+    [(
+        config_yaml,
+        data_path,
+        # if one of the values got "configured away"
+        '%s/templates/config.yaml' % BASE_PATH,
+    )],
+    construct_result
+)
+
 BASEINFO_CHANGED = """
 %s--------------------------------------------------
 The structure of the config files have changed.
-You will be asked to provide some config data again.
+please check %s if everything ist correct.
 --------------------------------------------------%s
-""" %(bcolors.FAIL, bcolors.ENDC)
+""" %(bcolors.FAIL, config_yaml, bcolors.ENDC)
 
 # base defaults are the defaults we are using for the base info if they where not set
-user_home = os.path.expanduser('~')
+NEED_BASEINFO = False
 try:
-    from .base_info import base_info as BASE_INFO
-    NEED_BASEINFO = False
-    # check whether BASE_DEFAULTS has new keys
-    for k in list(BASE_DEFAULTS.keys()):
-        if k not in BASE_INFO:
-            NEED_BASEINFO = True
-            print()
+    from .config_data.base_info import base_info as BASE_INFO
 except ImportError:
     NEED_BASEINFO = True
+if NEED_BASEINFO or must_reload:
+    print(BASEINFO_CHANGED)
+if must_reload:
+    BASE_INFO = construct_result[config_yaml]['base_info']
+
 # what folders do we need to create in odoo_sites for a new site
 FOLDERNAMES = ['addons','dump','etc','filestore', 'log', 'ssl', 'start-entrypoint.d', 'presets']
-# base info filename points to file where some default values are stored
-# base_info = {'project_path': '/home/robert/projects', 'skeleton': 'odoo/skeleton'}
-BASE_INFO_NAME = 'base_info'
-BASE_INFO_FILENAME = '%s/config/%s.py' % (BASE_PATH, BASE_INFO_NAME)
 
 PROJECT_DEFAULTS = {
     #name, explanation, default
@@ -51,6 +68,13 @@ PROJECT_DEFAULTS = {
 # an a list of localsites listed in local_sites.py
 #from sites import SITES, SITES_L as SITES_LOCAL
 # start with checking whether installation is finished
+sites_handler = None
+APACHE_PATH = ''
+DB_USER = ACT_USER
+DB_PASSWORD = 'admin'
+DB_PASSWORD_LOCAL = 'admin'
+SITES, SITES_LOCAL = {},{}
+MARKER = ''
 try:
     pwd = os.getcwd()
     from scripts.sites_handler import SitesHandler
@@ -73,10 +97,6 @@ try:
         print('please edit config/localdata.py. It seems to have a syntax error\n' + str(e) )
     os.chdir(pwd)
 except ImportError as e:
-    APACHE_PATH = ''
-    SITES, SITES_LOCAL = {},{}
-    MARKER = ''
-    sites_handler = None
     print(str(e))
 except OSError:
     # we probably runing from within docker
