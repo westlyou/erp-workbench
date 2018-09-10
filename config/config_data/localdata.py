@@ -12,7 +12,7 @@ NGINX_PATH = '/etc/nginx/'
 # it is a dic with the ip of the remote server as key
 # which ip to use is read from sytes.py
 
-REMOTE_USER_DIC = {
+REMOTE_SERVERS = {
     'localhost' : {
         'remote_user' : DB_USER,
         'remote_data_path' : BASE_PATH, 

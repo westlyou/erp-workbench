@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts import construct_defaults
 import getpass
 import shutil
@@ -20,7 +20,10 @@ class TestConstructDefault(unittest.TestCase):
         self.base_path = BASE_PATH
         self.act_user = ACT_USER
         self.user_home = os.path.expanduser('~')
-        for root, dirs, files in os.walk('%s/tests/test_data/' % BASE_PATH):
+        data_path = '%s/tests/test_data/' % BASE_PATH
+        if not os.path.exists(data_path):
+            os.makedirs(data_path, exist_ok=True)
+        for root, dirs, files in os.walk(data_path):
             for f in files:
                 os.unlink(os.path.join(root, f))
             for d in dirs:

@@ -12,7 +12,7 @@ from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, VERSION, NEED_NAME, \
     NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
-from config.localdata import DB_USER, DB_PASSWORD, REMOTE_USER_DIC
+from config.config_data.localdata import DB_USER, DB_PASSWORD, REMOTE_SERVERS
 try:
     from config.localdata import DB_PASSWORD_LOCAL
 except ImportError:
@@ -429,7 +429,7 @@ class InitHandler(RPC_Mixin):
                             must_exit = False
                 if must_exit:
                     sys.exit()
-            if self.site and not REMOTE_USER_DIC.get(site_server_ip):
+            if self.site and not REMOTE_SERVERS.get(site_server_ip):
                 selections = self.selections
                 must_exit = True
                 if selections:
@@ -452,7 +452,7 @@ class InitHandler(RPC_Mixin):
             # remote
             # -----------------
             # remote user depends which server the site is running on
-            server = self.site and REMOTE_USER_DIC.get(
+            server = self.site and REMOTE_SERVERS.get(
                 site_server_ip, {}) or {}
             login_info['remote_user'] = server.get('remote_user') or ''
             login_info['remote_user_pw'] = self.site and server.get(
@@ -707,11 +707,11 @@ class InitHandler(RPC_Mixin):
 
     @property
     def remote_user(self):
-        return REMOTE_USER_DIC[self.site['remote_server']['remote_url']]['remote_user']
+        return REMOTE_SERVERS[self.site['remote_server']['remote_url']]['remote_user']
 
     @property
     def remote_user_pw(self):
-        return REMOTE_USER_DIC[self.site['remote_server']['remote_url']].get('remote_pw', '')
+        return REMOTE_SERVERS[self.site['remote_server']['remote_url']].get('remote_pw', '')
 
     @property
     def remote_data_path(self):
@@ -722,14 +722,14 @@ class InitHandler(RPC_Mixin):
         if remote_data_path:
             return remote_data_path
         # then we check whether config/localdata.py has an remote path set.
-        remote_dic = REMOTE_USER_DIC[self.site['remote_server']['remote_url']]
+        remote_dic = REMOTE_SERVERS[self.site['remote_server']['remote_url']]
         remote_data_path = remote_dic.get(
             'remote_data_path', remote_dic.get('remote_path', self.remote_sites_home))
         return remote_data_path
 
     @property
     def remote_user_data_path(self):
-        remote_dic = REMOTE_USER_DIC[self.site['remote_server']['remote_url']]
+        remote_dic = REMOTE_SERVERS[self.site['remote_server']['remote_url']]
         remote_data_path = remote_dic.get(
             'remote_data_path', remote_dic.get('remote_path', self.remote_sites_home))
         return remote_data_path
@@ -1033,8 +1033,8 @@ class InitHandler(RPC_Mixin):
             if 'odoo_version' in vars(self.opts).keys():
                 odoo_version = self.opts.odoo_version
             else:
-                from config.globaldefaults import GLOBALDEFAULTS
-                odoo_version = GLOBALDEFAULTS.get('odoo_version', '12.0')
+                from config.config_data.docker_defaults import DOCKER_DEFAULTS
+                odoo_version = DOCKER_DEFAULTS.get('odoo_version', '12.0')
             self.default_values['odoo_version'] = odoo_version
         
     # -------------------------------------------------------------------

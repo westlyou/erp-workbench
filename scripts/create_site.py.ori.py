@@ -31,7 +31,7 @@ except ImportError:
 
 from config import ACT_USER, BASE_PATH, NEED_BASEINFO, FOLDERNAMES, \
     BASE_INFO_FILENAME, BASE_DEFAULTS, BASE_INFO, MARKER, \
-    APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, GLOBALDEFAULTS
+    APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, DOCKER_DEFAULTS
 
 from scripts.utilities import list_sites, \
     update_base_info, \
@@ -886,10 +886,10 @@ def main(opts):
     #   to get info from sites.py for $SITENAME
     # - remote_url : the servers url
     # - remote_data_path : COLLECT it from ODOO_SERVER_DATA ??
-    # local_data.REMOTE_USER_DIC:
+    # local_data.REMOTE_SERVERS:
     # ---------------------------
     # from this dictonary information on the remote server is collected
-    # this is done looking up 'remote_url' in local_data.REMOTE_USER_DIC.
+    # this is done looking up 'remote_url' in local_data.REMOTE_SERVERS.
     # - remote_user: user to acces the remote server with
     # - remote_pw : password to access the remote user with. should normaly the empty
     #   as it is best only to use a public key.
@@ -1533,27 +1533,27 @@ if __name__ == '__main__':
     parser_docker.add_argument(
         "-ddbname", "--dockerdbname",
         action="store", dest="dockerdbname", # no default, otherwise we can not get it from the site description
-        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % GLOBALDEFAULTS['dockerdb_container_name'])
+        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdb_container_name'])
 
     parser_docker.add_argument(
         "-ddbuser", "--dockerdbuser",
         action="store", dest="dockerdbuser", # no default, otherwise we can not get it from the site description
-        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % GLOBALDEFAULTS['dockerdbuser'])
+        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdbuser'])
 
     parser_docker.add_argument(
         "-ddbpw",
         action="store", dest="dockerdbpw", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % GLOBALDEFAULTS['dockerdbpw'])
+        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdbpw'])
 
     parser_docker.add_argument(
         "-drpcuser",
         action="store", dest="drpcuser", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % GLOBALDEFAULTS['dockerrpcuser'])
+        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuser'])
 
     parser_docker.add_argument(
         "-drpcuserpw",
         action="store", dest="drpcuserpw", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % GLOBALDEFAULTS['dockerrpcuserpw'])
+        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuserpw'])
 
     parser_docker.add_argument(
         "-ddpo", "--dockerdbport",

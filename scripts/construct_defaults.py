@@ -70,7 +70,6 @@ def check_and_update_base_defaults(base_path, user_home, act_user, yaml_files, r
         if os.path.exists(yaml_file_path):
             # compare file dates
             # check if folder exists:
-            prin('-------------------------->', os.path.dirname(data_file_path))
             if not os.path.exists(os.path.dirname(data_file_path)):
                 print(bcolors.FAIL)
                 print('*' * 80)

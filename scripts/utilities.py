@@ -53,7 +53,7 @@ SITE_TEMPLATE = """
 """
 
 try:
-    from config.localdata import REMOTE_USER_DIC
+    from config.localdata import REMOTE_SERVERS
 except ImportError:
     print('*' * 80)
     print('localdata.py not found. Please create it.')
@@ -916,7 +916,7 @@ def get_remote_server_info(opts, use_name=None):
             print(('% is not a vali ip' % opts.use_ip))
             print((bcolors.ENDC))
             return
-        serverDic = REMOTE_USER_DIC.get(addr)
+        serverDic = REMOTE_SERVERS.get(addr)
     else:
         d = deepcopy(SITES[name])
         serverDic = d.get('remote_server')
@@ -939,7 +939,7 @@ def get_remote_server_info(opts, use_name=None):
             print(('% is not a vali ip' % opts.use_ip_target))
             print((bcolors.ENDC))
             return
-        serverDic_target = REMOTE_USER_DIC.get(addr)
+        serverDic_target = REMOTE_SERVERS.get(addr)
     if not serverDic:
         print('*' * 80)
         print('the ip %s has no site description' % ip)

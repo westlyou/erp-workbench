@@ -28,7 +28,7 @@ except ImportError:
 from config import ACT_USER, BASE_PATH, FOLDERNAMES, \
     BASE_INFO, MARKER, \
     APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, \
-    REQUIREMENTS_FILE_TEMPLATE, GLOBALDEFAULTS
+    REQUIREMENTS_FILE_TEMPLATE, DOCKER_DEFAULTS
 
 from config.config_data.handlers import SiteCreator
 from config.config_data.handlers import DockerHandler

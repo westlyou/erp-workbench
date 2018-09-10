@@ -1,0 +1,29 @@
+# DOCKER_DEFAULTS provides the information needed to work with docker
+# to find its data
+
+# Variables that can be used in the values
+# %(BASE_PATH)s will be replaced with the actual folder where erp-worbnch is installed
+# %(USER_HOME)s the home folder of the logged in user
+
+DOCKER_DEFAULTS:
+    # the name of the containe in which all database are created
+    dockerdb_container_name: 'db'
+    # dockerdbuser is used to access the database  in the database container
+    dockerdbuser: 'odoo'
+    # dockerdbpw is the dockerdbuser's password
+    dockerdbpw: 'odoo'
+    # dockerrpcuser is the user with which we want to login to the odoo site running in the container
+    dockerrpcuser: 'admin'
+    # dockerrpcuserpw dockerrpcuser's password
+    # this is in most cases NOT 'admin'
+    # you can overrule it with -ddbpw
+    dockerrpcuserpw: 'admin'
+    # dumper_image:
+    # when dumping a container based odoo site to its backup structure
+    # a docker container is used that has access to databse container
+    # where the sites data is maintained (normally this continer is named db)
+    # to create a this dumper container we need an image which uses pgdump
+    # to dump the db.
+    # since pgdump is database version dependent, the database container
+    # and the dumper container need to use the same pgdump version.
+    docker_dumper_image: 'robertredcor/dumper'

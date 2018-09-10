@@ -44,7 +44,6 @@ class SitesHandler(object):
     def __init__(self, base_path, template_name='', preset_values=''):
         self.base_path = base_path
         self.check_and_copy_local_data()
-        self.check_and_copy_globaldefaults()
         self.template_name = template_name
         self.preset_values = preset_values
 
@@ -73,27 +72,6 @@ class SitesHandler(object):
             for line in data:
                 if m.match(line):
                     print(LOCALDATA_NOT_EDITED % p1)
-
-    def check_and_copy_globaldefaults(self):
-        #GLOBALDEFAULTS = {
-            ## the name of the container in which all databases are created
-            #'dockerdb_container_name' : 'db',
-            ## dockerdbuser is used to access the database  in the database container
-            #'dockerdbuser'      : 'odoo',
-            ## dockerdbpw is the dockerdbuser's password
-            #'dockerdbpw'        : 'odoo',
-            ## dockerrpcuser is the user with which we want to login to the odoo site running in the container
-            #'dockerrpcuser'     : 'admin',
-            ## dockerrpcuserpw dockerrpcuser's password
-            ## this is in most cases NOT 'admin'
-            ## you can overrule it with -ddbpw
-            #'dockerrpcuserpw'   : 'admin',
-        #}
-        p1 = '%s/config/globaldefaults.py' % self.base_path
-        p2 = '%s/templates/globaldefaults.py' % self.base_path
-        if not os.path.exists(p1):
-            # silently copy the defaults file
-            open(p1, 'w').write(open(p2, 'r').read())
 
     def check_and_create_sites_repo(self, force = False):
         # check whether sites repo defined in BASEINFO exists

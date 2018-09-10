@@ -1,7 +1,7 @@
 #!bin/python
 # -*- encoding: utf-8 -*-
 
-from config import SITES #, BASE_INFO, GLOBALDEFAULTS
+from config import SITES #, BASE_INFO, DOCKER_DEFAULTS
 #from config.handlers import InitHandler, DBUpdater
 from scripts.create_handler import InitHandler
 import os

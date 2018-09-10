@@ -378,7 +378,7 @@ sample localdata.py:
     # remote_user_dic is used to access the remote server to update the local db
     # it is a dic with the ip of the remote server as key
     # which ip to use is read from sytes.py
-    REMOTE_USER_DIC = {
+    REMOTE_SERVERS = {
         '144.76.184.20' : {
             'remote_user' : 'odooprojects',
             'remote_data_path' : '/home/odooprojects/odoo_instances',

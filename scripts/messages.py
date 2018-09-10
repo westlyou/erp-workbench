@@ -212,8 +212,8 @@ LOCALSITESLIST_MARKER_MISSING = """
 the marker
 %s
 could not be found in config/localdata.py
-please add it inside REMOTE_USER_DIC, so it reads something like:
-REMOTE_USER_DIC = {
+please add it inside REMOTE_SERVERS, so it reads something like:
+REMOTE_SERVERS = {
 %s
     ...
 }

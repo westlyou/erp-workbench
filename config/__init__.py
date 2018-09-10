@@ -9,14 +9,26 @@ import getpass
 ACT_USER = getpass.getuser()
 from scripts.bcolors import bcolors
 
-# first thing we do, is make sure there is a config.yaml file
-# if it does not exist, we copy it from config.yaml.in
-config_yaml = '%s/config/config.yaml' % BASE_PATH
+# first thing we do, is make sure there exists all *.yaml files
+# if it does not exist, we copy it from ??.yaml.in
+
 data_path = os.path.normpath('%s/config_data' % BASE_PATH)
 user_home = os.path.expanduser('~')
-if not os.path.exists(config_yaml):
-    from shutil import copyfile
-    copyfile('%s.in' % config_yaml, config_yaml)
+yaml_list = []
+for y_info in  (('config', 'base_info.py'), ('server', 'server_info.py'), ('docker', 'docker_info.py')):
+    y_name, file_name = y_info
+    config_yaml = '%s/config/%s.yaml' % (BASE_PATH, y_name)
+    if not os.path.exists(config_yaml):
+        from shutil import copyfile
+        copyfile('%s.in' % config_yaml, config_yaml)
+    # build a list to be sent to check_and_update_base_defaults
+    yaml_list.append(
+        (
+            config_yaml,
+            '%s/config/config_data/%s' % (BASE_PATH, file_name),
+            '%s/templates/%s.yaml' % (BASE_PATH, y_name), 
+        )
+    )
 
 # the base info we need to access the various parts of erp-workbench 
 # is in some yaml file in erp-workbench the config folder
@@ -26,12 +38,7 @@ must_reload = check_and_update_base_defaults(
     BASE_PATH,
     user_home,
     ACT_USER,
-    [(
-        config_yaml,
-        '%s/data_path/base_info.py',
-        # if one of the values got "configured away"
-        '%s/templates/config.yaml' % BASE_PATH,
-    )],
+    yaml_list,
     construct_result
 )
 
@@ -51,7 +58,7 @@ except ImportError:
 if NEED_BASEINFO or must_reload:
     print(BASEINFO_CHANGED)
 if must_reload:
-    BASE_INFO = construct_result[config_yaml]['base_info']
+    BASE_INFO = construct_result[config_yaml]['BASE_DEFAULTS']
 
 # what folders do we need to create in odoo_sites for a new site
 FOLDERNAMES = ['addons','dump','etc','filestore', 'log', 'ssl', 'start-entrypoint.d', 'presets']
@@ -83,10 +90,10 @@ try:
     # MARKER is used to mark the position in sites.py to add a new site description
     MARKER = sites_handler.marker # from messages.py
     try:
-        from config.localdata import REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD
+        from config.localdata import REMOTE_SERVERS, APACHE_PATH, DB_USER, DB_PASSWORD
     except ImportError:
         print('please create config/localdata.py')
-        print('it must have values for REMOTE_USER_DIC, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL')
+        print('it must have values for REMOTE_SERVERS, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL')
         print('use template/localdata.py as template')
         DB_USER = ACT_USER
         DB_PASSWORD = 'admin'
@@ -146,17 +153,17 @@ except:
     version_info = None
 
 #p =  ''#os.path.split(os.path.realpath(__file__))[0]
-if not os.path.exists('%s/config/globaldefaults.py' % BASE_PATH):
+if not os.path.exists('%s/config/DOCKER_DEFAULTS.py' % BASE_PATH):
     ## silently copy the defualts file
     #act = os.getcwd()
     #os.chdir(p)
-    open('%s/config/globaldefaults.py' % BASE_PATH, 'w').write(open('%s/templates/globaldefaults.py' % BASE_PATH, 'r').read())
+    open('%s/config/docker_defaults.py' % BASE_PATH, 'w').write(open('%s/templates/docker_defaults.py' % BASE_PATH, 'r').read())
     #os.chdir(act)
 try:   
-    from globaldefaults import GLOBALDEFAULTS
+    from docker_defaults import DOCKER_DEFAULTS
 except ImportError:
     sys.path.insert(0, '%s/config' % BASE_PATH)
-    from globaldefaults import GLOBALDEFAULTS
+    from docker_defaults import DOCKER_DEFAULTS
 
 # NEED_NAME is a list of options that must provide a name
 NEED_NAME = [

@@ -1,4 +1,4 @@
-GLOBALDEFAULTS = {
+DOCKER_DEFAULTS = {
     # the name of the container in which the database is created
     'dockerdb_container_name' : 'db',
     # dockerdbuser is used to access the database  in the database container
