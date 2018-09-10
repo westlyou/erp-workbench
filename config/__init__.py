@@ -28,7 +28,7 @@ must_reload = check_and_update_base_defaults(
     ACT_USER,
     [(
         config_yaml,
-        '%s/data_path, achtung testen was richtig ist
+        '%s/data_path/base_info.py',
         # if one of the values got "configured away"
         '%s/templates/config.yaml' % BASE_PATH,
     )],
