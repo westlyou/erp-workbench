@@ -1,5 +1,5 @@
 import os
-from config import DB_USER, BASE_PATH, BASE_INFO
+from config import BASE_PATH, BASE_INFO
 
 
 def add_options_create(parser):

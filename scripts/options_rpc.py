@@ -1,4 +1,5 @@
-from config import DB_USER
+from config import BASE_INFO
+
 
 def add_options_rpc(parser):
     """add options to the rpc parser
@@ -20,8 +21,8 @@ def add_options_rpc(parser):
                             action="store", dest="db_password", default='admin',
                             help="the password to access the database. default 'admin'")
     parser_rpc.add_argument("-dbu", "--dbuser",
-                            action="store", dest="db_user", default=DB_USER,
-                            help="define user to log into database default %s" % DB_USER)
+                            action="store", dest="db_user", default=BASE_INFO['db_user'],
+                            help="define user to log into database default %s" % BASE_INFO['db_user'])
     parser_rpc.add_argument("-rpch", "--rpchost",
                             action="store", dest="rpc_host", default='localhost',
                             help="define where odoo runs and can be accessed trough the rpc api. Default localhost")

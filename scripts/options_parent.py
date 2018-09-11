@@ -2,7 +2,7 @@
 # the parent parser gets incloded in some other also
 # and provides common options
 
-from config import DB_USER, BASE_PATH, BASE_INFO
+from config import BASE_PATH, BASE_INFO
 
 def add_options_parent(parser):
     """add options to the create parser
@@ -23,6 +23,10 @@ def add_options_parent(parser):
         help = """force. this parameter is used to force setting of new keys into the configuration
             or when copying sitedata without disturbing a running odoo"""
     )
+    parent_parser.add_argument(
+        "-q", "--quiet",
+        action="store_true", dest="quiet", default=False,
+        help="be quiet")
     parent_parser.add_argument(
         "-v", "--verbose",
         action="store_true", dest="verbose", default=False,

@@ -18,9 +18,9 @@ SITES_HOME = BASE_PATH #os.path.split(os.path.split(os.path.realpath(__file__))[
 # migrate folder will be used when migrating to a new odoo version
 MIGRATE_FOLDER = '%s/upgrade/' % BASE_PATH
 BASE_INFO = {}
-DB_USER = ACT_USER
+#DB_USER = ACT_USER
 DB_PASSWORD = 'admin'
-DB_PASSWORD_LOCAL = 'admin'
+#DB_PASSWORD_LOCAL = 'admin'
 SITES, SITES_LOCAL = {},{}
 MARKER = ''
 # what folders do we need to create in odoo_sites for a new site
@@ -79,7 +79,7 @@ please check %s if everything ist correct.
 # base defaults are the defaults we are using for the base info if they where not set
 NEED_BASEINFO = False
 try:
-    from config.config_data.base_info import base_info as BASE_INFO
+    from config.config_data.base_info import BASE_DEFAULTS as BASE_INFO
 except ImportError:
     NEED_BASEINFO = True
 if NEED_BASEINFO or must_reload:

@@ -284,19 +284,22 @@ def get_base_info(base_info, base_defaults):
 # ----------------------------------
 
 
-def list_sites(sites_dic):
+def list_sites(sites_dic, quiet=False):
     """
     list sitenames listed in the sites_dic
     @sites_dic    : dictionary with info about sites
                     this is the combination of sites.py and local_sites.py
+    quiet is set when testing
     """
     keys = list(sites_dic.keys())
     keys.sort()
     for key in keys:
         if sites_dic[key].get('is_local'):
-            print('%s (local)' % key)
+            if not quiet:
+                print('%s (local)' % key)
         else:
-            print(key)
+            if not quiet:
+                print(key)
 
 # ----------------------------------
 # module_add

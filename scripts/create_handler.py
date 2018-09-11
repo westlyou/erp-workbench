@@ -6,13 +6,15 @@ import sys
 import os
 # import logging
 import re
-# import socket
+import socket
 import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, \
-    VERSION, NEED_NAME, \
-    NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
+    NEED_NAME, NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
+from config.config_data.base_info import BASE_DEFAULTS
+from config.config_data.servers_info import REMOTE_SERVERS
+
 # robert: restructure
 #from config.config_data.servers_info import DB_USER, DB_PASSWORD, REMOTE_SERVERS
 # try:
@@ -319,7 +321,10 @@ class InitHandler(RPC_Mixin):
         else:
             self.site_names = []
         self.opts = opts
-        self.sites = sites
+        if sites:
+            self.sites = sites
+        else:
+            self.sites = SITES
         self.default_values = {}
         #self.check_name(no_completion=True, must_match=True)
         # resolve inheritance within sites
@@ -333,8 +338,10 @@ class InitHandler(RPC_Mixin):
             #if result:
                 #self.site_names = [result]
         if not selected:
-            self._complete_selection(
-                parsername, options, prompt='%s-options ?' % parsername)
+            # when testing we migth start without a name
+            if not opts.__dict__.get('skip_name'):
+                self._complete_selection(
+                    parsername, options, prompt='%s-options ?' % parsername)
             # check again if selected
             parsername, selected, options = collect_options(opts)
         self.parsername = parsername
@@ -416,21 +423,24 @@ class InitHandler(RPC_Mixin):
                 site_server_ip = 'localhost'
             else:
                 site_server_ip = self.site['remote_server']['remote_url']
-            if site_server_ip == 'xx.xx.xx.xx':
-
-                if self.default_values['is_local']:
-                    p = '%s/sites_local/%s.py' % (
-                        BASE_INFO['sitesinfo_path'], self.site_name)
-
-                print(SITE_NOT_EDITED % (self.site_name, os.path.normpath(p)))
-                selections = self.selections
-                must_exit = True
-                if selections:
-                    for s in selections:
-                        if s[0] in NO_NEED_SERVER_IP:
-                            must_exit = False
-                if must_exit:
-                    sys.exit()
+            try:
+                site_server_ip = socket.gethostbyname(site_server_ip)
+            except:
+                pass
+            # robert restructure
+            #if site_server_ip == 'xx.xx.xx.xx':
+                #if self.default_values['is_local']:
+                    #p = '%s/sites_local/%s.py' % (
+                        #BASE_INFO['sitesinfo_path'], self.site_name)
+                #print(SITE_NOT_EDITED % (self.site_name, os.path.normpath(p)))
+                #selections = self.selections
+                #must_exit = True
+                #if selections:
+                    #for s in selections:
+                        #if s[0] in NO_NEED_SERVER_IP:
+                            #must_exit = False
+                #if must_exit:
+                    #sys.exit()
             if self.site and not REMOTE_SERVERS.get(site_server_ip):
                 selections = self.selections
                 must_exit = True
@@ -696,7 +706,7 @@ class InitHandler(RPC_Mixin):
     def db_user(self):
         if self.parsername == 'docker':
             return self.docker_db_admin
-        return self.login_info.get('db_user') or self.opts.__dict__.get('db_user', DB_USER)
+        return self.login_info.get('db_user') or self.opts.__dict__.get('db_user', BASE_DEFAULTS['db_user'])
 
     @property
     def db_host(self):
@@ -2332,8 +2342,9 @@ class SiteCreator(InitHandler, DBUpdater):
             p = subprocess.Popen(
                 '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=os.environ.copy())
             out, err = p.communicate(input=commands)
-            print(out)
-            print(err)
+            if not opts.quiet:
+                print(out)
+                print(err)
         else:
             # create virtual env
             cmd_line = ['virtualenv', '-p', python_version, 'python']

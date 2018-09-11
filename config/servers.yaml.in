@@ -6,11 +6,12 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 REMOTE_SERVERS:
-    server_name: 'ACT_USER'
-    server_ip: '127.0.0.1'
-    remote_user: '%(DB_USER)s'
-    remote_data_path: '%(BASE_PATH)s'
-    # remote_pw is used as credential for the remote user. normaly unset
-    # to use public keys.
-    remote_pw: ''
-    local_user_email: 'user_to_use@please set in local data'
+    127.0.0.1:
+        server_name: 'ACT_USER'
+        server_ip: '127.0.0.1'
+        remote_user: '%(DB_USER)s'
+        remote_data_path: '%(BASE_PATH)s'
+        # remote_pw is used as credential for the remote user. normaly unset
+        # to use public keys.
+        remote_pw: ''
+        local_user_email: 'user_to_use@please set in local data'

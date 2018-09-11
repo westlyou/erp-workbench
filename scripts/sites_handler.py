@@ -48,33 +48,6 @@ class SitesHandler(object):
         self.template_name = template_name
         self.preset_values = preset_values
 
-    # robert refacture
-    # def check_and_copy_local_data(self):
-    #     # make sure config localdata exists and is correctly edited
-    #     p1 =  '%s/config/localdata.py' % self.base_path
-    #     p2 =  '%s/templates/localdata.py' % self.base_path
-    #     if not os.path.exists(p1):
-    #         # BB, move localdata to config
-    #         if os.path.exists('%s/localdata.py' % self.base_path):
-    #             open(p1, 'w').write(open('%s/localdata.py' % self.base_path, 'r').read())
-    #             print(LOCALDATA_MOVED % ('%s/localdata.py' % self.base_path, p1))
-    #             os.unlink('%s/localdata.py' % self.base_path)
-    #             try:
-    #                 os.unlink('%s/localdata.pyc' % self.base_path)
-    #             except:
-    #                 pass
-    #             sys.exit()
-    #         # silently copy the defaults file
-    #         open(p1, 'w').write(open(p2, 'r').read())
-    #         print(LOCALDATA_CREATED % p1)
-    #         sys.exit()
-    #     else:
-    #         data = open(p1, 'r').read().split('\n')
-    #         m = re.compile(r'[^#]+UNEDITED')
-    #         for line in data:
-    #             if m.match(line):
-    #                 print(LOCALDATA_NOT_EDITED % p1)
-
     def check_and_create_sites_repo(self, force = False):
         # check whether sites repo defined in BASEINFO exists
         # if not download and install it

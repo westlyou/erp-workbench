@@ -48,77 +48,6 @@ banner = bcolors.red + BANNER_HEAD  + bcolors.normal + BANNER_TEXT
 
 #ascii art by: Cara Pearson
 colors = bcolors
-class tabCompleter(object):
-
-    def pathCompleter(self, text, state):
-        line = readline.get_line_buffer().split()
-
-        return [x for x in glob.glob(text+'*')][state]
-
-def interactive():
-    t = tabCompleter()
-    singluser = ""
-    if args.interactive is True:
-        print(colors.white + "\n\nWelcome to interactive mode!\n\n" + colors.normal)
-        print(colors.red + "WARNING:" + colors.white + " Leaving an option blank will leave it empty and refer to default\n\n" + colors.normal)
-        print("Available services to brute-force:")
-        for serv in services:
-            srv = serv
-            for prt in services[serv]:
-                iplist = services[serv][prt]
-                port = prt
-                plist = len(iplist)
-                print("Service: " + colors.green + str(serv) + colors.normal + " on port " + colors.red + str(port) + colors.normal + " with " + colors.red + str(plist) + colors.normal + " hosts")
-
-        args.service = input('\n' + colors.lightblue + 'Enter services you want to brute - default all (ssh,ftp,etc): ' + colors.red)
-
-        args.threads = input(colors.lightblue + 'Enter the number of parallel threads (default is 2): ' + colors.red)
-
-        args.hosts = input(colors.lightblue + 'Enter the number of parallel hosts to scan per service (default is 1): ' + colors.red)
-
-        if args.passlist is None or args.userlist is None:
-            customword = input(colors.lightblue + 'Would you like to specify a wordlist? (y/n): ' + colors.red)
-        if customword == "y":
-            readline.set_completer_delims('\t')
-            readline.parse_and_bind("tab: complete")
-            readline.set_completer(t.pathCompleter)
-            if args.userlist is None and args.username is None:
-                args.userlist = input(colors.lightblue + 'Enter a userlist you would like to use: ' + colors.red)
-                if args.userlist == "":
-                    args.userlist = None
-            if args.passlist is None and args.password is None:
-                args.passlist = input(colors.lightblue + 'Enter a passlist you would like to use: ' + colors.red)
-                if args.passlist == "":
-                    args.passlist = None
-
-        if args.username is None or args.password is None: 
-            singluser = input(colors.lightblue + 'Would to specify a single username or password (y/n): ' + colors.red)
-        if singluser == "y":
-            if args.username is None and args.userlist is None:
-                args.username = input(colors.lightblue + 'Enter a username: ' + colors.red)
-                if args.username == "":
-                    args.username = None
-            if args.password is None and args.passlist is None:
-                args.password = input(colors.lightblue + 'Enter a password: ' + colors.red)
-                if args.password == "":
-                    args.password = None
-
-        if args.service == "":
-            args.service = "all"
-        if args.threads == "":
-            args.threads = "2"
-        if args.hosts == "":
-            args.hosts = "1"
-
-    print(colors.normal)
-
-
-    argcomplete.autocomplete(parser)
-    args = parser.parse_args()
-
-    if args.file is None and args.modules is False:
-        parser.error("argument -f/--file is required")
-    return args
 
 #https://stackoverflow.com/questions/6365601/default-sub-command-or-handling-no-sub-command-with-argparse
 def set_default_subparser(self, name, args=None):
@@ -203,14 +132,16 @@ def main(opts, parsername):
             if opts.create:
                 existed = handler.create_or_update_site()
                 if existed:
-                    print()
-                    print('%s site allredy existed' % handler.site_name)
-                    print(SITE_EXISTED % (handler.default_values['inner'], handler.site_name))
+                    if not opts.quiet:
+                        print()
+                        print('%s site allredy existed' % handler.site_name)
+                        print(SITE_EXISTED % (handler.default_values['inner'], handler.site_name))
                 else:
                     if handler.site_name:
-                        print()
-                        print('%s site created' % handler.site_name)
-                        print(SITE_NEW % (handler.site_name, handler.site_name, handler.default_values['inner']))
+                        if not opts.quiet:
+                            print()
+                            print('%s site created' % handler.site_name)
+                            print(SITE_NEW % (handler.site_name, handler.site_name, handler.default_values['inner']))
             # create the folder structure within the datafoler defined in the config
             # this also creates the config file used by a docker server within the
             # newly created folders
@@ -227,7 +158,7 @@ def main(opts, parsername):
         # ----------
         # list_sites lists all existing sites both from global and local sites
         if opts.list_sites:
-            list_sites(SITES)
+            list_sites(SITES, opts.quiet)
             did_run_a_command = True
             return
         

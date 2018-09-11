@@ -2,7 +2,7 @@
 # the parent parser gets incloded in some other also
 # and provides common options
 
-from config import DB_USER, BASE_PATH, BASE_INFO
+from config import BASE_PATH, BASE_INFO
 
 def add_options_support(parser):
     """add options to the create parser
