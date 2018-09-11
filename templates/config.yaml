@@ -14,7 +14,7 @@ BASE_DEFAULTS:
   # the sitesinfo_path points to a folder, where these site descriptions 
   # are kept in several subfolders
   # by default it is kept within the erp-workbench folder
-  # %(BASE_PATH)s
+  # %s(BASE_PATH)
   sitesinfo_path: '%(BASE_PATH)s/sites_list/'
 
   # sitesinfo_url:
@@ -56,4 +56,13 @@ BASE_DEFAULTS:
   # this setting is only used when rederict_emil is installed
   local_user_mail: 'info@company.com'
 
+  # db_user:
+  # this is the default data base user, if no db user is defined in the
+  # server description file from the sites.yaml file
+  db_user: 'admin'
+
+  # db_password:
+  # this is the default password, if it not is defined in the
+  # server description file from the sites.yaml file
+  db_password: 'admin'
 

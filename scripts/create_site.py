@@ -8,10 +8,15 @@ import subprocess
 import re
 import argparse
 import argcomplete
+
+try:
+    from scripts.bcolors import bcolors
+except ImportError:
+    sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
+
 from scripts.bcolors import bcolors
 from scripts.banner import BANNER_HEAD, BANNER_TEXT
 
-sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from scripts.messages import *
 
 from scripts.utilities import create_server_config, checkout_sa, list_sites
