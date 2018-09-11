@@ -1,39 +1,29 @@
 import os
 import sys
 import unittest
+from argparse import Namespace
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from scripts import create_site
 
-print(sys.path)
 
 """
 run it with:
 bin/python -m unittest discover tests
 """
 
-class TestManager(unittest.TestCase):
+class Testreate(unittest.TestCase):
 
     def setUp(self):
-        pass
+        from config.config_data.handlers import SiteCreator
+        args = Namespace()
+        args.name = ''
+        args.subparser_name = 'ccreate'
+        self.handler = SiteCreator(args, {})
 
-    def test_get_base_preset(self):
-        """ get_base_preset should return a dictonary with info on the objects
-            we have to handle
-            this must return a dictionary
-            with a description of objects that each erp site needs to have set
-            It muss have a structure 'company'
+    def test_create_ls(self):
+        """ run the create -ls command 
         """
-        return
-        data = self.manager.get_yaml_file('base_preset')
-        company = data.get('company')
-        self.assertTrue(company)
-        for n in ['model', 'model_help']:
-            self.assertTrue(company[n], '%s is missing %s' % ('company', n))
-        # all other elements need these fields also
-        for k, v in list(data.items()):
-            for n in ['model', 'model_help']:
-                self.assertTrue(v[n], '%s is missing %s' % (k, n))
+        print(self.handler)
 
 
 if __name__ == '__main__':
