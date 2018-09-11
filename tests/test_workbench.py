@@ -5,7 +5,6 @@ from argparse import Namespace
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 """
 run it with:
 bin/python -m unittest discover tests

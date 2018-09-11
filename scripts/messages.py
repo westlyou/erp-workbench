@@ -262,17 +262,17 @@ alias  doc="cd %(user_home)s/Documents"
 alias  down="cd %(user_home)s/Downloads"
 alias  drop="cd %(user_home)s/Dropbox"
 """
-OOIN = """
+WWB = """
 # odoo
 alias  wwb="cd %s"
 """
-OOLI = """
+WWLI = """
 # sites-list
-alias ooli="cd %s"
+alias wwli="cd %s"
 """
-OODA = """
-# odoo data
-alias  ooda="cd %s"
+WWDA = """
+# erp data
+alias  wwda="cd %s"
 """
 VIRTENV_D = """
 #deactivate virtual env
@@ -290,7 +290,7 @@ ALIASC = """
 alias  do_checkit="for x in *; do echo ----------; echo \$x; echo ----------; ( cd \$x; git status; ) ; done"
 """
 ALIASOO = """
-alias  ooinw="wwb; source python/bin/activate"
+alias  wwbw="workon workbench"
 """
 ALIAS_LINE = 'alias  %(sname)s="cd %(path)s"\n'
 AMARKER = '##-----wb alias-marker %s-----##'
@@ -303,19 +303,6 @@ ABLOCK = """%(aliasmarker_start)s
 ALIAS_LENGTH = 4
 
 ALIAS_HEADER = """
-trapper(){
-    deactivate 2> /dev/null
-}
-setvenv(){
-    if [ -f python/bin/activate ]
-    then
-       source python/bin/activate
-    else
-        echo No virtualenv found
-    fi
-}
-alias v="echo starting virtual env. Stop with vv;trapper;setvenv"
-alias vv="trapper"
 cd_function() {
     if [ $2 ]; then
         if [ $3 ]; then

@@ -15,12 +15,6 @@ from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
 from config.config_data.base_info import BASE_DEFAULTS
 from config.config_data.servers_info import REMOTE_SERVERS
 
-# robert: restructure
-#from config.config_data.servers_info import DB_USER, DB_PASSWORD, REMOTE_SERVERS
-# try:
-#     from config.localdata import DB_PASSWORD_LOCAL
-# except ImportError:
-#     DB_PASSWORD_LOCAL = 'admin'  # bbb
 from copy import deepcopy
 from scripts.name_completer import SimpleCompleter
 import stat
@@ -454,12 +448,13 @@ class InitHandler(RPC_Mixin):
                     sys.exit()
             login_info['user'] = ACT_USER
             # access to the local database
-            xx # we must read DB_PASSWORD_LOCAL from the server 'localhost'
-            login_info['db_password'] = self.opts.__dict__.get('db_password', DB_PASSWORD_LOCAL)
-            login_info['db_user'] = self.opts.__dict__.get('db_user', DB_USER)
+            db_user = BASE_DEFAULTS.get('db_user')
+            db_password = BASE_DEFAULTS.get('dbdb_password_user')
+            login_info['db_password'] = self.opts.__dict__.get('db_password', db_password)
+            login_info['db_user'] = self.opts.__dict__.get('db_user', db_user)
             # access to the locally running odoo
-            login_info['rpc_user'] = self.opts.__dict__.get('rpc_user', DB_USER)
-            login_info['rpc_pw'] = self.opts.__dict__.get('rpc_password', DB_PASSWORD_LOCAL)
+            login_info['rpc_user'] = self.opts.__dict__.get('rpc_user', db_user)
+            login_info['rpc_pw'] = self.opts.__dict__.get('rpc_password', db_password)
             # access to the local docker
             # -----------------
             # remote
@@ -470,8 +465,8 @@ class InitHandler(RPC_Mixin):
             login_info['remote_user'] = server.get('remote_user') or ''
             login_info['remote_user_pw'] = self.site and server.get(
                 'remote_pw') or ''
-            login_info['remote_db_password'] = self.opts.__dict__.get('db_password', DB_PASSWORD)
-            login_info['remote_db_user'] = self.opts.__dict__.get('db_user', DB_USER)
+            login_info['remote_db_password'] = self.opts.__dict__.get('db_password', db_password)
+            login_info['remote_db_user'] = self.opts.__dict__.get('db_user', db_user)
             # docker
             # while docker opts are not yet loaded
             try:
@@ -2038,9 +2033,9 @@ class InitHandler(RPC_Mixin):
                     'dpath': dp,
                 }
         # wwb cd to erp_workbench
-        result += OOIN % BASE_PATH
-        result += OOLI % BASE_INFO['sitesinfo_path']
-        result += OODA % BASE_INFO['erp_server_data_path']
+        result += WWB % BASE_PATH
+        result += WWLI % BASE_INFO['sitesinfo_path']
+        result += WWB % BASE_INFO['erp_server_data_path']
         result += DOCKER_CLEAN
         result += DOC_ET_ALL % {'user_home': os.path.expanduser("~/")}
         result += ALIASC
@@ -2342,7 +2337,7 @@ class SiteCreator(InitHandler, DBUpdater):
             p = subprocess.Popen(
                 '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=os.environ.copy())
             out, err = p.communicate(input=commands)
-            if not opts.quiet:
+            if not self.opts.quiet:
                 print(out)
                 print(err)
         else:

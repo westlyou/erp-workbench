@@ -8,10 +8,6 @@ from pprint import pprint
 
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from config import BASE_INFO, SITES, ACT_USER
-try:
-    from config.localdata import DB_PASSWORD_LOCAL
-except ImportError:
-    DB_PASSWORD_LOCAL = 'admin' # bbb
 import psycopg2
 
 

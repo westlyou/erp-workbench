@@ -20,7 +20,6 @@ MIGRATE_FOLDER = '%s/upgrade/' % BASE_PATH
 BASE_INFO = {}
 #DB_USER = ACT_USER
 DB_PASSWORD = 'admin'
-#DB_PASSWORD_LOCAL = 'admin'
 SITES, SITES_LOCAL = {},{}
 MARKER = ''
 # what folders do we need to create in odoo_sites for a new site
@@ -97,7 +96,6 @@ if must_reload and construct_result[yaml_dic['project'][0]]:
     PROJECT_DEFAULTS = construct_result[yaml_dic['project'][0]]['PROJECT_DEFAULTS']
 else:
     from config.config_data.project_info import PROJECT_DEFAULTS
-
 
 # sites is a combination created from "regular" sites listed in sites.py
 # an a list of localsites listed in local_sites.py

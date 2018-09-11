@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# make sure we are in a virtualenv
+import os, sys, time
+if not os.environ.get('VIRTUAL_ENV'):
+    print('not running in a virtualenv')
+    print('activate the worbench environment executing:')
+    print('workon workbench')
+    sys.exit()
 from argparse import RawTextHelpFormatter, ArgumentParser
 import readline, glob
-import sys, time, os
 import subprocess
 #import xml.dom.minidom
 import re
