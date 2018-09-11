@@ -34,16 +34,27 @@ def read_yaml_file(path, vals={}):
             print(bcolors.ENDC)
             raise
     raw_yaml_data = '\n'.join(raw_yaml_data_stripped) % vals
-    return yaml.load(StringIO(raw_yaml_data))
+    try:
+        return yaml.load(StringIO(raw_yaml_data))
+    except yaml.parser.ParserError as e:
+        print(bcolors.FAIL)
+        print('*' * 80)
+        print('file %s can not be parsed' % path)
+        print(bcolors.ENDC)
+        raise
 
 
-def check_and_update_base_defaults(vals, yaml_files, results={}):
+
+def check_and_update_base_defaults(yaml_files, vals, results={}):
     """read a list of yaml files and construct python files that can be imported
 
     Arguments:
-        vals {dictonary} : values that are used in the yaml files
         yaml_files {list of tuples} -- tuples with (
-            path to the yaml file, path to the datafile to be constructed)
+            path to the yaml file, 
+            path to the datafile to be constructed,
+            {path to yaml with defaults}
+        )
+        vals {dictonary} : values that are used in the yaml files
 
     Keyword Arguments:
         results {dict} -- dictionary with the data loaded (default: {{}})
@@ -57,9 +68,16 @@ def check_and_update_base_defaults(vals, yaml_files, results={}):
         if len(yaml_data) == 3:
             # we have to construct a yaml file with its variable replaced
             yaml_file_path, data_file_path, yaml_file_path_defaults = yaml_data
-        else:
+        elif len(yaml_data) == 2:
             yaml_file_path_defaults = ''
             yaml_file_path, data_file_path = yaml_data
+        else:
+            print(bcolors.FAIL)
+            print('*' * 80)
+            print('badly formated entry for check_and_update_base_defaults') 
+            print(yaml_data)
+            print(bcolors.ENDC)
+            raise ValueError
         if os.path.exists(yaml_file_path):
             # compare file dates
             # check if folder exists:
@@ -83,7 +101,7 @@ def check_and_update_base_defaults(vals, yaml_files, results={}):
             for k,v in yaml_data.items():
                 new_yaml_data += new_line % (k, pformat(v))
             with open(data_file_path, 'w') as f:
-                f.write(pformat(new_yaml_data))
+                f.write(new_yaml_data)
 
             must_restart = True
             results[yaml_file_path] = yaml_data

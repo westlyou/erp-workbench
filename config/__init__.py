@@ -53,6 +53,8 @@ vals = {
     'ACT_USER'  : ACT_USER,
     'DB_USER'   : ACT_USER,
 }
+# from pprint import pformat
+# print(pformat(yaml_dic))
 must_reload = check_and_update_base_defaults(
     yaml_dic.values(),
     vals,
@@ -70,7 +72,7 @@ please check %s if everything ist correct.
 # base defaults are the defaults we are using for the base info if they where not set
 NEED_BASEINFO = False
 try:
-    from .config_data.base_info import base_info as BASE_INFO
+    from config.config_data.base_info import base_info as BASE_INFO
 except ImportError:
     NEED_BASEINFO = True
 if NEED_BASEINFO or must_reload:
@@ -81,7 +83,7 @@ if must_reload:
 if must_reload:
     DOCKER_DEFAULTS = construct_result[yaml_dic['docker']]['DOCKER_DEFAULTS']
 else:
-    from config_data.docker_info import DOCKER_DEFAULTS
+    from config.config_data.docker_info import DOCKER_DEFAULTS
 # load project defaults
 if must_reload:
     PROJECT_DEFAULTS = construct_result[yaml_dic['project']]['PROJECT_DEFAULTS']

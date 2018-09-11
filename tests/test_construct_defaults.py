@@ -45,22 +45,22 @@ class TestConstructDefault(unittest.TestCase):
             'USER_HOME' : self.user_home,  
         }
         must_reload = construct_defaults.check_and_update_base_defaults(
-            vals,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,
                 # defaults are the same
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
             )],
+            vals,
             result)
         self.assertTrue(must_reload)
         # we repeat the process but now reload must not be set
         must_reload = construct_defaults.check_and_update_base_defaults(
-            vals,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,
             )],
+            vals,
             result)
         self.assertFalse(must_reload)
 

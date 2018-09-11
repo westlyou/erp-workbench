@@ -1,4 +1,5 @@
 # REMOTE_SERVERS describes with what servers we deal
+# they can also be defined withing the sites_list structure
 
 # Variables that can be used in the values
 # %(BASE_PATH)s will be replaced with the actual folder where erp-worbnch is installed
@@ -7,10 +8,9 @@
 REMOTE_SERVERS:
     server_name: 'localhost'
     server_ip: '127.0.0.1'
-    remote_user: '%(ACT_USER)s'
-    remote_data_path: '%(BASE_PATH)s',
+    remote_user: '%(DB_USER)s'
+    remote_data_path: '%(BASE_PATH)s'
     # remote_pw is used as credential for the remote user. normaly unset
     # to use public keys.
     remote_pw: ''
     local_user_email: 'user_to_use@please set in local data'
-
