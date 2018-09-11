@@ -10,13 +10,15 @@ import re
 import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
-    ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, VERSION, NEED_NAME, \
+    ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, \
+    VERSION, NEED_NAME, \
     NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
-from config.config_data.localdata import DB_USER, DB_PASSWORD, REMOTE_SERVERS
-try:
-    from config.localdata import DB_PASSWORD_LOCAL
-except ImportError:
-    DB_PASSWORD_LOCAL = 'admin'  # bbb
+# robert: restructure
+#from config.config_data.servers_info import DB_USER, DB_PASSWORD, REMOTE_SERVERS
+# try:
+#     from config.localdata import DB_PASSWORD_LOCAL
+# except ImportError:
+#     DB_PASSWORD_LOCAL = 'admin'  # bbb
 from copy import deepcopy
 from scripts.name_completer import SimpleCompleter
 import stat

@@ -89,6 +89,8 @@ def check_and_update_base_defaults(yaml_files, vals, results={}):
                 raise ValueError
             if os.path.exists(data_file_path) and  \
                 os.path.getmtime(data_file_path) >= os.path.getmtime(yaml_file_path):
+                # we have to flag, that we did not load this module
+                results[yaml_file_path] = {}
                 continue
             # read defaults 
             yaml_data = {}

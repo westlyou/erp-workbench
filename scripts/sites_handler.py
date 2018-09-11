@@ -9,7 +9,8 @@ from pprint import pformat
 import subprocess
 from subprocess import PIPE
 from copy import deepcopy
-from config.config_data.base_info import base_info as BASE_INFO
+#from config.config_data.base_info import base_info as BASE_INFO
+from config import BASE_INFO
 from config import ACT_USER
 from scripts.messages import *
 from scripts import bcolors
@@ -43,35 +44,36 @@ from .sites_global import SITES_G
 class SitesHandler(object):
     def __init__(self, base_path, template_name='', preset_values=''):
         self.base_path = base_path
-        self.check_and_copy_local_data()
+        #self.check_and_copy_local_data()
         self.template_name = template_name
         self.preset_values = preset_values
 
-    def check_and_copy_local_data(self):
-        # make sure config localdata exists and is correctly edited
-        p1 =  '%s/config/localdata.py' % self.base_path
-        p2 =  '%s/templates/localdata.py' % self.base_path
-        if not os.path.exists(p1):
-            # BB, move localdata to config
-            if os.path.exists('%s/localdata.py' % self.base_path):
-                open(p1, 'w').write(open('%s/localdata.py' % self.base_path, 'r').read())
-                print(LOCALDATA_MOVED % ('%s/localdata.py' % self.base_path, p1))
-                os.unlink('%s/localdata.py' % self.base_path)
-                try:
-                    os.unlink('%s/localdata.pyc' % self.base_path)
-                except:
-                    pass
-                sys.exit()
-            # silently copy the defaults file
-            open(p1, 'w').write(open(p2, 'r').read())
-            print(LOCALDATA_CREATED % p1)
-            sys.exit()
-        else:
-            data = open(p1, 'r').read().split('\n')
-            m = re.compile(r'[^#]+UNEDITED')
-            for line in data:
-                if m.match(line):
-                    print(LOCALDATA_NOT_EDITED % p1)
+    # robert refacture
+    # def check_and_copy_local_data(self):
+    #     # make sure config localdata exists and is correctly edited
+    #     p1 =  '%s/config/localdata.py' % self.base_path
+    #     p2 =  '%s/templates/localdata.py' % self.base_path
+    #     if not os.path.exists(p1):
+    #         # BB, move localdata to config
+    #         if os.path.exists('%s/localdata.py' % self.base_path):
+    #             open(p1, 'w').write(open('%s/localdata.py' % self.base_path, 'r').read())
+    #             print(LOCALDATA_MOVED % ('%s/localdata.py' % self.base_path, p1))
+    #             os.unlink('%s/localdata.py' % self.base_path)
+    #             try:
+    #                 os.unlink('%s/localdata.pyc' % self.base_path)
+    #             except:
+    #                 pass
+    #             sys.exit()
+    #         # silently copy the defaults file
+    #         open(p1, 'w').write(open(p2, 'r').read())
+    #         print(LOCALDATA_CREATED % p1)
+    #         sys.exit()
+    #     else:
+    #         data = open(p1, 'r').read().split('\n')
+    #         m = re.compile(r'[^#]+UNEDITED')
+    #         for line in data:
+    #             if m.match(line):
+    #                 print(LOCALDATA_NOT_EDITED % p1)
 
     def check_and_create_sites_repo(self, force = False):
         # check whether sites repo defined in BASEINFO exists

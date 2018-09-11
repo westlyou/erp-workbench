@@ -4,7 +4,7 @@
 # %(BASE_PATH)s will be replaced with the actual folder where erp-worbnch is installed
 # %(USER_HOME)s the home folder of the logged in user
 
-ROJECT_DEFAULTS:
+PROJECT_DEFAULTS:
     projectname: undefined
     odoo_version: '12'
     odoo_minor: '.0'

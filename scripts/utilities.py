@@ -52,17 +52,7 @@ SITE_TEMPLATE = """
     },
 """
 
-try:
-    from config.localdata import REMOTE_SERVERS
-except ImportError:
-    print('*' * 80)
-    print('localdata.py not found. Please create it.')
-    print("""it should contain:
-    db_user = NAME_OF_LOCAL_DBUSER
-    db_password = PASSWORD
-    """)
-    print('*' * 80)
-#    sys.exit()
+from config.config_data.servers_info import REMOTE_SERVERS
 
 
 def get_process_id(name, path):
@@ -267,24 +257,24 @@ def get_base_info(base_info, base_defaults):
         default = BASE_INFO.get(k, default)
         base_info[k] = get_single_value(name, explanation, default)
 
-# ----------------------------------
-# update_base_info
-# collects localdata that will be stored in config/base_info.py
-# @base_info_path   : path to config/base_info.pyconfig/base_info.py
-# @default_values   : dictionary with default values
-# ----------------------------------
+# # ----------------------------------
+# # update_base_info
+# # collects localdata that will be stored in config/base_info.py
+# # @base_info_path   : path to config/base_info.pyconfig/base_info.py
+# # @default_values   : dictionary with default values
+# # ----------------------------------
 
 
-def update_base_info(base_info_path, defaults):
-    """
-    collects localdata that will be stored in config/base_info.py
-    @base_info_path   : path to config/base_info.pyconfig/base_info.py
-    @default_values   : dictionary with default values
-    """
-    base_info = {}
-    get_base_info(base_info, defaults)
-    set_base_info(base_info, base_info_path)
-    print('%s created' % base_info_path)
+# def update_base_info(base_info_path, defaults):
+#     """
+#     collects localdata that will be stored in config/base_info.py
+#     @base_info_path   : path to config/base_info.pyconfig/base_info.py
+#     @default_values   : dictionary with default values
+#     """
+#     base_info = {}
+#     get_base_info(base_info, defaults)
+#     set_base_info(base_info, base_info_path)
+#     print('%s created' % base_info_path)
 
 # ----------------------------------
 # list_sites

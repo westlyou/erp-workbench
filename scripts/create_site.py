@@ -14,9 +14,7 @@ from scripts.banner import BANNER_HEAD, BANNER_TEXT
 sys.path.insert(0, os.path.split(os.path.split(os.path.realpath(__file__))[0])[0])
 from scripts.messages import *
 
-from scripts.utilities import update_base_info, \
-     create_server_config, checkout_sa, \
-     list_sites
+from scripts.utilities import create_server_config, checkout_sa, list_sites
 
 try:
     from config import SITES, SITES_LOCAL
@@ -26,8 +24,7 @@ except ImportError:
     from config import SITES, SITES_LOCAL
     
 from config import ACT_USER, BASE_PATH, FOLDERNAMES, \
-    BASE_INFO, MARKER, \
-    APACHE_PATH, DB_USER, DB_PASSWORD, LOGIN_INFO_FILE_TEMPLATE, \
+    BASE_INFO, MARKER, LOGIN_INFO_FILE_TEMPLATE, \
     REQUIREMENTS_FILE_TEMPLATE, DOCKER_DEFAULTS
 
 from config.config_data.handlers import SiteCreator

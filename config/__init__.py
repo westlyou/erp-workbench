@@ -3,6 +3,13 @@ import os
 import sys
 import getpass
 from scripts.bcolors import bcolors
+
+"""
+rename files config/localdata.py -> confid/local_data/servers_info.py
+    GLOBALDEFAULTS --> docker_info.DOCKER_DEFAULTS
+
+"""
+
 # ACT_USER is the actualy logged in user
 ACT_USER = getpass.getuser()
 # BASE_PATH is the home directory of erp_workbench
@@ -78,17 +85,18 @@ except ImportError:
 if NEED_BASEINFO or must_reload:
     print(BASEINFO_CHANGED)
 if must_reload:
-    BASE_INFO = construct_result[yaml_dic['config']]['BASE_DEFAULTS']
+    if construct_result[yaml_dic['config'][0]]:
+        BASE_INFO = construct_result[yaml_dic['config'][0]]['BASE_DEFAULTS']
 # load docker info
-if must_reload:
-    DOCKER_DEFAULTS = construct_result[yaml_dic['docker']]['DOCKER_DEFAULTS']
+if must_reload and construct_result[yaml_dic['docker'][0]]:
+    DOCKER_DEFAULTS = construct_result[yaml_dic['docker'][0]]['DOCKER_DEFAULTS']
 else:
     from config.config_data.docker_info import DOCKER_DEFAULTS
 # load project defaults
-if must_reload:
-    PROJECT_DEFAULTS = construct_result[yaml_dic['project']]['PROJECT_DEFAULTS']
+if must_reload and construct_result[yaml_dic['project'][0]]:
+    PROJECT_DEFAULTS = construct_result[yaml_dic['project'][0]]['PROJECT_DEFAULTS']
 else:
-    from config_data.project_info import PROJECT_DEFAULTS
+    from config.config_data.project_info import PROJECT_DEFAULTS
 
 
 # sites is a combination created from "regular" sites listed in sites.py

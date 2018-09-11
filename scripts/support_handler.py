@@ -183,15 +183,17 @@ class SupportHandler(InitHandler):
             if result:
                 print("%s added to sites.py (local)" % self.site_name)
     # ----------------------------------
-    # add_server_to_localdata
-    # add new server info to localdat
+    # add_server_to_server_list
+    # add new server info to server_list
     # ----------------------------------
-    def add_server_to_localdata(self):
+    def add_server_to_server_list(self):
         """
         add new site description to sites.py
         @opts             : option instance
         @default_values   : dictionary with default values
         """
+        #needs to be adapted to the using of yaml
+        raise ValueError('add_server_to_server_list needs to be adapted')
         opts = self.opts
         server_info = opts.add_server.strip().split('@')
         if not len(server_info) == 2:

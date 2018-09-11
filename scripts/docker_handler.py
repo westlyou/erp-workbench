@@ -3,7 +3,7 @@
 
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04
 from docker import Client
-from config import SITES, BASE_INFO, GLOBALDEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
+from config import SITES, BASE_INFO, DOCKER_DEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
 #from config.handlers import InitHandler, DBUpdater
 from scripts.create_handler import InitHandler
 from scripts.update_local_db import DBUpdater
@@ -22,8 +22,8 @@ class DockerHandler(InitHandler, DBUpdater):
     def __init__(self, opts, sites=SITES, url='unix://var/run/docker.sock', use_tunnel=False):
         """
         """
-        self.docker_db_admin_pw = GLOBALDEFAULTS['dockerdbpw']
-        self.docker_db_admin = GLOBALDEFAULTS['dockerdbuser']
+        self.docker_db_admin_pw = DOCKER_DEFAULTS['dockerdbpw']
+        self.docker_db_admin = DOCKER_DEFAULTS['dockerdbuser']
         super(DockerHandler, self).__init__(opts, sites)
         try:
             from docker import Client
@@ -46,9 +46,9 @@ class DockerHandler(InitHandler, DBUpdater):
         # ----------------------
         # the name of the database container is by default db
         docker_info = self.site['docker']
-        self.docker_db_admin_pw = docker_info.get('db_admin_pw', GLOBALDEFAULTS['dockerdbpw'])
+        self.docker_db_admin_pw = docker_info.get('db_admin_pw', DOCKER_DEFAULTS['dockerdbpw'])
         if not self.opts.dockerdbname:
-            db_container_name = docker_info.get('db_container_name', GLOBALDEFAULTS['dockerdb_container_name'])
+            db_container_name = docker_info.get('db_container_name', DOCKER_DEFAULTS['dockerdb_container_name'])
         self.db_container_name = db_container_name
         
         # update the docker registry so we get info about the db_container_name 
@@ -88,18 +88,18 @@ class DockerHandler(InitHandler, DBUpdater):
         # by default the odoo docker user db is 'odoo'
         self.docker_db_admin = docker_info.get('db_admin', 'odoo')
         if self.opts.dockerdbuser:
-            self.docker_db_admin = self.opts.dockerdbuser or GLOBALDEFAULTS['dockerdbuser']        
+            self.docker_db_admin = self.opts.dockerdbuser or DOCKER_DEFAULTS['dockerdbuser']        
         # by default the odoo docker db user's pw is 'odoo'
-        #self.docker_db_admin_pw = GLOBALDEFAULTS['dockerdbpw']
+        #self.docker_db_admin_pw = DOCKER_DEFAULTS['dockerdbpw']
         if self.opts.dockerdbpw:
-            self.docker_db_admin_pw = self.opts.dockerdbpw or GLOBALDEFAULTS['dockerdbpw']  
+            self.docker_db_admin_pw = self.opts.dockerdbpw or DOCKER_DEFAULTS['dockerdbpw']  
           
         # --------------------------------------------------
         # get the credential to log into the sites container
         # --------------------------------------------------
         docker_rpc_user = self.opts.drpcuser
         if not docker_rpc_user:
-            docker_rpc_user = GLOBALDEFAULTS['dockerrpcuser']
+            docker_rpc_user = DOCKER_DEFAULTS['dockerrpcuser']
         self.docker_rpc_user = docker_rpc_user
         
         docker_rpc_user_pw = self.opts.drpcuserpw
@@ -108,7 +108,7 @@ class DockerHandler(InitHandler, DBUpdater):
             # we try whether we can learn it from the site itself
             docker_rpc_user_pw = self.site.get('odoo_admin_pw')
             if not docker_rpc_user_pw:
-                docker_rpc_user_pw = GLOBALDEFAULTS['dockerrpcuserpw']
+                docker_rpc_user_pw = DOCKER_DEFAULTS['dockerrpcuserpw']
         self.docker_rpc_user_pw = docker_rpc_user_pw
         
         #dbhost = self.db_host 

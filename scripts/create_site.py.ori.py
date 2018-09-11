@@ -490,11 +490,11 @@ def main(opts):
 
     # add_server
     # ----------
-    # add_server_to_localdata
+    # add_server_to_server_list
     # add new server info to localdat
     # ----------------------------------
     if opts.add_server:
-        handler.add_server_to_localdata()
+        handler.add_server_to_server_list()
         did_run_a_command = True
         return
 

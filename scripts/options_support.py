@@ -30,7 +30,7 @@ def add_options_support(parser):
     parser_support.add_argument(
         "--add-server",
         action="store", dest="add_server",
-        help = 'add server to localdata. server ip and user must be provided in the form user@server_ip'
+        help = 'add server to config/servers.yaml. server ip and user must be provided in the form user@server_ip'
     )
     parser_support.add_argument(
         "--docker-port",

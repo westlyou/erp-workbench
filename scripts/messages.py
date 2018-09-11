@@ -78,7 +78,7 @@ and add a remote block like
 SITE_UNKNOW_IP = """%s
 --------------------------------------------------------
 please add the ip %%s found in the site description %%s
-to config/localdata.py
+to config/servers.yaml
 you can do so by executing:
 bin/c support --add-server %%s@%%s
 --------------------------------------------------------
@@ -88,7 +88,7 @@ bin/c support --add-server %%s@%%s
 SITE_CREATED_SERVER = """%s
 --------------------------------------------------------
 added a server with the %sip %%s for user %%s%s
-%sPlease check its content by editing config/localdata.py
+%sPlease check its content by editing config/servers.yaml
 --------------------------------------------------------
 %s
 """ % (bcolors.OKGREEN, bcolors.FAIL, bcolors.ENDC, bcolors.OKGREEN, bcolors.ENDC)
@@ -142,7 +142,7 @@ could not be found.
 ----------------------------------------------------%s
 """ % (bcolors.FAIL, bcolors.ENDC)
 LOCALDATA_CREATED = """
-A new set of localdata was created for you!
+A new set of remote servers was created for you!
 ----------------------------------------------------
 it is in %%s
 %sIts content must be edited before it can be used%s
@@ -211,7 +211,7 @@ LOCALSITESLIST_MARKER_MISSING = """
 %s
 the marker
 %s
-could not be found in config/localdata.py
+could not be found in config/servers.yaml
 please add it inside REMOTE_SERVERS, so it reads something like:
 REMOTE_SERVERS = {
 %s
