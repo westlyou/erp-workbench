@@ -1,47 +1,65 @@
 #!bin/python
 import os
 import sys
+import getpass
+from scripts.bcolors import bcolors
+# ACT_USER is the actualy logged in user
+ACT_USER = getpass.getuser()
 # BASE_PATH is the home directory of erp_workbench
-BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+BASE_PATH  = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+SITES_HOME = BASE_PATH #os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+# migrate folder will be used when migrating to a new odoo version
 MIGRATE_FOLDER = '%s/upgrade/' % BASE_PATH
 BASE_INFO = {}
-import getpass
-ACT_USER = getpass.getuser()
-from scripts.bcolors import bcolors
+DB_USER = ACT_USER
+DB_PASSWORD = 'admin'
+DB_PASSWORD_LOCAL = 'admin'
+SITES, SITES_LOCAL = {},{}
+MARKER = ''
+# what folders do we need to create in odoo_sites for a new site
+FOLDERNAMES = ['addons','dump','etc','filestore', 'log', 'ssl', 'start-entrypoint.d', 'presets']
 
 # first thing we do, is make sure there exists all *.yaml files
 # if it does not exist, we copy it from ??.yaml.in
 
 data_path = os.path.normpath('%s/config_data' % BASE_PATH)
 user_home = os.path.expanduser('~')
-yaml_list = []
-for y_info in  (('config', 'base_info.py'), ('server', 'server_info.py'), ('docker', 'docker_info.py')):
+yaml_dic = {}
+for y_info in  (
+        ('config', 'base_info.py'), 
+        ('servers', 'servers_info.py'), 
+        ('docker', 'docker_info.py'), 
+        ('project', 'project_info.py')
+    ):
     y_name, file_name = y_info
     config_yaml = '%s/config/%s.yaml' % (BASE_PATH, y_name)
     if not os.path.exists(config_yaml):
         from shutil import copyfile
         copyfile('%s.in' % config_yaml, config_yaml)
     # build a list to be sent to check_and_update_base_defaults
-    yaml_list.append(
-        (
-            config_yaml,
-            '%s/config/config_data/%s' % (BASE_PATH, file_name),
-            '%s/templates/%s.yaml' % (BASE_PATH, y_name), 
-        )
+    yaml_dic[y_name] = (
+        config_yaml,
+        '%s/config/config_data/%s' % (BASE_PATH, file_name),
+        '%s/templates/%s.yaml' % (BASE_PATH, y_name), 
     )
 
 # the base info we need to access the various parts of erp-workbench 
 # is in some yaml file in erp-workbench the config folder
 from scripts.construct_defaults import check_and_update_base_defaults
 construct_result = {}
+vals = {
+    'USER_HOME' : user_home, 
+    'BASE_PATH' : BASE_PATH,
+    'ACT_USER'  : ACT_USER,
+    'DB_USER'   : ACT_USER,
+}
 must_reload = check_and_update_base_defaults(
-    BASE_PATH,
-    user_home,
-    ACT_USER,
-    yaml_list,
+    yaml_dic.values(),
+    vals,
     construct_result
 )
 
+# now we can load the files we just created
 BASEINFO_CHANGED = """
 %s--------------------------------------------------
 The structure of the config files have changed.
@@ -58,30 +76,25 @@ except ImportError:
 if NEED_BASEINFO or must_reload:
     print(BASEINFO_CHANGED)
 if must_reload:
-    BASE_INFO = construct_result[config_yaml]['BASE_DEFAULTS']
+    BASE_INFO = construct_result[yaml_dic['config']]['BASE_DEFAULTS']
+# load docker info
+if must_reload:
+    DOCKER_DEFAULTS = construct_result[yaml_dic['docker']]['DOCKER_DEFAULTS']
+else:
+    from config_data.docker_info import DOCKER_DEFAULTS
+# load project defaults
+if must_reload:
+    PROJECT_DEFAULTS = construct_result[yaml_dic['project']]['PROJECT_DEFAULTS']
+else:
+    from config_data.project_info import PROJECT_DEFAULTS
 
-# what folders do we need to create in odoo_sites for a new site
-FOLDERNAMES = ['addons','dump','etc','filestore', 'log', 'ssl', 'start-entrypoint.d', 'presets']
 
-PROJECT_DEFAULTS = {
-    #name, explanation, default
-    'projectname' : ('project name', 'what is the project name', 'projectname'),
-    'odoo_version' : ('odoo version', 'version of odoo', '12'),
-    'odoo_minor' : ('minor part of odoo version', 'minor part version of odoo', '.0'),
-    'flectra_version' : ('odoo version', 'version of flectra', '1.1'),
-    'flectra_minor' : ('minor part of flectra version', 'minor part version of flectra', '.4'),
-}
 # sites is a combination created from "regular" sites listed in sites.py
 # an a list of localsites listed in local_sites.py
 #from sites import SITES, SITES_L as SITES_LOCAL
 # start with checking whether installation is finished
 sites_handler = None
-APACHE_PATH = ''
-DB_USER = ACT_USER
-DB_PASSWORD = 'admin'
-DB_PASSWORD_LOCAL = 'admin'
-SITES, SITES_LOCAL = {},{}
-MARKER = ''
+
 try:
     pwd = os.getcwd()
     from scripts.sites_handler import SitesHandler
@@ -89,19 +102,6 @@ try:
     SITES, SITES_LOCAL = sites_handler.get_sites()
     # MARKER is used to mark the position in sites.py to add a new site description
     MARKER = sites_handler.marker # from messages.py
-    try:
-        from config.localdata import REMOTE_SERVERS, APACHE_PATH, DB_USER, DB_PASSWORD
-    except ImportError:
-        print('please create config/localdata.py')
-        print('it must have values for REMOTE_SERVERS, APACHE_PATH, DB_USER, DB_PASSWORD, DB_PASSWORD_LOCAL')
-        print('use template/localdata.py as template')
-        DB_USER = ACT_USER
-        DB_PASSWORD = 'admin'
-        DB_PASSWORD_LOCAL = 'admin'
-        raise ImportError
-        #sys.exit()
-    except SyntaxError as e:
-        print('please edit config/localdata.py. It seems to have a syntax error\n' + str(e) )
     os.chdir(pwd)
 except ImportError as e:
     print(str(e))
@@ -111,31 +111,6 @@ except OSError:
     if os.getcwd() == '/mnt/sites':
         print('------------------------------')
         raise ImportError()
-    
-# try to get also NGINX_PATH
-# if not possible, provide warning and assume standard location
-try:
-    from config.localdata import NGINX_PATH
-except ImportError as e:
-    print(bcolors.WARNING + '*' * 80)
-    print('could not read nginx path from config.localdata')
-    print('assuming it is: /etc/nginx/')
-    print('you can fix this by executing: bin/e')
-    print("and adding: NGINX_PATH = '/etc/nginx/'")
-    print('*' * 80 + bcolors.ENDC)
-    NGINX_PATH = '/etc/nginx/'
-except Exception as e:
-    pass
-    
-try:
-    from config.localdata import DB_PASSWORD_LOCAL
-except ImportError:
-    # BBB
-    DB_PASSWORD_LOCAL = 'admin'
-
-if sites_handler:
-    # automatically update sites list only, when BASE_INFO[''] is set
-    sites_handler.pull()
 
 # file to which site configuration will be written
 LOGIN_INFO_FILE_TEMPLATE = '%s/login_info.cfg.in'
@@ -145,25 +120,10 @@ REQUIREMENTS_FILE_TEMPLATE = '%s/install/requirements.txt'
 # elements we add with pip install when we are in a local environment
 MODULES_TO_ADD_LOCALLY = ['pytest-odoo']
 
-SITES_HOME =  os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
-
 try:
     from .version_info import *
 except:
     version_info = None
-
-#p =  ''#os.path.split(os.path.realpath(__file__))[0]
-if not os.path.exists('%s/config/DOCKER_DEFAULTS.py' % BASE_PATH):
-    ## silently copy the defualts file
-    #act = os.getcwd()
-    #os.chdir(p)
-    open('%s/config/docker_defaults.py' % BASE_PATH, 'w').write(open('%s/templates/docker_defaults.py' % BASE_PATH, 'r').read())
-    #os.chdir(act)
-try:   
-    from docker_defaults import DOCKER_DEFAULTS
-except ImportError:
-    sys.path.insert(0, '%s/config' % BASE_PATH)
-    from docker_defaults import DOCKER_DEFAULTS
 
 # NEED_NAME is a list of options that must provide a name
 NEED_NAME = [
@@ -208,10 +168,12 @@ NO_NEED_NAME = [
     "use_branch",
     "list_ports"
 ]
+
 # need name and target 
 NEED_TARGET = [
     'copy_admin_pw',
 ]
+
 # is know IP to remote server needed
 NO_NEED_SERVER_IP = [
     'edit_site',
@@ -242,7 +204,6 @@ FLECTRA_VERSIONS = {
     },
 }
 
-
 ODOO_VERSIONS_ = {
     '7.0' : { # elfero
         'python_ver' : 'python2',
@@ -261,6 +222,7 @@ ODOO_VERSIONS_ = {
         'python_path' : '/usr/bin/python3',
     },
 }
+
 ODOO_VERSIONS = {
     '7.0' : ODOO_VERSIONS_['7.0'],
     '9.0' : ODOO_VERSIONS_['9.0'],

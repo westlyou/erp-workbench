@@ -8,7 +8,7 @@ import os
 """
 
 def read_yaml_file(path, vals={}):
-    """read a yaml file and replace all variable used in it
+    """read a yaml file and replace all variables used in it
 
     Arguments:
         path {string} -- path to the yaml file
@@ -37,13 +37,11 @@ def read_yaml_file(path, vals={}):
     return yaml.load(StringIO(raw_yaml_data))
 
 
-def check_and_update_base_defaults(base_path, user_home, act_user, yaml_files, results={}):
-    """resad a list of yaml files and construct python files that can be imported
+def check_and_update_base_defaults(vals, yaml_files, results={}):
+    """read a list of yaml files and construct python files that can be imported
 
     Arguments:
-        base_path {string} -- path where erp-workbench is installed
-        user_home {string} -- users home directory
-        act_user {string} -- name of the sctual user
+        vals {dictonary} : values that are used in the yaml files
         yaml_files {list of tuples} -- tuples with (
             path to the yaml file, path to the datafile to be constructed)
 
@@ -62,11 +60,6 @@ def check_and_update_base_defaults(base_path, user_home, act_user, yaml_files, r
         else:
             yaml_file_path_defaults = ''
             yaml_file_path, data_file_path = yaml_data
-        vals = {
-            'USER_HOME' : user_home, 
-            'BASE_PATH' : base_path,
-            'ACT_USER'  : act_user,
-        }
         if os.path.exists(yaml_file_path):
             # compare file dates
             # check if folder exists:

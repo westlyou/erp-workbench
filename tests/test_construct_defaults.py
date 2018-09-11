@@ -39,10 +39,13 @@ class TestConstructDefault(unittest.TestCase):
         result = {}
         # when a yaml file with config setting is newer than the coresponding
         # datafile we have to reload the datafile from the result
+        vals = {
+            'BASE_PATH' : self.base_path,
+            'ACT_USER' : self.act_user,
+            'USER_HOME' : self.user_home,  
+        }
         must_reload = construct_defaults.check_and_update_base_defaults(
-            self.base_path,
-            self.user_home,
-            self.act_user,
+            vals,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,
@@ -53,9 +56,7 @@ class TestConstructDefault(unittest.TestCase):
         self.assertTrue(must_reload)
         # we repeat the process but now reload must not be set
         must_reload = construct_defaults.check_and_update_base_defaults(
-            self.base_path,
-            self.user_home,
-            self.act_user,
+            vals,
             [(
                 '%s/tests/yaml_files/config.yaml' % self.base_path,
                 '%s/tests/test_data/base_config.py' % self.base_path,

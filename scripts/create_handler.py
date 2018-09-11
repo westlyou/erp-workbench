@@ -442,6 +442,7 @@ class InitHandler(RPC_Mixin):
                     sys.exit()
             login_info['user'] = ACT_USER
             # access to the local database
+            xx # we must read DB_PASSWORD_LOCAL from the server 'localhost'
             login_info['db_password'] = self.opts.__dict__.get('db_password', DB_PASSWORD_LOCAL)
             login_info['db_user'] = self.opts.__dict__.get('db_user', DB_USER)
             # access to the locally running odoo
