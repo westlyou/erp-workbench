@@ -111,6 +111,9 @@ def main(opts, parsername):
     # create commands
     # ----------------------
     if parsername == 'create':
+
+        handler.check_name()
+
         # create
         # ------
         # builds or updates a server structure

@@ -620,6 +620,8 @@ def checkout_sa(opts):
     site_addons = []
     is_local = SITES_LOCAL.get(opts.name) is not None
     _s = SITES.get(opts.name)
+    if not _s:
+        return
     if is_local:
         _s = SITES_LOCAL.get(opts.name)
     site_addons = _s.get('addons', [])

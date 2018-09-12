@@ -807,9 +807,10 @@ class InitHandler(RPC_Mixin):
             if SITES.get(name):
                 self.site_names = [name]
                 return name
-            if opts.add_site or opts.add_site_local:
-                self.site_names = [name]
-                return name
+            if opts.subparser_name == 'support':
+                if opts.add_site or opts.add_site_local:
+                    self.site_names = [name]
+                    return name
         # no name
         if not name:
             name = ''  # make sure it is a string
@@ -840,11 +841,12 @@ class InitHandler(RPC_Mixin):
                 done = True
                 self.site_names = []
                 return ''
-            if _name and (opts.add_site or opts.add_site_local):
-                if SITES.get(_name):
-                    print("site %s allready exists in sites.py" % _name)
-                else:
-                    done = True
+            if opts.subparser_name == 'support':
+                if _name and (opts.add_site or opts.add_site_local):
+                    if SITES.get(_name):
+                        print("site %s allready exists in sites.py" % _name)
+                    else:
+                        done = True
             if _name and SITES.get(_name):
                 done = True
             else:
@@ -1937,17 +1939,16 @@ class InitHandler(RPC_Mixin):
             else:
                 p.communicate()
 
-    def add_aliases(self):
+    def add_aliases_to_git_exclude(self):
         """
         exclude site folders from beeing handled by git
         less .git/info/exclude 
         """
         names = list(SITES.keys())
         names.sort()
-        for n in names:
         marker_start = AMARKER % 'start'
         marker_end = AMARKER % 'end'
-        exclude_f_path = '%s.git/info/exclude' % BASE_PATH
+        exclude_f_path = '%s/.git/info/exclude' % BASE_PATH
         with open(exclude_f_path, 'r') as f:
             data = f.read()
         data = data.split('\n')
@@ -1971,16 +1972,11 @@ class InitHandler(RPC_Mixin):
         alias_str += ABLOCK % {
             'aliasmarker_start': marker_start,
             'aliasmarker_end': marker_end,
-            'alias_list': '\.n'.join(list(self.sites.keys())),
+            'alias_list': '\n'.join(names),
             'alias_header': '',
-            'ppath': '',
         }
         with open(exclude_f_path, 'w') as f:
-        alias_str += ABLOCK % {
             f.write(alias_str)
-
-      
-
 
     def add_aliases(self):
         """
@@ -2043,6 +2039,9 @@ class InitHandler(RPC_Mixin):
             'ppath': pp,
         }
         open(alias_path, 'w').write(alias_str)
+
+        # now write stings to git excluse file
+        self.add_aliases_to_git_exclude()
 
     def create_aliases(self):
         """
