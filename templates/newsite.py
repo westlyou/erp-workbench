@@ -18,101 +18,6 @@
         'without_demo': 'all',
         # pg_version to use with dumper
         # 'pg_version' : '--cluster 10/main',
-        'site_settings': {
-            # proto is either http:// or https://
-            # it is used to construct the  web.base.url
-            # if not set, the base url will be left untouched
-            'proto': 'http://',
-            'configs': {
-                'website_config': {
-                    'model': "website.config.settings",
-                    'website_name': 'Your Sitename',
-                    # needs recaptcha installed
-                    # 'site_key' : 'xx',
-                    # 'secret_key' : 'x',
-                },
-                # the following sample values assume, that the module support branding is installed
-                'support_branding': {
-                    'model': 'ir.config_parameter',
-                    'config_parameter_company_name': 'Your company',
-                    'config_parameter_company_url': 'https://yourwebsite.com',
-                    'config_parameter_company_color': '#000',
-                    'config_parameter_support_email': 'support@yourwebsite.com',
-                    'config_parameter_release': 42,
-                },
-            },
-            'server_config': {
-                # override values to be set in the server config file
-                # the defaul values that can be manipulated from this stanza are set
-                # in templates/openerp_cfg_defaults.py
-                #    'workers' : 4,
-            },
-            'site_settings': {
-                # data to bes set on the remote server with
-                # --set-site-data
-                'company_data': {
-                    # use any number of fields you want to set on the main company
-                    # this is normaly done after after all modules are installed
-                    # so you can also use fields like firstname/lastname that are
-                    # only available after the addons have been installed
-                    'name': 'acme & co',
-                    'street': 'the street 007',
-                    'zip': '12345',
-                    'city': 'The City',
-                    'phone': 'the phone number',
-                },
-                'users': {
-                    # add users you want to be created
-                    # for each user provide either an string with the email,
-                    # or a dictionary with more data. In any case, the email must
-                    # be provided
-                    # the same rules as for the company apply
-                    'testuser': 'test_user@%(base_url)s',
-                    'otheruser': {
-                        'email': 'otheruser%(base_url)s',
-                        'city': 'otherusers city',
-                        # ...
-                    },
-                },
-                # what languaes to load, the first one will be the default language
-                # unless the language is an empty string
-                'languages': [],  # ['de_CH', 'fr_CH']
-            },
-            'local_settings': {
-                # these are values that are set, when we run bin/c with the
-                # -SL --set-local-data option
-                # candiates to set are:
-                # admin emai (pw is allready set to 'admin')
-                # base url ..
-                'base_url': 'http://localhost:8069',
-                'admin_mail': '%(local_user_mail)s',
-                'addons': {
-                    'install': [],
-                    # unistall is not yet implemented
-                    'uninstall': []
-                },
-                'site_settings': {
-                    'configs': {
-                        'ir.config_parameter': {
-                            'records': [
-                                # list of (search-key-name, value), {'field' : value, 'field' : value ..}
-                                [('key', 'support_branding.company_name'),
-                                 {'value': 'redO2oo KLG'}],
-                            ],
-                        },
-                    },
-                },
-            },
-        },
-        'email_settings': {
-            'smtp_server': '',
-            'email_server_incomming': '',
-            'email_user_incomming': '',
-            'email_pw_incomming': '',
-            'email_userver_outgoing': '',
-            'email_user_outgoing': '',
-            'email_pw_outgoing': '',
-        },
         'remote_server': {
             'remote_url': '%(remote_server)s',  # please adapt
             'remote_data_path': '/root/erp_workbench',
@@ -155,10 +60,6 @@
             'vservername': 'www.%(site_name)s.ch',
             # 'vserveraliases': ['%(site_name)s.ch',],
         },
-        # path to the letsencrypt structure
-        'letsencrypt': {
-            'path': '/etc/letsencrypt/live/'
-        },
         # odoo_addons allow to install odoo base tools
         'odoo_addons': [
             # 'website builder',
@@ -179,7 +80,6 @@
                 ## what is the target (subdirectory) within the addons folder
                 #'target' : 'docmarolf_calendar',
                 ## group what group should be created within the target directory.
-                ## see http://docs.anybox.fr/anybox.recipe.odoo/1.9.1/configuration.html#addons
                 #'group' : 'somegroup',
                 ## add_path is added to the addon path
                 ## it is needed in the case when group of modules are added under a group

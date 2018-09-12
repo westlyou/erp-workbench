@@ -296,7 +296,7 @@ ALIAS_LINE = 'alias  %(sname)s="cd %(path)s"\n'
 AMARKER = '##-----wb alias-marker %s-----##'
 ABLOCK = """%(aliasmarker_start)s
 # please do not change the lines between the two markers
-# they are managed by the odooMaker scripts
+# they are managed by the erp-workbench scripts
 %(alias_header)s
 %(alias_list)s
 %(aliasmarker_end)s"""

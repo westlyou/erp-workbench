@@ -28,8 +28,6 @@ from scripts.utilities import collect_options, _construct_sa, bcolors, find_addo
 from scripts.messages import *
 import shutil
 
-# tool to check and fix site structure
-from scripts.fixup_site import fixup_sites, fixup_remote_site
 """
 https://breakingcode.wordpress.com/2013/03/11/an-example-dependency-resolution-algorithm-in-python/
 https://pypi.python.org/pypi/pipdeptree/0.8.0
@@ -552,7 +550,7 @@ class InitHandler(RPC_Mixin):
             print(bcolors.WARNING + k + bcolors.ENDC, v)
 
     def set_config(self):
-        raise ValueErro('must be reimplemented')
+        raise ValueError('must be reimplemented')
         data = self.opts.set_config
         force = self.opts.force
         changed = False
@@ -973,18 +971,19 @@ class InitHandler(RPC_Mixin):
         is_local = site_name and not(SITES_LOCAL.get(site_name) is None)
         default_values['is_local'] = is_local
         default_values['db_user'] = self.db_user
-        # sites_home is odoo_instnces is installed
-        # eg ~/erp_workbench
-        # the site_name is what the user with option -n and was checked by check_name
+        # the site_name is defined with option -n and was checked by check_name
         default_values['site_name'] = site_name
         default_values.update(BASE_INFO)
-        if isinstance(site_name, str) and SITES.get(site_name):
-            if opts:
-                if (not opts.add_site) and (not opts.add_site_local):
-                    if site_name:
-                        default_values.update(SITES.get(site_name))
-            else:
-                default_values.update(SITES.get(site_name))
+        if site_name and isinstance(site_name, str) and SITES.get(site_name):
+            # robert refactor, i do not understand following
+            #if opts:
+                #if (not opts.add_site) and (not opts.add_site_local):
+                    #if site_name:
+                        #default_values.update(SITES.get(site_name))
+            #else:
+                #default_values.update(SITES.get(site_name))
+            # robert, replaced aove by foloowing line
+            default_values.update(SITES.get(site_name))
         # now make sure we have a minor version number
         if not default_values.get('odoo_minor'):
             default_values['odoo_minor'] = ''
@@ -1937,6 +1936,51 @@ class InitHandler(RPC_Mixin):
                 print(p.communicate())
             else:
                 p.communicate()
+
+    def add_aliases(self):
+        """
+        exclude site folders from beeing handled by git
+        less .git/info/exclude 
+        """
+        names = list(SITES.keys())
+        names.sort()
+        for n in names:
+        marker_start = AMARKER % 'start'
+        marker_end = AMARKER % 'end'
+        exclude_f_path = '%s.git/info/exclude' % BASE_PATH
+        with open(exclude_f_path, 'r') as f:
+            data = f.read()
+        data = data.split('\n')
+        alias_str = ''
+        # loop over data and add lines to the result untill we see the marker
+        # then we loop untill we get the endmarker or the end of the file
+        start_found = False
+        end_found = False
+        for line in data:
+            if not start_found:
+                if line.strip() == marker_start:
+                    start_found = True
+                    continue
+                alias_str += '%s\n' % line
+            else:
+                if line.strip() == marker_end:
+                    end_found = True
+                    start_found = False
+        # we no have all lines without the constucted alias in alias_str
+        # we add a new block of lines to it
+        alias_str += ABLOCK % {
+            'aliasmarker_start': marker_start,
+            'aliasmarker_end': marker_end,
+            'alias_list': '\.n'.join(list(self.sites.keys())),
+            'alias_header': '',
+            'ppath': '',
+        }
+        with open(exclude_f_path, 'w') as f:
+        alias_str += ABLOCK % {
+            f.write(alias_str)
+
+      
+
 
     def add_aliases(self):
         """

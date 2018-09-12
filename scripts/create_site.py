@@ -92,7 +92,7 @@ def set_default_subparser(self, name, args=None):
 def main(opts, parsername):
     """
     """
-    default_handler = SiteCreator
+    # default_handler = SiteCreator
     opts.subparser_name = parsername
     if parsername == 'create':
         handler = SiteCreator(opts, SITES)
@@ -173,11 +173,27 @@ def main(opts, parsername):
     # support commands
     # ----------------------
     if parsername == 'support':
+        # add_site
+        # --------
+        # add_site adds a site description to the sites.py file
+        # add_site_local adds a site description to the sites_local.py file
+        if opts.add_site or opts.add_site_local:
+            handler.add_site_to_sitelist()
+            did_run_a_command = True
+            return
+
+        # drop_site
+        # --------
+        # drop_site removes a site description from the sites.py file
+        if opts.drop_site:
+            handler.drop_site()
+            did_run_a_command = True
+            return
+
         # edit_site, edit_server
         # ----------------------
         # Lets the user edit the content of config/localdat.py to edit a server
         # description, or change the server description in LOCALDATA['sitesinfo_path']
-        # add_site_local adds a site description to the sites_local.py file
         if opts.edit_site or opts.edit_server:
             if opts.edit_site:
                 handler.check_name(must_match=True)

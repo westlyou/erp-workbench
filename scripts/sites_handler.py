@@ -246,19 +246,17 @@ class SitesHandler(object):
         handler.default_values['base_sites_home'] = '/root/erp_workbench' 
         handler.default_values['base_url'] = ('%s.ch' % handler.site_name)
         template = ''
-        remote_url = handler.opts.use_ip or 'xx.xx.xx.xx'
+        remote_url = handler.opts.use_ip or '127.0.0.1'
+        # no_outer will be set, if we use an existing site-description as base
         no_outer = False
         if template_name:
             template = self.find_template(template_name)
             # now we replace all instances of the old name with the new one
             template = template.replace(template_name, handler.opts.name)
             no_outer = True # do not wrap the template in an outer dict
-            # 'remote_url' : '176.9.142.21',  # alice2
-            #template['remote_server']['remote_url'] = remote_url
-            #template = '"%s" : %s' % (handler.opts.name, pformat(template))
         if not template:
             template = open('%s/templates/newsite.py' % handler.sites_home, 'r').read() % handler.default_values
-            template = template.replace('xx.xx.xx.xx', remote_url)
+            template = template.replace('127.0.0.1', remote_url)
         return self._add_site('G', template, no_outer)
 
     def add_site_local(self, handler, template_name = ''):

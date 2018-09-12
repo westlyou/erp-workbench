@@ -120,7 +120,8 @@ class SupportHandler(InitHandler):
             if 1: #preset_values:
                 result = sites_handler.add_site_global(handler = self, template_name=template)#, preset_values=preset_values)
                 if result:
-                    print("%s added to sites.py" % self.site_name)
+                    if not opts.quiet:
+                        print("%s added to sites.py" % self.site_name)
             else:
                 if pvals.get('pvals_path'):
                     print((bcolors.WARNING))
