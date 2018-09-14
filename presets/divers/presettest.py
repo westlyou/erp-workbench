@@ -6,8 +6,8 @@ presettest = {
     "presettest": {
         'site_name': 'presettest',
         'servername': 'presettest',
-        'odoo_admin_pw': '',
-        'odoo_version': '10.0',
+        'erp_admin_pw': '',
+        'erp_version': '10.0',
         # servertype is odoo or flectra
         'server_type': 'odoo',
         'db_name': 'presettest',

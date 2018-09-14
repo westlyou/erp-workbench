@@ -29,7 +29,7 @@ DB_USER = 'robert'
 BASE_ADDONS_PATH = '/home/robert/projects/afbschweiz/afbschweiz/parts/odoo/addons'
 ADDONS_PATH = '/home/robert/addons'
 DATA_DIR = '/home/robert/odoo_projects_data/afbschweiz'
-ODOO_ADMIN_PW = 'admin'
+erp_admin_pw = 'admin'
 DB_PASSWORD = 'odoo'
 
 # path to the site description
@@ -132,7 +132,7 @@ class Handler(object):
         """
         opts = self.opts
         name = self.site_name
-        odoo_admin_pw = self.site_description.get('odoo_admin_pw', 'admin')
+        erp_admin_pw = self.site_description.get('erp_admin_pw', 'admin')
         addon_paths = self.collect_addon_paths()
         # now copy a template openerp-server.conf
         # since this is a stripped dow version of the real thing, we have to construct
@@ -140,11 +140,11 @@ class Handler(object):
         valDic = {
             'add_path' : addon_paths,
             'db_name' : self.site_name,
-            'odoo_admin_pw' : odoo_admin_pw,
+            'erp_admin_pw' : erp_admin_pw,
             'db_user' : DB_USER,
             'base_addons_path' : BASE_ADDONS_PATH,
             'data_dir' : DATA_DIR,
-            'odoo_admin_pw' : ODOO_ADMIN_PW,
+            'erp_admin_pw' : ERP_ADMIN_PW,
             'db_password' : DB_PASSWORD,            
         }
         config_file = SERVER_CONFIG % valDic
@@ -1146,7 +1146,7 @@ without_demo = all
 data_dir = %(data_dir)s
 auto_reload = False
 db_name = %(db_name)s
-admin_passwd = %(odoo_admin_pw)s
+admin_passwd = %(erp_admin_pw)s
 db_user = %(db_user)s
 db_password = %(db_password)s
 dbfilter = %(db_name)s

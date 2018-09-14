@@ -34,7 +34,7 @@ def add_options_parent(parser):
 
     parent_parser.add_argument(
         "-V", "--version",
-        action="store", dest="odoo_version", default='12.0',
+        action="store", dest="erp_version", default='12.0',
         help="odoo version to use")
 
     parent_parser.add_argument(

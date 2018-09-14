@@ -88,11 +88,14 @@ install/CREATE_SITE.txt
 ------------------------
 end  hurry:
 ------------------------
+
 ------------
 PREPARATION:
 ------------
+
     create private/public key pair
     ------------------------------
+
     as normal user issue the following command
         ssh-keygen -t rsa
     just accept all prompts with enter
@@ -100,6 +103,7 @@ PREPARATION:
 
     the following modules must be installed (as user root):
     -------------------------------------------------------
+
         postgresql should be up and running
         sudo apt-get install postgresql postgresql-contrib
 
@@ -111,6 +115,7 @@ PREPARATION:
 
     create a virtual env:
     ---------------------
+
         change to target directory:
             cd ~/odoo_instances # this script assumes this directory as base
 
@@ -121,12 +126,14 @@ PREPARATION:
 
         set utf8:
         --------
+
             vim python/lib/python2.7/site.py
             search "ascii", 2 lines lower, change ascii to utf8
 
 
     as normal user:
     ---------------
+
         install lessc:
             curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
             sudo apt-get install -y nodejs
@@ -138,11 +145,13 @@ PREPARATION:
 
     add yourself as postgres superuser to the database:
     ---------------------------------------------------
+
         sudo -u postgres psql -e --command "CREATE USER $USER WITH SUPERUSER PASSWORD 'admin'"
 
 
     Install Wkhtmltopdf
     -------------------
+
     sudo wget -P Downloads http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
     cd Downloads
     sudo dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb
@@ -150,11 +159,13 @@ PREPARATION:
 
     create private/public key pair
     ------------------------------
+
     as normal user issue the following command
         ssh-keygen -t rsa
 
     copy the public key to .ssh/autorized_keys on the machine/homedir from
     which you will copy live data
+
 ----------------
 END PREPARATION:
 ----------------
@@ -162,6 +173,7 @@ END PREPARATION:
 -----------------------
 create ~/odoo_instances
 -----------------------
+
     As normal user:
 
     check out repository:
@@ -181,6 +193,7 @@ create ~/odoo_instances
     this will create some config files which you have
     to edit, to be able to run bin/c successfully
     -----------------------------------------------
+
     bin/c   # this will result in a message with hints what to do next
 
     edit local config data:
@@ -226,8 +239,10 @@ END create ~/odoo_instances
 --------------
 handling sites
 --------------
+
     defining sites:
     ---------------
+
         the sites are described in three dictionaries (all of them in odoo_sites)
         - sites.py
             here the remote sites are described
@@ -265,12 +280,14 @@ handling sites
 
         help:
         -----
+
             bin/c.sh -h
             bin/u.sh -h
 
 
     creating local sites
     --------------------
+
     bin/c.sh is used to create local sites. To be able to do so, the site needs
     an entry either in sites.py or sites_local.py.
     You can list the possible sites with:
@@ -297,6 +314,7 @@ handling sites
 
     copy remote data to local_sites
     -------------------------------
+
     To be able to run a local site with life data you have to set up yourself
     as a postgres superuser:
         add yourself as postgres superuser to the database:
@@ -313,6 +331,7 @@ END handling sites
 -------------------------------
 godies
 -------------------------------
+
 The setupscript bin/dosetup.py you have to run in each local site
 adds some aliases to your ~/.bash_aliases file. they start with the
 first 4 characters to the site name:
@@ -324,6 +343,7 @@ try it out ..
 
 some usefull postgres commands:
 -------------------------------
+
     list postgres user and change password
     --------------------------------------
     become root
@@ -350,12 +370,14 @@ if you ever want to change change the password of an odoo user:
 
 subversion:
 -----------
+
     add the following line to ~/.subversion/config
     global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej *~ #*# .#* .*.swp .DS_Store *.egg-info
 
 --------------------
 sample localdata.py:
 --------------------
+
     this localdata.py works for accessing files on frieda (144.76.184.20)
     as local user nirmala, and as remote user odooprojects
 

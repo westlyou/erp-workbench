@@ -12,6 +12,7 @@ Welcome to ERP Workbench's documentation!
 
     intro
     aliases
+    walktrough/index
     howtos/index
     presets/index
     install/index

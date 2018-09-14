@@ -38,7 +38,7 @@ create docker image with actual oddo
     - download odoo source:
             'git init .',
             'git submodule init',
-            'git submodule add -b %s https://github.com/odoo/odoo.git src' % odoo_version
+            'git submodule add -b %s https://github.com/odoo/odoo.git src' % erp_version
         
     
 

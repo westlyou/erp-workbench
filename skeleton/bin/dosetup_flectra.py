@@ -27,7 +27,7 @@ PROJECT_LIST_DIR = os.path.split(os.path.split(PROJECT_HOME)[0])[0]
 # a buildout.cfg file
 # It is created by wwb's bin/c -c PROJECT_NAME
 # and contains lines like
-# odoo_version = 1.1.0
+# erp_version = 1.1.0
 # db_name = psytex
 LOGIN_FILE = '%%s/login_info.cfg.in' %% PROJECT_HOME
 OUT_FILE = '%%s/etc/flectra.conf' %% PROJECT_HOME
@@ -54,7 +54,7 @@ TAGS = [
     'dbfilter',
     'db_password',
     'log_db_level',
-    'odoo_version',
+    'erp_version',
     'without_demo',
     
 ]

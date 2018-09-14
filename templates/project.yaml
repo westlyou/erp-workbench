@@ -6,7 +6,7 @@
 
 PROJECT_DEFAULTS:
     projectname: undefined
-    odoo_version: '12'
-    odoo_minor: '.0'
+    erp_version: '12'
+    erp_minor: '.0'
     flectra_version: '1.1'
     flectra_minor: '.4'

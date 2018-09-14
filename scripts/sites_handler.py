@@ -71,7 +71,7 @@ class SitesHandler(object):
                     'site_name' : 'demo_global', 
                     'marker' : self.marker,
                     'base_sites_home' : '/home/%s/erp_workbench' % ACT_USER,
-                    'odoo_version' : '12',
+                    'erp_version' : '12',
                     'base_url' : 'demo_global',
                     'local_user_mail' : 'mail@localhost.com',
                     'remote_server' : 'localhost',
@@ -157,7 +157,7 @@ class SitesHandler(object):
         # merge passwords
         # -------------------------------------------------------------
         DEFAULT_PWS = {
-            'odoo_admin_pw' : '',
+            'erp_admin_pw' : '',
             #'email_pw_incomming' : '',
             #'email_pw_outgoing' : '',
         }

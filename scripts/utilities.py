@@ -184,11 +184,11 @@ def create_server_config(handler):
         return
     server_type = handler.site.get('server_type', 'odoo')
     config_name = CONFIG_NAME[server_type]['config']
-    odoo_admin_pw = handler.site.get('odoo_admin_pw', '')
+    erp_admin_pw = handler.site.get('erp_admin_pw', '')
     p = os.path.normpath('%s/%s' % (BASE_INFO['erp_server_data_path'], name))
     collect_addon_paths(handler)
     # now copy a template openerp-server.conf
-    handler.default_values['odoo_admin_pw'] = odoo_admin_pw
+    handler.default_values['erp_admin_pw'] = erp_admin_pw
     template = open(
         '%s/templates/%s' % (handler.default_values['sites_home'], config_name), 'r').read()
     if os.path.exists('%s/etc/' % p):

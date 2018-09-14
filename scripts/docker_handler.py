@@ -106,7 +106,7 @@ class DockerHandler(InitHandler, DBUpdater):
         if not docker_rpc_user_pw:
             # no password was provided by an option
             # we try whether we can learn it from the site itself
-            docker_rpc_user_pw = self.site.get('odoo_admin_pw')
+            docker_rpc_user_pw = self.site.get('erp_admin_pw')
             if not docker_rpc_user_pw:
                 docker_rpc_user_pw = DOCKER_DEFAULTS['dockerrpcuserpw']
         self.docker_rpc_user_pw = docker_rpc_user_pw
@@ -116,7 +116,7 @@ class DockerHandler(InitHandler, DBUpdater):
             #'rpchost' : 'localhost',
             #'port' : ports[0].get("HostPort", '8069'),
             #'rpcuser' : 'admin',
-            #'rpcpw' : self.sites[self.site_name]['odoo_admin_pw'],
+            #'rpcpw' : self.sites[self.site_name]['erp_admin_pw'],
             #'dbuser' : 'odoo', # should be configurable
             #'dbpw' : 'odoo', # should be configurable
             #'dbhost' : dbhost,
@@ -438,7 +438,7 @@ class DockerHandler(InitHandler, DBUpdater):
             version = self.version
             more_sites = []
             for k, v in list(self.sites.items()):
-                if v.get('odoo_version') == version:
+                if v.get('erp_version') == version:
                     more_sites.append(k)
         else:
             more_sites = (self.opts.use_sites or '').split(',')
@@ -505,17 +505,17 @@ class DockerHandler(InitHandler, DBUpdater):
         
         # copy files from the official odoo docker file to the sites data directory
         # while doing so adapt the dockerfile to pull all needed elements
-        odoo_version = self.site['odoo_version']
-        if not odoo_version in list(ODOO_VERSIONS.keys()):
-            print(ODOO_VERSION_BAD % (self.site_name, self.site['odoo_version']))
+        erp_version = self.site['erp_version']
+        if not erp_version in list(ODOO_VERSIONS.keys()):
+            print(ODOO_VERSION_BAD % (self.site_name, self.site['erp_version']))
             return
-        docker_source_path = '%s/docker/docker/%s/' % (self.default_values['erp_server_data_path'], odoo_version)
+        docker_source_path = '%s/docker/docker/%s/' % (self.default_values['erp_server_data_path'], erp_version)
         # get path to where we want to write the docker file
         docker_target_path = '%s/docker/' % self.default_values['data_dir']
         if not os.path.exists(docker_target_path):
             os.mkdir(docker_target_path)
         # there are some files we can copy unaltered
-        #for fname in DOCKER_FILES[odoo_version]:
+        #for fname in DOCKER_FILES[erp_version]:
             #shutil.copy('%s%s' % (docker_source_path, fname), docker_target_path)
         # construct dockerfile from template
         apt_list, pip_list = self.collect_extra_libs()
@@ -523,7 +523,7 @@ class DockerHandler(InitHandler, DBUpdater):
         with open('%sDockerfile' % docker_target_path, 'w' ) as result:
             pref = ' ' * 8
             data_dic = {
-               'odoo_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % odoo_version),
+               'odoo_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
                'apt_list' : '\n'.join(['%s%s \\' % (pref, a) for a in apt_list]),
             }
             if pip_list:
@@ -569,7 +569,7 @@ class DockerHandler(InitHandler, DBUpdater):
         cmd_lines = [
             'git init .',
             'git submodule init',
-            'git submodule add -b %s https://github.com/odoo/odoo.git src' % odoo_version
+            'git submodule add -b %s https://github.com/odoo/odoo.git src' % erp_version
         ]
         self.run_commands(cmd_lines=cmd_lines)
         #for line in open( '%sDockerfile' % docker_source_path, 'r' ):
@@ -714,7 +714,7 @@ class DockerHandler(InitHandler, DBUpdater):
 
         # if we know admins password, we set it
         # for non docker pw is usualy admin, so we do not use it
-        #adminpw = self.sites[self.site_name].get('odoo_admin_pw')
+        #adminpw = self.sites[self.site_name].get('erp_admin_pw')
         #if adminpw:
             #cmd_lines_docker += [['%s/psql' % where, '-U', user, '-d', site_name,  '-c', "update res_users set password='%s' where login='admin';" % adminpw]]
 

@@ -8,13 +8,13 @@ part = login_info
 recipe =
 ##---------------------------------
 # odoo version
-odoo_version = %(odoo_version)s
+erp_version = %(erp_version)s
 ##---------------------------------
 # odoo minor
-odoo_minor = %(odoo_minor)s
+erp_minor = %(erp_minor)s
 ##---------------------------------
 # odoo nightly
-odoo_nightly = %(odoo_nightly)s
+erp_nightly = %(erp_nightly)s
 ##---------------------------------
 # should demo data be OMITED when creating the database?
 # this is of interest only when the database is created for the first time

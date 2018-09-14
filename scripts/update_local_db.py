@@ -523,7 +523,7 @@ class DBUpdater(object):
                 ]
             # if we know admins password, we set it
             # for non docker pw is usualy admin, so we do not use it
-            #adminpw = self.sites[self.site_name].get('odoo_admin_pw')
+            #adminpw = self.sites[self.site_name].get('erp_admin_pw')
             # if adminpw:
                 #cmd_lines_docker += [['%s/psql' % where, '-U', user, '-d', site_name,  '-c', "update res_users set password='%s' where login='admin';" % adminpw]]
             cmd_lines_no_docker = [

@@ -353,8 +353,8 @@ class InitHandler(RPC_Mixin):
         self.default_values['current_user'] = ACT_USER
         self.default_values['foldernames'] = FOLDERNAMES
         # make sure also freshly introduced variables do not create an error 
-        if 'odoo_nightly' not in self.default_values:
-            self.default_values['odoo_nightly'] = self.default_values['odoo_version']
+        if 'erp_nightly' not in self.default_values:
+            self.default_values['erp_nightly'] = self.default_values['erp_version']
 
         # construct path to datafolder erp_server_data_path
         if self.need_login_info:
@@ -656,7 +656,7 @@ class InitHandler(RPC_Mixin):
         """
 
         if self.site:
-            return self.site.get('odoo_version', self.default_values['odoo_version'])
+            return self.site.get('erp_version', self.default_values['erp_version'])
 
     @property
     def minor(self):
@@ -667,7 +667,7 @@ class InitHandler(RPC_Mixin):
         """
 
         if self.site:
-            return self.site.get('odoo_minor', self.default_values['odoo_minor'])
+            return self.site.get('erp_minor', self.default_values['erp_minor'])
 
     @property
     def nightly(self):
@@ -679,7 +679,7 @@ class InitHandler(RPC_Mixin):
         """
 
         if self.site:
-            return self.site.get('odoo_nightly', '')
+            return self.site.get('erp_nightly', '')
 
     @property
     def docker_db_user(self):
@@ -987,8 +987,8 @@ class InitHandler(RPC_Mixin):
             # robert, replaced aove by foloowing line
             default_values.update(SITES.get(site_name))
         # now make sure we have a minor version number
-        if not default_values.get('odoo_minor'):
-            default_values['odoo_minor'] = ''
+        if not default_values.get('erp_minor'):
+            default_values['erp_minor'] = ''
         site_base_path = os.path.normpath(os.path.expanduser(
             '%(project_path)s/%(site_name)s/' % default_values))
         # /home/robert/projects/afbsecure/afbsecure/parts/odoo
@@ -1038,13 +1038,13 @@ class InitHandler(RPC_Mixin):
                     v = v % self.default_values
                     self.default_values[k] = v
                     counter += 1  # avoid endless loop
-        if not self.default_values.get('odoo_version'):
-            if 'odoo_version' in vars(self.opts).keys():
-                odoo_version = self.opts.odoo_version
+        if not self.default_values.get('erp_version'):
+            if 'erp_version' in vars(self.opts).keys():
+                erp_version = self.opts.erp_version
             else:
                 from config.config_data.docker_defaults import DOCKER_DEFAULTS
-                odoo_version = DOCKER_DEFAULTS.get('odoo_version', '12.0')
-            self.default_values['odoo_version'] = odoo_version
+                erp_version = DOCKER_DEFAULTS.get('erp_version', '12.0')
+            self.default_values['erp_version'] = erp_version
         
     # -------------------------------------------------------------------
     # name_needed
@@ -2402,7 +2402,7 @@ class SiteCreator(InitHandler, DBUpdater):
         default_values = self.default_values
         default_values['projectname'] = self.projectname
         # only set when creating or editing the site
-        default_values['odoo_version'] = self.site.get('odoo_version', '')
+        default_values['erp_version'] = self.site.get('erp_version', '')
         # read the login_info.py.in
         # in this file, all variables are of the form $(VARIABLENAME)$
         # replace_dic is constructed in get_user_info_base->build_replace_info

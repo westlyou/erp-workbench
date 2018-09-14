@@ -24,9 +24,9 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 TAGS = [
-    'odoo_version',
-    'odoo_minor',
-    'odoo_nightly',
+    'erp_version',
+    'erp_minor',
+    'erp_nightly',
 ]
 
 # to find executable python
@@ -51,18 +51,18 @@ def main(opts):  # nosetup=False, onlysetup=False):
         pass  # allready exists
     tags = OrderedDict()
     collect_tags(tags, TAGS)
-    VERSION = tags.get('odoo_version')
-    ODOO_MINOR = tags.get('odoo_minor', '')
-    NIGHTLY = tags.get('odoo_nightly', '')
+    VERSION = tags.get('erp_version')
+    ODOO_MINOR = tags.get('erp_minor', '')
+    NIGHTLY = tags.get('erp_nightly', '')
     # the following line would read something like
-    # odoo_version : '11.0' -> will become '11'
-    # odoo_minor: '.0' <-- will be wrapped into version
-    # odoo_nightly : '', defaults to version, can be either 'version + minor' or 'master'
+    # erp_version : '11.0' -> will become '11'
+    # erp_minor: '.0' <-- will be wrapped into version
+    # erp_nightly : '', defaults to version, can be either 'version + minor' or 'master'
     # https://nightly.odoo.com/ODOO_VERSION+ODO_MINOR/nightly/src/odoo_ODOO_VERSIONODOO_MINOR.latest.zip
     # https://nightly.odoo.com/11.0/nightly/src/odoo_11.0.latest.zip
-    # odoo_version : '12' 
-    # odoo_minor: .0alpha1' 
-    # odoo_nightly : 'master', 
+    # erp_version : '12' 
+    # erp_minor: .0alpha1' 
+    # erp_nightly : 'master', 
     # https://nightly.odoo.com/master/nightly/src/odoo_12.0alpha1.latest.zip
     
     # first calculate the elements

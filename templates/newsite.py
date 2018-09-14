@@ -5,10 +5,10 @@
     "%(site_name)s": {
         'site_name': '%(site_name)s',
         'servername': '%(site_name)s',
-        'odoo_admin_pw': '',
-        'odoo_version': '%(odoo_version)s',
-        'odoo_minor': '.0',
-        'odoo_nightly': '', # what folder on nightly if not version like 'master'
+        'erp_admin_pw': '',
+        'erp_version': '%(erp_version)s',
+        'erp_minor': '.0',
+        'erp_nightly': '', # what folder on nightly if not version like 'master'
         # servertype is odoo or flectra
         'server_type': 'odoo',
         'db_name': '%(site_name)s',
@@ -28,14 +28,14 @@
             # needs red_override_email_recipients installed
         },
         'docker': {
-            'base_image': 'robertredcor/%(site_name)s:%(odoo_version)s-latest',
-            'odoo_image_version': 'odoo:%(odoo_version)s',
+            'base_image': 'robertredcor/%(site_name)s:%(erp_version)s-latest',
+            'erp_image_version': 'odoo:%(erp_version)s',
             'container_name': '%(site_name)s',
             # 'db_container_name'    : 'db', # needs only to be set if it is not 'db'
             # trough what port can we access oddo (mapped to 8069)
-            'odoo_port': '%(docker_port)s',
+            'erp_port': '%(docker_port)s',
             # trough what port can we access odoos long polling port (mapped to 8072)
-            'odoo_longpoll': '%(docker_long_poll_port)s',
+            'erp_longpoll': '%(docker_long_poll_port)s',
             # within the the container the user odoo has a user and group id that
             # is used to access the files in the log and filestore volumes
             'external_user_group_id': '104:107',
@@ -60,8 +60,8 @@
             'vservername': 'www.%(site_name)s.ch',
             # 'vserveraliases': ['%(site_name)s.ch',],
         },
-        # odoo_addons allow to install odoo base tools
-        'odoo_addons': [
+        # erp_addons allow to install odoo base tools
+        'erp_addons': [
             # 'website builder',
             # 'crm',
         ],

@@ -353,7 +353,7 @@ class SupportHandler(InitHandler):
         # construct the command line like:
         # -C /home/robert/projects/breitschtraeff10/breitschtraeff10/etc/odoo.cfg -D breitschtraeff10 -B migrations -R "11.0" 
         config_path = '%s/etc/odoo.cfg' % self.default_values['inner']
-        target_version = self.sites[target_site]['odoo_version']
+        target_version = self.sites[target_site]['erp_version']
         if not os.path.exists(config_path):
             print(bcolors.FAIL)
             print('*' * 80)

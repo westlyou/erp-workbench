@@ -239,9 +239,9 @@ not all values are allways set!
                  'survey',
                  'mass mailing campaigns',
                  'blogs'],
- 'odoo_admin_pw': 'AfbsDemo$77',
+ 'erp_admin_pw': 'AfbsDemo$77',
  'odoo_server_data_path': '/home/robert/odoo_projects_data',
- 'odoo_version': '9.0',
+ 'erp_version': '9.0',
  'osv_memory_age_limit': '1.0',
  'osv_memory_count_limit': False,
  'outer': '/home/robert/projects/afbsdemo',
@@ -1042,7 +1042,7 @@ if __name__ == '__main__':
 
     parent_parser.add_argument(
         "-V", "--version",
-        action="store", dest="odoo_version", default='10.0',
+        action="store", dest="erp_version", default='10.0',
         help="odoo version to use")
 
     parent_parser.add_argument(
