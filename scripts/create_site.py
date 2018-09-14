@@ -46,6 +46,7 @@ from config.config_data.handlers import MailHandler
 
 # get config options
 from scripts.options_create import add_options_create
+from scripts.options_docker import add_options_docker
 from scripts.options_parent import add_options_parent
 from scripts.options_rpc import add_options_rpc
 from scripts.options_support import add_options_support
@@ -274,6 +275,7 @@ def parse_args():
         'docker',
         help='docker provides commands to handle docker containers',
         parents=[parent_parser])
+    add_options_docker(parser_support)
     # -----------------------------------------------
     # manage remote server (can be localhost)
     parser_remote = subparsers.add_parser(

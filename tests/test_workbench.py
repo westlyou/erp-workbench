@@ -74,10 +74,12 @@ class TestSupport(unittest.TestCase):
     def test_support_add_site(self):
         """ run the create -c command 
         """
+        import sites_list
         self.handler.site_names = ['new_site']
         self.args.add_site = True
         result = self.handler.add_site_to_sitelist()
-        reload(sites_list.SITES_G)
+        reload(sites_list)
+        print (list(sites_list.SITES_G.keys()))
         
 
 if __name__ == '__main__':

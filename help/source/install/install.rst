@@ -332,171 +332,176 @@ END handling sites
 godies
 -------------------------------
 
-The setupscript bin/dosetup.py you have to run in each local site
-adds some aliases to your ~/.bash_aliases file. they start with the
-first 4 characters to the site name:
-so rederpdemo produces:
-    rede
-    redehome
+this is all a copy from the old install::
 
-try it out ..
+    The setupscript bin/dosetup.py you have to run in each local site
+    adds some aliases to your ~/.bash_aliases file. they start with the
+    first 4 characters to the site name:
+    so rederpdemo produces:
+        rede
+        redehome
 
-some usefull postgres commands:
--------------------------------
+    try it out ..
 
-    list postgres user and change password
-    --------------------------------------
-    become root
-        su
-    become user postgres
-        su postgres
-    start psql
-        psql
-    list users
-        \du
-    change password of user robert to be admin
-        ALTER USER robert WITH PASSWORD 'admin'
+    some usefull postgres commands:
+    -------------------------------
 
-if you ever want to change change the password of an odoo user:
-    su
-    su postgres
-    psql
-    \connect DBNAME         # connect to db DBNAME
-    # list odoo users
-    # password will only be set until user is logged in successfully the first time
-    select login, password, password_crypt from res_users;
-    # change password of odoo user admin
-    update res_users set password='admin' where login='admin';
-
-subversion:
------------
-
-    add the following line to ~/.subversion/config
-    global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej *~ #*# .#* .*.swp .DS_Store *.egg-info
-
---------------------
-sample localdata.py:
---------------------
-
-    this localdata.py works for accessing files on frieda (144.76.184.20)
-    as local user nirmala, and as remote user odooprojects
-
-    # db_user is the used to access the local postgres server
-    DB_USER = 'nirmala'
-    # db_password ist used to login db_userdb_user
-    DB_PASSWORD = 'odoo'
-    # apache_pathis used to create virtual sites    if you ever want to change change the password of an odoo user:
+        list postgres user and change password
+        --------------------------------------
+        become root
             su
+        become user postgres
             su postgres
+        start psql
             psql
-            \connect DBNAME         # connect to db DBNAME
-            # list odoo users
-            # password will only be set until user is logged in successfully the first time
-            select login, password, password_crypt from res_users;
-            # change password of odoo user admin
-            update res_users set password='admin' where login='admin';
+        list users
+            \du
+        change password of user robert to be admin
+            ALTER USER robert WITH PASSWORD 'admin'
 
-    APACHE_PATH = '/etc/apache2'
-    # remote_user_dic is used to access the remote server to update the local db
-    # it is a dic with the ip of the remote server as key
-    # which ip to use is read from sytes.py
-    REMOTE_SERVERS = {
-        '144.76.184.20' : {
-            'remote_user' : 'odooprojects',
-            'remote_data_path' : '/home/odooprojects/odoo_instances',
-            # remote_pw is used as credential for the remote user. normaly unset
-            # to use public keys.
-            'remote_pw' : '',
-        },
-    }
+    if you ever want to change change the password of an odoo user:
+        su
+        su postgres
+        psql
+        \connect DBNAME         # connect to db DBNAME
+        # list odoo users
+        # password will only be set until user is logged in successfully the first time
+        select login, password, password_crypt from res_users;
+        # change password of odoo user admin
+        update res_users set password='admin' where login='admin';
 
+    subversion:
+    -----------
 
-setup /etc/sudoerr:
--------------------
-on the remote server we have to have a user odooprojects to act as a proxy for these user, that are not
-allowed to access the remote server as user root.
-in the users homdirectory must exist a folder: /home/odooprojects/odoo_instances
-The user has to be added to sudoerrs as follows:
+        add the following line to ~/.subversion/config
+        global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej *~ #*# .#* .*.swp .DS_Store *.egg-info
 
-#includedir /etc/sudoers.d
-odooprojects ALL = NOPASSWD: /usr/bin/docker
-odooprojects ALL = NOPASSWD: /root/odoo_instances/scripts/site_syncer.py
+    --------------------
+    sample localdata.py:
+    --------------------
 
+        this localdata.py works for accessing files on frieda (144.76.184.20)
+        as local user nirmala, and as remote user odooprojects
 
+        # db_user is the used to access the local postgres server
+        DB_USER = 'nirmala'
+        # db_password ist used to login db_userdb_user
+        DB_PASSWORD = 'odoo'
+        # apache_pathis used to create virtual sites    if you ever want to change change the password of an odoo user:
 
+                su
+                su postgres
+                psql
+                \connect DBNAME         # connect to db DBNAME
+                # list odoo users
+                # password will only be set until user is logged in successfully the first time
+                select login, password, password_crypt from res_users;
+                # change password of odoo user admin
+                update res_users set password='admin' where login='admin';
 
-master password:
-----------------
-check ur odoo8 config file named as: odoo-server.conf. it basically inside of your etc folder.
+        APACHE_PATH = '/etc/apache2'
+        # remote_user_dic is used to access the remote server to update the local db
+        # it is a dic with the ip of the remote server as key
+        # which ip to use is read from sytes.py::
 
-find and open it.
+            REMOTE_SERVERS = {
 
-admin_passwd = admin
-
-here admin is your master password. try this.
-
-EDIT:  If you have changed the master password from the user interface, it is stored in a resource file called .openerp_serverrc in the home directory of the user running the server/service.
-
-
-
-echo "--------------------------------------------------"
-echo "########## Install Asterisk Dependencies #########"
-echo "--------------------------------------------------"
-echo -e "---- Installing Dependencies... ----"
-sudo apt install -y wget gcc gcc-c++ libncurses-dev libxml2-dev  libsqlite3-dev libsrtp0-dev \
-    uuid-dev libssl-dev bzip2 libjansson-dev
-
-# from http://www.mikeslab.net/?p=330
-sudo apt-get update; sudo apt-get upgrade -y; sudo apt-get dist-upgrade -y; sudo apt-get install \
-    -y build-essential git-core pkg-config subversion libjansson-dev sqlite autoconf automake libtool \
-    libxml2-dev libncurses5-dev unixodbc unixodbc-dev libasound2-dev libogg-dev libvorbis-dev libneon27-dev \
-    libsrtp0-dev libspandsp-dev uuid uuid-dev sqlite3 libsqlite3-dev libgnutls-dev libtool-bin python-dev texinfo;
-    #sudo shutdown -r now
-
-echo "--------------------------------------------------"
-echo "########## Install PJSIP #########"
-echo "--------------------------------------------------"
-mkdir /root/aserisk
-cd /root/asterisk
-git clone https://github.com/asterisk/pjproject pjproject
-cd pjproject
-./configure --prefix=/usr --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr CFLAGS='-O2 -DNDEBUG -DPJ_HAS_IPV6=1'
-make
-make dep
-make install
-ldconfig
-# check whether modules are loaded with
-ldconfig -p | grep pj
+                '144.76.184.20' : {
+                    'remote_user' : 'odooprojects',
+                    'remote_data_path' : '/home/odooprojects/odoo_instances',
+                    # remote_pw is used as credential for the remote user. normaly unset
+                    # to use public keys.
+                    'remote_pw' : '',
+                },
+            }
 
 
-echo "--------------------------------------------------"
-echo "############## Install Asterisk ##################"
-echo "--------------------------------------------------"
-sudo cd /usr/src
-sudo wget wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
-sudo tar zxvf asterisk*
-sudo cd ./asterisk*
-sudo ./configure  --with-pjproject-bundled
+    setup /etc/sudoerr:
+    -------------------
+    on the remote server we have to have a user odooprojects to act as a proxy for these user, that are not
+    allowed to access the remote server as user root.
+    in the users homdirectory must exist a folder: /home/odooprojects/odoo_instances
+    The user has to be added to sudoerrs as follows:
 
-echo "--------------------------------------------------"
-echo "############## Disable Resource RES-SRTP ##################"
-echo "--------------------------------------------------"
-sudo make menuselect
-sudo make && sudo make install
-
-echo "-------------------------------------------------------------------------"
-echo "############## Install Configuration Files and Service ##################"
-echo "-------------------------------------------------------------------------"
-sudo make samples
-sudo make config
-
-echo "------------------------------------------------------"
-echo "############## Install Certificates ##################"
-echo "------------------------------------------------------"
-sudo mkdir /etc/asterisk/keys
-sudo cd contrib/scripts
-sudo ./ast_tls_cert -C $SERVER_NAME -O "Asterisk Fernuni" -d /etc/asterisk/keys
+    #includedir /etc/sudoers.d
+    odooprojects ALL = NOPASSWD: /usr/bin/docker
+    odooprojects ALL = NOPASSWD: /root/odoo_instances/scripts/site_syncer.py
 
 
-# to clean the config files
-sed -e 's/;.*$//' -e '/^$/d' rtp.conf.ori > rtp.conf
+
+
+    master password:
+    ----------------
+    check ur odoo8 config file named as: odoo-server.conf. it basically inside of your etc folder.
+
+    find and open it.
+
+    admin_passwd = admin
+
+    here admin is your master password. try this.
+
+    EDIT:  If you have changed the master password from the user interface, it is stored in a resource file called .openerp_serverrc in the home directory of the user running the server/service.
+
+
+
+    echo "--------------------------------------------------"
+    echo "########## Install Asterisk Dependencies #########"
+    echo "--------------------------------------------------"
+    echo -e "---- Installing Dependencies... ----"
+    sudo apt install -y wget gcc gcc-c++ libncurses-dev libxml2-dev  libsqlite3-dev libsrtp0-dev \
+        uuid-dev libssl-dev bzip2 libjansson-dev
+
+    # from http://www.mikeslab.net/?p=330
+    sudo apt-get update; sudo apt-get upgrade -y; sudo apt-get dist-upgrade -y; sudo apt-get install \
+        -y build-essential git-core pkg-config subversion libjansson-dev sqlite autoconf automake libtool \
+        libxml2-dev libncurses5-dev unixodbc unixodbc-dev libasound2-dev libogg-dev libvorbis-dev libneon27-dev \
+        libsrtp0-dev libspandsp-dev uuid uuid-dev sqlite3 libsqlite3-dev libgnutls-dev libtool-bin python-dev texinfo;
+        #sudo shutdown -r now
+
+    echo "--------------------------------------------------"
+    echo "########## Install PJSIP #########"
+    echo "--------------------------------------------------"
+    mkdir /root/aserisk
+    cd /root/asterisk
+    git clone https://github.com/asterisk/pjproject pjproject
+    cd pjproject
+    ./configure --prefix=/usr --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr CFLAGS='-O2 -DNDEBUG -DPJ_HAS_IPV6=1'
+    make
+    make dep
+    make install
+    ldconfig
+    # check whether modules are loaded with
+    ldconfig -p | grep pj
+
+
+    echo "--------------------------------------------------"
+    echo "############## Install Asterisk ##################"
+    echo "--------------------------------------------------"
+    sudo cd /usr/src
+    sudo wget wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
+    sudo tar zxvf asterisk*
+    sudo cd ./asterisk*
+    sudo ./configure  --with-pjproject-bundled
+
+    echo "--------------------------------------------------"
+    echo "############## Disable Resource RES-SRTP ##################"
+    echo "--------------------------------------------------"
+    sudo make menuselect
+    sudo make && sudo make install
+
+    echo "-------------------------------------------------------------------------"
+    echo "############## Install Configuration Files and Service ##################"
+    echo "-------------------------------------------------------------------------"
+    sudo make samples
+    sudo make config
+
+    echo "------------------------------------------------------"
+    echo "############## Install Certificates ##################"
+    echo "------------------------------------------------------"
+    sudo mkdir /etc/asterisk/keys
+    sudo cd contrib/scripts
+    sudo ./ast_tls_cert -C $SERVER_NAME -O "Asterisk Fernuni" -d /etc/asterisk/keys
+
+
+    # to clean the config files
+    sed -e 's/;.*$//' -e '/^$/d' rtp.conf.ori > rtp.conf
