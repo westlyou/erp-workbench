@@ -71,6 +71,8 @@ class SupportHandler(InitHandler):
         add new site description to sites.py
         @opts             : option instance
         @default_values   : dictionary with default values
+
+        returns dictonary with info about what happened, mainly for testing purposes
         """
         from config import sites_handler
         opts = self.opts
@@ -87,7 +89,10 @@ class SupportHandler(InitHandler):
         # if the site allready exist, we bail out
         if self.sites.get(self.site_name):
             print("site %s allready defined" % self.site_name)
-            return
+            return {
+                'existed' : self.site_name,
+                'site' : self.sites[self.site_name]
+            }
 
         # make sure the variables for the the docker port and remote site are set
         docker_port = 9000 # just arbitrary
@@ -101,7 +106,7 @@ class SupportHandler(InitHandler):
                 print(('*' * 80))
                 print(('%s is not a valid port number' % opts.docker_port))
                 print((bcolors.ENDC))
-                return
+                return {'error' : e}
         else:
             docker_port = self.default_values.get('docker_port', docker_port)
             docker_long_poll_port = self.default_values.get('docker_long_poll_port', docker_long_poll_port)
@@ -133,7 +138,10 @@ class SupportHandler(InitHandler):
                     print(('*' * 80))
                     print((bcolors.ENDC))
             # no preset stuff yet
-            return
+            return {
+                'added' : self.site_name,
+                'site' : self.sites[self.site_name],
+            }
             # before we can construct a site description we need a file with site values
             if opts.use_preset:
                 pvals = {}  # dict to get link to the preset-vals-file
@@ -160,7 +168,7 @@ class SupportHandler(InitHandler):
                         print('could not read or generate a file with default values')
                         print(('*' * 80))
                         print((bcolors.ENDC))
-                    return
+                    return {'pvals' : 'still ??'}
             else:
                 result = sites_handler.add_site_global(
                     handler=self,
@@ -168,7 +176,11 @@ class SupportHandler(InitHandler):
                     #preset_values=preset_values)
             if result:
                 print("%s added to sites.py" % self.site_name)
-
+            return {
+                'added' : self.site_name,
+                'result' : result,
+                'type' : 'G'
+            }
         elif opts.add_site_local:
             # we add to sites local
             # we read untill we find an empty }
@@ -183,6 +195,13 @@ class SupportHandler(InitHandler):
                     handler=self, template_name=template) #, preset_values=preset_values)
             if result:
                 print("%s added to sites.py (local)" % self.site_name)
+            return {
+                'added' : self.site_name,
+                'result' : result,
+                'type' : 'L'
+            }
+        return {'error' : 'should not have come here'}
+
     # ----------------------------------
     # add_server_to_server_list
     # add new server info to server_list

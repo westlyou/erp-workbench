@@ -51,7 +51,7 @@ A remote server is a server accessible trough the internet, where site is deploy
 Defining what erp type you handle by default:
 ---------------------------------------------
 
-For the time being (sept. 2018) there are two types of erp system er-workbench is capable of handling:
+For the time being (sept. 2018) there are two types of erp system erp-workbench is capable of handling:
 
     - odoo
     - flectra

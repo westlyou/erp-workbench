@@ -47,6 +47,16 @@ def read_yaml_file(path, vals={}):
 
 def check_and_update_base_defaults(yaml_files, vals, results={}):
     """read a list of yaml files and construct python files that can be imported
+    We have three elements involved in this process:
+    1. config/config_data/xx_info.py
+       this file has the actual data. If it is newer than the rest, it is taken
+    2. if config/config_data/xx_info.py does not exist or is not new er than
+       config/xx.yaml, it is generated from this file.
+       config/xx.yaml was copied from config/xx.yaml.in if it did not exist (in config/__init__.py)
+    3. When config/config_data/xx_info.py is generated, default values are read from
+       templates/xx.yaml.
+       This is to make sure, that all the values needed esist, as the user could somehow have 
+       deleted it when edititing the config/xx.yaml file.
 
     Arguments:
         yaml_files {list of tuples} -- tuples with (

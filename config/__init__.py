@@ -50,7 +50,7 @@ for y_info in  (
     )
 
 # the base info we need to access the various parts of erp-workbench 
-# is in some yaml file in erp-workbench the config folder
+# it is in the config.yaml file in the erp-workbench config folder
 from scripts.construct_defaults import check_and_update_base_defaults
 construct_result = {}
 vals = {
