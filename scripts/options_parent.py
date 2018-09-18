@@ -3,30 +3,34 @@
 # and provides common options
 
 from config import BASE_PATH, BASE_INFO
+from utilities.parser_handler import ParserHandler
 
-def add_options_parent(parser):
+def add_options_parent(parser, result_dic = {}):
     """add options to the create parser
     
     Arguments:
         parser {argparse instance} -- instance to which arguments should be added
     """
-    parent_parser = parser
+    parent_parser = ParserHandler(parser, result_dic)
 
     parent_parser.add_argument(
         "-n", "--name",
         action="store", dest="name", default=False,
         help = 'name of the site to create'
     )
+    
     parent_parser.add_argument(
         "-F", "--force",
         action="store_true", dest="force", default=False,
         help = """force. this parameter is used to force setting of new keys into the configuration
             or when copying sitedata without disturbing a running odoo"""
     )
+    
     parent_parser.add_argument(
         "-q", "--quiet",
         action="store_true", dest="quiet", default=False,
         help="be quiet")
+    
     parent_parser.add_argument(
         "-v", "--verbose",
         action="store_true", dest="verbose", default=False,

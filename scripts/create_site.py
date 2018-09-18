@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # make sure we are in a virtualenv
 import os, sys, time
-if not os.environ.get('VIRTUAL_ENV'):
+# robert: i usualy thest in wingide
+if not os.environ.get('VIRTUAL_ENV') and not os.environ.get('WINGDB_ACTIVE'):
     print('not running in a virtualenv')
     print('activate the worbench environment executing:')
     print('workon workbench')
@@ -50,6 +51,8 @@ from scripts.options_docker import add_options_docker
 from scripts.options_parent import add_options_parent
 from scripts.options_rpc import add_options_rpc
 from scripts.options_support import add_options_support
+from scripts.options_remote import add_options_remote
+from scripts.parser_mail import add_options_mail
 
 banner = bcolors.red + BANNER_HEAD  + bcolors.normal + BANNER_TEXT
 
@@ -94,6 +97,10 @@ def main(opts, parsername):
     """
     """
     # default_handler = SiteCreator
+    try:
+        import wingdbstub
+    except:
+        pass
     opts.subparser_name = parsername
     if parsername == 'create':
         handler = SiteCreator(opts, SITES)
@@ -227,16 +234,19 @@ def main(opts, parsername):
 def parse_args():
     argparse.ArgumentParser.set_default_subparser = set_default_subparser
     usage = ""
-
+    need_names_dic = {
+        'need_name' : [], # we need a name
+        'name_valid': [], # given name must be valid  
+    }
     # -----------------------------------------------
     # parent parser holds arguments, that are used for all subparsers 
     parent_parser = ArgumentParser(usage=usage, add_help=False)
     # set options for parent_parser
-    add_options_parent(parent_parser)
+    add_options_parent(parent_parser, need_names_dic)
     # parser_rpc is also used in several parsers to provide default values
     parser_rpc = ArgumentParser(add_help=False)
     # set options for parser_rpc
-    add_options_rpc(parser_rpc)
+    add_options_rpc(parser_rpc, need_names_dic)
 
 
     # parser is the main parser
@@ -268,14 +278,14 @@ def parse_args():
         and other support commands.
         """, 
         parents=[parent_parser])
-    add_options_support(parser_support)
+    add_options_support(parser_support, need_names_dic)
     # -----------------------------------------------
     # manage docker
     parser_docker = subparsers.add_parser(
         'docker',
         help='docker provides commands to handle docker containers',
         parents=[parent_parser])
-    add_options_docker(parser_support)
+    add_options_docker(parser_support, need_names_dic)
     # -----------------------------------------------
     # manage remote server (can be localhost)
     parser_remote = subparsers.add_parser(
@@ -288,41 +298,18 @@ def parse_args():
         'mail',
         help='mail provides commands to manage mail accounts.',
         parents=[parent_parser])
+    add_options_mail(parser_mail, need_names_dic)
 
     # -----------------------------------------------
     # manage sites create and update sites
     # -----------------------------------------------
     #http://stackoverflow.com/questions/10448200/how-to-parse-multiple-sub-commands-using-python-argparse
     #parser_site_s = parser_site.add_subparsers(title='manage sites', dest="site_creation_commands")
-    add_options_create(parser_manage)
-
-    # -----------------------------------------------
-    # support commands
-    # -----------------------------------------------
-    #parser_manage_s = parser_manage.add_subparsers(title='manage sites', dest="site_manage_commands")
-
-    # -----------------------------------------------
-    # manage docker
-    # -----------------------------------------------
-    #parser_support_s = parser_support.add_subparsers(title='docker commands', dest="docker_commands")
-    parser_docker.add_argument(
-        "-dassh", "--docker-add_ssh",
-        action="store_true", dest="docker_add_ssh", default=False,
-        help = 'add ssh to a docker container'
-    )
-
+    add_options_create(parser_manage, need_names_dic)
     # -----------------------------------------------
     # manage remote server (can be localhost)
     # -----------------------------------------------
-    #parser_docker_s = parser_docker.add_subparsers(title='remote commands', dest="remote_commands")
-    parser_remote.add_argument(
-        "--add-apache",
-        action="store_true", dest="add_apache", default=False,
-        help = 'add apache.conf to the apache configuration. Name must be provided'
-    )
-    # -----------------------------------------------
-    # manage mails
-    # -----------------------------------------------
+    add_options_remote(parser_remote, need_names_dic)
     
     sub_parser = parser.set_default_subparser('create')
     args, unknownargs = parser.parse_known_args()
