@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 import os
 import re
-from config import SITES, BASE_INFO, MARKER, ODOO_VERSIONS, MIGRATE_FOLDER, sites_handler
+from config import SITES, BASE_INFO, MARKER, ODOO_VERSIONS, MIGRATE_FOLDER, sites_handler, DOCKER_DEFAULTS, PROJECT_DEFAULTS
 from scripts.sites_handler import UpdateError
 from scripts.create_handler import InitHandler, bcolors
 from scripts.messages import *
@@ -95,7 +95,7 @@ class SupportHandler(InitHandler):
             }
 
         # make sure the variables for the the docker port and remote site are set
-        docker_port = 9000 # just arbitrary
+        docker_port = DOCKER_DEFAULTS.get('docker_port', 9000) 
         docker_long_poll_port = 19000
         if opts.docker_port:
             try:
@@ -112,6 +112,10 @@ class SupportHandler(InitHandler):
             docker_long_poll_port = self.default_values.get('docker_long_poll_port', docker_long_poll_port)
         self.default_values['docker_port'] = docker_port
         self.default_values['docker_long_poll_port'] = docker_long_poll_port
+        
+        # docker hub
+        self.default_values['docker_hub_name'] = DOCKER_DEFAULTS.get('docker_hub_name', 'dockerhubname missing')
+        self.default_values['erp_image_version'] = PROJECT_DEFAULTS.get('project_type', 'odoo')       
 
         if opts.remote_server:
             self.default_values['remote_server'] = opts.remote_server
