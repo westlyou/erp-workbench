@@ -7,10 +7,10 @@
         'servername': '%(site_name)s',
         'erp_admin_pw': '',
         'erp_version': '%(erp_version)s',
-        'erp_minor': '.0',
-        'erp_nightly': '', # what folder on nightly if not version like 'master'
+        'erp_minor': '%(erp_minor)s',
+        'erp_nightly': '%(erp_nightly)s', # what folder on nightly if not version like 'master'
         # servertype is odoo or flectra
-        'server_type': 'odoo',
+        'server_type': '%(server_type)s',
         'db_name': '%(site_name)s',
         # inherits tells from what other site we want to inherit values
         'inherit': '',
@@ -28,8 +28,8 @@
             # needs red_override_email_recipients installed
         },
         'docker': {
-            'base_image': 'robertredcor/%(site_name)s:%(erp_version)s-latest',
-            'erp_image_version': 'odoo:%(erp_version)s',
+            'base_image': '%(docker_hub_name)s/%(site_name)s:%(erp_version)s-latest',
+            'erp_image_version': '%(erp_image_version)s:%(erp_version)s',
             'container_name': '%(site_name)s',
             # 'db_container_name'    : 'db', # needs only to be set if it is not 'db'
             # trough what port can we access oddo (mapped to 8069)

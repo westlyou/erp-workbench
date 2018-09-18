@@ -272,7 +272,7 @@ class SitesHandler(object):
             template = template.replace(template_name, handler.opts.name)
             no_outer = True # do not wrap the template in an outer dict
         if not template:
-            # make sure we really have a site_name, this is sometimes not the cae while testing
+            # make sure we really have a site_name, this is sometimes not the case while testing
             if not handler.default_values['site_name']:
                 handler.default_values['site_name'] = handler.site_name
             with open('%s/templates/newsite.py' % handler.sites_home, 'r') as f:

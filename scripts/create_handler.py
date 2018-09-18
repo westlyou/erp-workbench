@@ -11,7 +11,8 @@ import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, \
-    NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
+    NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS, PROJECT_DEFAULTS, \
+    DOCKER_DEFAULTS, DOCKER_DEFAULTS
 from config.config_data.base_info import BASE_DEFAULTS
 from config.config_data.servers_info import REMOTE_SERVERS
 
@@ -346,10 +347,6 @@ class InitHandler(RPC_Mixin):
         self.construct_defaults(self.site_name)
         self.default_values['current_user'] = ACT_USER
         self.default_values['foldernames'] = FOLDERNAMES
-        # make sure also freshly introduced variables do not create an error 
-        if 'erp_nightly' not in self.default_values:
-            self.default_values['erp_nightly'] = self.default_values['erp_version']
-
         # construct path to datafolder erp_server_data_path
         if self.need_login_info:
             # this will just return when there is no site name
@@ -981,18 +978,28 @@ class InitHandler(RPC_Mixin):
         default_values['site_name'] = site_name
         default_values.update(BASE_INFO)
         if site_name and isinstance(site_name, str) and SITES.get(site_name):
-            # robert refactor, i do not understand following
-            #if opts:
-                #if (not opts.add_site) and (not opts.add_site_local):
-                    #if site_name:
-                        #default_values.update(SITES.get(site_name))
-            #else:
-                #default_values.update(SITES.get(site_name))
-            # robert, replaced aove by foloowing line
             default_values.update(SITES.get(site_name))
+        # now we try to replace the %(xx)s element with values we connected from 
+        # the yaml files
+        tmp_dic = {}
+        for td in [DOCKER_DEFAULTS, PROJECT_DEFAULTS]:
+            tmp_dic.update(td)
+        for k,v in self.default_values.items():
+            try:
+                self.default_values[k] = v % tmp_dic
+            except:
+                pass
+        # we need nightly to construct an url to download the software 
+        if not self.default_values.get('erp_nightly'):
+            self.default_values['erp_nightly'] = PROJECT_DEFAULTS.get(
+                'erp_nightly', 
+                self.default_values['erp_version'])
+        if not self.default_values.get('server_type'):
+            self.default_values['server_type'] = PROJECT_DEFAULTS.get(
+                'server_type', 'odoo')
         # now make sure we have a minor version number
         if not default_values.get('erp_minor'):
-            default_values['erp_minor'] = ''
+            default_values['erp_minor'] = PROJECT_DEFAULTS.get('erp_minor', '')
         site_base_path = os.path.normpath(os.path.expanduser(
             '%(project_path)s/%(site_name)s/' % default_values))
         # /home/robert/projects/afbsecure/afbsecure/parts/odoo
@@ -1046,8 +1053,7 @@ class InitHandler(RPC_Mixin):
             if 'erp_version' in vars(self.opts).keys():
                 erp_version = self.opts.erp_version
             else:
-                from config.config_data.docker_defaults import DOCKER_DEFAULTS
-                erp_version = DOCKER_DEFAULTS.get('erp_version', '12.0')
+                erp_version = PROJECT_DEFAULTS.get('erp_version', '12.0')
             self.default_values['erp_version'] = erp_version
         
     # -------------------------------------------------------------------

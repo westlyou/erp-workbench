@@ -6,6 +6,14 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 DOCKER_DEFAULTS:
+    # docker_hub_name:
+    # what is the name of the dockerhub to use
+    docker_hub_name: 'robertrottermann'
+    # docker_port:
+    # this is the default posrt we assign to a docker container to use
+    # it has to be adapted in the site description depending on what
+    # server the site is running
+    docker_port: 9000
     # the name of the containe in which all database are created
     dockerdb_container_name: 'db'
     # dockerdbuser is used to access the database  in the database container

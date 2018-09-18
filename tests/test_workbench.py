@@ -5,6 +5,7 @@ from argparse import Namespace
 from importlib import reload
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sites_list
 
 """
 run it with:
@@ -59,7 +60,7 @@ class TestCreate(unittest.TestCase):
         args.list_sites = True
         main(args, args.subparser_name)
 
-    def test_create_parse_args(self):
+    def x_test_create_parse_args(self):
         """ run the create parse_args command 
         """
         from scripts.create_site import parse_args
@@ -68,7 +69,12 @@ class TestCreate(unittest.TestCase):
 class TestSupport(unittest.TestCase):
 
     def setUp(self):
+        super().setUp()
         from config.config_data.handlers import SupportHandler
+        import sites_list
+        self.sites_list_path = os.path.dirname(sites_list.__file__)
+        self.SITES_G = sites_list.SITES_G
+        self.SITES_L = sites_list.SITES_L
         args = MyNamespace()
         args.name = ''
         args.subparser_name = 'support'
@@ -76,17 +82,34 @@ class TestSupport(unittest.TestCase):
         args.quiet = True
         self.args = args
         self.handler = SupportHandler(args, {})
+        
+    def tearDown(self):
+        super().tearDown()
+        # remove sites we added
+        for n, existing in [('sites_global',self.SITES_G)  , ('sites_local', self.SITES_L)]:
+            keys = list(existing.keys())
+            temp_path = os.path.normpath('%s/%s' % (self.sites_list_path, n))
+            files = os.listdir(temp_path)
+            for file_name in files:
+                try:
+                    n, e = file_name.split('.')
+                except:
+                    continue
+                if n != '__init__' and e == 'py':
+                    if n not in keys:
+                        os.unlink('%s/%s' % (temp_path, file_name))
 
-    def x_test_support_add_site(self):
+    def test_support_add_site(self):
         """ run the create -c command 
         """
-        import sites_list
-        self.handler.site_names = ['new_site']
-        self.handler.name = 'new_site'
+        new_name = 'new_site'
+        self.handler.site_names = [new_name]
+        self.handler.name = new_name
         self.args.add_site = True
         result = self.handler.add_site_to_sitelist()
         reload(sites_list.sites_global)
-        print (list(sites_list.SITES_G.keys()))
+        from sites_list.sites_global import SITES_G
+        self.assertTrue(new_name in SITES_G.keys())
         
 
 if __name__ == '__main__':

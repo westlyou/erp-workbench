@@ -1,12 +1,32 @@
-# ROJECT_DEFAULTS how we start a new project
+# PROJECT_DEFAULTS how we start a new project
 
 # Variables that can be used in the values
 # %(BASE_PATH)s will be replaced with the actual folder where erp-worbnch is installed
 # %(USER_HOME)s the home folder of the logged in user
 
 PROJECT_DEFAULTS:
+    # project_type:
+    # tells erp workbench what kind of project we want o handle
+    # actuall 0d00 or erp
+    project_type: odoo
+    # projectname:
+    # what is the project name
+    # normaly set when creating a site description
     projectname: undefined
+    # erp_version:
+    # what version of the erp system are we generating
+    # must exist out there and must be downloadable from the internet
     erp_version: '12'
-    erp_minor: '.0'
+    # erp_minor:
+    # what is the minor version number
+    # this is important for unreleased odoo versions
+    erp_minor: '.0alpha1'
+    # erp_nightly:
+    # what folder in the nightly download structure to use
+    # again this is for odoo.
+    # if the version is released, its value is identical to erp_version
+    erp_nightly: 'master'
+    # flectra_version:
     flectra_version: '1.1'
+    # flectra_minor:
     flectra_minor: '.4'
