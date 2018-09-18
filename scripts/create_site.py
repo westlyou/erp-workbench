@@ -52,7 +52,7 @@ from scripts.options_parent import add_options_parent
 from scripts.options_rpc import add_options_rpc
 from scripts.options_support import add_options_support
 from scripts.options_remote import add_options_remote
-from scripts.parser_mail import add_options_mail
+from scripts.options_mail import add_options_mail
 
 banner = bcolors.red + BANNER_HEAD  + bcolors.normal + BANNER_TEXT
 
@@ -93,7 +93,7 @@ def set_default_subparser(self, name, args=None):
 
 
 
-def main(opts, parsername):
+def main(opts, parsername, need_names_dic):
     """
     """
     # default_handler = SiteCreator
@@ -120,7 +120,7 @@ def main(opts, parsername):
     # ----------------------
     if parsername == 'create':
 
-        handler.check_name()
+        handler.check_name(need_names_dic=need_names_dic)
 
         # create
         # ------
@@ -321,7 +321,7 @@ def parse_args():
             args.name = unknownargs[0]
         else:
             args.name = ''
-    return args, sub_parser
+    return args, sub_parser, need_names_dic
     
     
     opts = OptsWrapper(args)
@@ -334,7 +334,7 @@ def parse_args():
 
 if __name__ == '__main__':
     #print(banner)
-    args, sub_parser_name = parse_args()
+    args, sub_parser_name, need_names_dic = parse_args()
 
 
     #(opts, args) = parser.parse_args()
@@ -344,7 +344,7 @@ if __name__ == '__main__':
     # --------------------------------------------------------
     did_run_a_command = False
 
-    main(args, sub_parser_name) #opts.noinit, opts.initonly)
+    main(args, sub_parser_name, need_names_dic) #opts.noinit, opts.initonly)
 
     if 0: #not did_run_a_command:
         print(bcolors.FAIL)

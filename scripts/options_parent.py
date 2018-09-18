@@ -3,11 +3,11 @@
 # and provides common options
 
 from config import BASE_PATH, BASE_INFO
-from utilities.parser_handler import ParserHandler
+from scripts.parser_handler import ParserHandler
 
 def add_options_parent(parser, result_dic = {}):
     """add options to the create parser
-    
+
     Arguments:
         parser {argparse instance} -- instance to which arguments should be added
     """

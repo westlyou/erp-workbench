@@ -1,6 +1,6 @@
 import os
 from config import BASE_PATH, BASE_INFO
-from utilities.parser_handler import ParserHandler
+from scripts.parser_handler import ParserHandler
 
 def add_options_create(parser, result_dic):
     """add options to the create parser

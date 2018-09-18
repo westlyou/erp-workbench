@@ -11,7 +11,7 @@ import subprocess
 from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, \
-    NEED_NAME, NO_NEED_NAME, NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
+    NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS
 from config.config_data.base_info import BASE_DEFAULTS
 from config.config_data.servers_info import REMOTE_SERVERS
 
@@ -777,20 +777,24 @@ class InitHandler(RPC_Mixin):
     # @no_completion: flag whether a vlid name should be selected for a
     #                 selection list
     # -------------------------------------------------------------------
-    def check_name(self, no_completion=False, must_match=False):
+    def check_name(self, no_completion=False, must_match=False, need_names_dic={}):
         """
         check if name is in any of the sites listed in list_sites
         or needed at all
         @opts otion namespace
         @no_completion: flag whether a valid name should be selected for a
                         selection list
+        need_names_dic is a dictonary with two lists:
+        need_names_dic = {
+            'need_name' : [], # we need a name
+            'name_valid': [], # given name must be valid  
+        }
+          
         """
-        try:
-            import wingdbstub
-        except:
-            pass
         opts = self.opts
         name = self.site_name
+        need_name = need_names_dic.get('need_name', [])
+        name_valid = need_names_dic.get('name_valid', [])
         if name:
             if name == 'all':
                 site_names = list(self.sites.keys())
@@ -813,6 +817,7 @@ class InitHandler(RPC_Mixin):
         # no name
         if not name:
             name = ''  # make sure it is a string
+        
         if no_completion:
             # probably called at startup
             if must_match:
@@ -829,11 +834,11 @@ class InitHandler(RPC_Mixin):
             else:
                 self.site_names = [name]
                 return name
-        if not self.name_needed():
+        if not self.name_needed(need_names_dic=need_names_dic):
             return
         done = False
-        cmpl = SimpleCompleter('', options=list(SITES.keys(
-        )), default=name or '', prompt='please provide valid site name:')
+        cmpl = SimpleCompleter('', 
+            options=list(SITES.keys()), default=name or '', prompt='please provide valid site name:')
         while not done:
             _name = cmpl.input_loop()
             if _name is None:
@@ -1053,7 +1058,7 @@ class InitHandler(RPC_Mixin):
     # @option : option to check
     #          if not provided check what option user has selected
     # -------------------------------------------------------------------
-    def name_needed(self, option=None):
+    def name_needed(self, option=None, need_names_dic={}):
         """
         check if name needed
         or needed at all
@@ -1069,29 +1074,19 @@ class InitHandler(RPC_Mixin):
             result = False
             options = self.selections
             for option in options:
-                if self.name_needed(option[0]):
+                if self.name_needed(option[0], need_names_dic):
                     result = True
             return result
 
         # do we need a name
         # if an option is provide, check this one
-        no_need_name = NO_NEED_NAME
-        need_name = NEED_NAME
+        need_name = need_names_dic['name_valid']
+        name_valid = need_names_dic['name_valid']
         if option:
-            if option in no_need_name:
-                return
-            if option in need_name:
+            if option not in need_name:
+                return False
+            if option in name_valid:
                 return True
-        # no decision could be made so far, check the options
-        nn = [n for n in need_name if opts.__dict__.get(n)]
-        nnn = [n for n in no_need_name if opts.__dict__.get(n)]
-        if not nn:
-            # nothing found that needs a name so far
-            if nnn:
-                # we faoun an option set that does not require name
-                return
-        # bah, what should we do ..
-        # lets assume, we do need a name ..
         return True
 
     # ----------------------------------

@@ -1,9 +1,9 @@
 from config import BASE_INFO
-from utilities.parser_handler import ParserHandler
+from scripts.parser_handler import ParserHandler
 
 def add_options_rpc(parser, result_dic):
     """add options to the rpc parser
-    
+
     Arguments:
         parser {argparse instance} -- instance to which arguments should be added
     """

@@ -1,8 +1,8 @@
-from utilities.parser_handler import ParserHandler
+from scripts.parser_handler import ParserHandler
 
 def add_options_remote(parser, result_dic):
     """add options to the create parser
-    
+
     Arguments:
         parser {argparse instance} -- instance to which arguments should be added
     """

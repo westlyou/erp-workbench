@@ -133,49 +133,6 @@ try:
 except:
     version_info = None
 
-# NEED_NAME is a list of options that must provide a name
-NEED_NAME = [
-    "add_apache",
-    "add_site",
-    "add_site_local",
-    "create",
-    "create_certificate",
-    "create_container",
-    'copy_admin_pw',
-    "dataupdate",
-    "dataupdate_close_connections",
-    "directories",
-    "docker_add_ssh",
-    #"docker_show",
-    "edit_site",
-    "module_add",
-    "module_update",
-    "modules_update",
-    "name",
-    "norefresh",
-    'full_update',
-    'full_update_rebuild',
-    'full_update_rebuild_refresh',
-    'update_install_serversetting',
-]
-
-# NO_NEED_NAME is a list of options that do not need to provide a name
-NO_NEED_NAME = [
-    "add_server",
-    "alias",
-    "docker_create_db_container",
-    "edit_server",
-    "list_sites",
-    "listmodules",
-    "module_create",
-    "pull",
-    "reset",
-    "set_config",
-    "shell",
-    "show",
-    "use_branch",
-    "list_ports"
-]
 
 # need name and target 
 NEED_TARGET = [

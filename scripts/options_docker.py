@@ -3,7 +3,7 @@
 # and provides common options
 
 from config import BASE_PATH, BASE_INFO, DOCKER_DEFAULTS
-from utilities.parser_handler import ParserHandler
+from scripts.parser_handler import ParserHandler
 
 def add_options_docker(parser, result_dic):
     """add options to the create parser
