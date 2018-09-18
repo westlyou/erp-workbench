@@ -12,6 +12,7 @@ from copy import deepcopy
 #from config.config_data.base_info import base_info as BASE_INFO
 from config import BASE_INFO
 from config import ACT_USER
+from config.config_data.servers_info import REMOTE_SERVERS
 from scripts.messages import *
 from scripts import bcolors
 
@@ -60,7 +61,14 @@ class SitesHandler(object):
             if not os.path.exists(bp):
                 print(LOCALSITESLIST_BASEPATH_MISSING % bp)
             p1 = sites_list_path
-            if not os.path.exists(p1):
+            # there could be a siteslist folder existing but without
+            # the its inner structure (how??, but it happens!)
+            must_create = False
+            for n in ['__init__.py', 'sites_global', 'sites_local']:
+                if not os.path.exists(os.path.normpath('%s/%s' % (p1, n))):
+                    must_create = True
+                    break
+            if not os.path.exists(p1) or must_create:
                 os.makedirs(p1, exist_ok=True)
                 # add __init__.py
                 open('%s/__init__.py' % p1, 'w').write(SITES_LIST_INI)
@@ -136,12 +144,12 @@ class SitesHandler(object):
             from sites_list import SITES_G, SITES_L
             #from sites_list.sites_local import SITES_L
         except ImportError:
-            from bcolors import bcolors
+            from scripts.bcolors import bcolors
             print(bcolors.FAIL)
             print('*' * 80)
             print('could not import sites list')
             print(bcolors.ENDC)
-            return [], []
+            return {}, {}
             
         # -------------------------------------------------------------
         # test code from prakash to set the local sites value to true
@@ -243,10 +251,19 @@ class SitesHandler(object):
         """
 
         self.handler = handler
-        handler.default_values['base_sites_home'] = '/root/erp_workbench' 
+        remote_url = handler.opts.use_ip or '127.0.0.1'
+        # look up what remote url we need to use
+        remote_server_info = REMOTE_SERVERS.get(remote_url)
+        if not remote_server_info:
+            print(bcolors.FAIL)
+            print('*' * 80)
+            print('no remote server description found for %s' % remote_url)
+            print('please create it with bin/s --add-server %s' % remote_url)
+            print(bcolors.ENDC)
+            sys.exit()
+        handler.default_values['base_sites_home'] = remote_server_info.get('remote_data_path', '/root/erp_workbench')
         handler.default_values['base_url'] = ('%s.ch' % handler.site_name)
         template = ''
-        remote_url = handler.opts.use_ip or '127.0.0.1'
         # no_outer will be set, if we use an existing site-description as base
         no_outer = False
         if template_name:
@@ -255,7 +272,11 @@ class SitesHandler(object):
             template = template.replace(template_name, handler.opts.name)
             no_outer = True # do not wrap the template in an outer dict
         if not template:
-            template = open('%s/templates/newsite.py' % handler.sites_home, 'r').read() % handler.default_values
+            # make sure we really have a site_name, this is sometimes not the cae while testing
+            if not handler.default_values['site_name']:
+                handler.default_values['site_name'] = handler.site_name
+            with open('%s/templates/newsite.py' % handler.sites_home, 'r') as f:
+                template = f.read() % handler.default_values
             template = template.replace('127.0.0.1', remote_url)
         return self._add_site('G', template, no_outer)
 
@@ -270,7 +291,11 @@ class SitesHandler(object):
             template['remote_server']['remote_url'] = 'localhost'
             template = '"%s" : %s' % (handler.opts.name, pformat(template))
         if not template:
-            template = open('%s/templates/newsite.py' % handler.sites_home, 'r').read() % handler.default_values
+            # make sure we really have a site_name, this is sometimes not the cae while testing
+            if not handler.default_values['site_name']:
+                handler.default_values['site_name'] = handler.site_name
+            with open('%s/templates/newsite.py' % handler.sites_home, 'r') as f:
+                template = exec.read() % handler.default_values
             template = template.replace('xx.xx.xx.xx', 'localhost')
         return self._add_site('L', template, False)
 
@@ -283,26 +308,23 @@ class SitesHandler(object):
             print(SITE_ADDED_NO_DOT % site_name)
             return
         if where not in ['L', 'G']:
-            return
+            return {'error' : 'not a valid sites type %s' % where}
         if not no_outer:
             outer_template = SITES_GLOBAL_TEMPLATE % (site_name, template)
         else:
             outer_template = template
         if where == 'G':
-            #m = re.compile(r'\n%s' % MARKER)
-            #sites = open('%s/sites_global.py' % sites_list_path).read()
-            #if not m.search(sites):
-                #print "ERROR: the marker could not be found in sites.py"
-                #print "make sure it exists and starts at the beginning of the line"
-                #return
-            #open('%s/sites_global.py' % sites_list_path, 'w').write(m.sub(template, sites))
-            
             # add a new file with the sites info
-            f = open('%s/sites_global/%s.py' % (BASE_INFO['sitesinfo_path'], site_name), 'w').write(outer_template)
+            f_path = '%s/sites_global/%s.py' % (BASE_INFO['sitesinfo_path'], site_name)
         elif where == 'L':
             site_name = self.handler.site_name
-            f = open('%s/sites_local/%s.py' % (BASE_INFO['sitesinfo_path'], site_name), 'w').write(outer_template)
-        return True
+            f_path = '%s/sites_local/%s.py' % (BASE_INFO['sitesinfo_path'], site_name)
+        with open(f_path, 'w') as f:
+            f.write(outer_template)
+        return {
+            'type' : where,
+            'site_info' : outer_template,
+        }
         
 
     def pull(self, auto='check'):

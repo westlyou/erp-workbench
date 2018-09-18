@@ -76,9 +76,10 @@ class TestSupport(unittest.TestCase):
         """
         import sites_list
         self.handler.site_names = ['new_site']
+        self.handler.name = 'new_site'
         self.args.add_site = True
         result = self.handler.add_site_to_sitelist()
-        reload(sites_list)
+        reload(sites_list.sites_global)
         print (list(sites_list.SITES_G.keys()))
         
 

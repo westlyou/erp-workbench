@@ -140,7 +140,7 @@ class SupportHandler(InitHandler):
             # no preset stuff yet
             return {
                 'added' : self.site_name,
-                'site' : self.sites[self.site_name],
+                'site' : result, #self.sites[self.site_name],
             }
             # before we can construct a site description we need a file with site values
             if opts.use_preset:
