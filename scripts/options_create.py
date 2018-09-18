@@ -1,24 +1,27 @@
 import os
 from config import BASE_PATH, BASE_INFO
+from utilities.parser_handler import ParserHandler
 
-
-def add_options_create(parser):
+def add_options_create(parser, result_dic):
     """add options to the create parser
     
     Arguments:
         parser {argparse instance} -- instance to which arguments should be added
     """
-    parser_manage = parser
+    parser_manage = ParserHandler(parser, result_dic)
 
     parser_manage.add_argument(
         "-c", "--create",
         action="store_true", dest="create", default=False,
-        help = 'create new site structure in %s. Name must be provided' % BASE_INFO.get('project_path', os.path.expanduser('projects'))
+        help = 'create new site structure in %s. Name must be provided' % BASE_INFO.get(
+            'project_path', os.path.expanduser('projects')),
+        need_name = True
     )
     parser_manage.add_argument(
         "-D", "--directories",
         action="store_true", dest="directories", default=False,
-        help = 'create local directories for site %s. option -n must be set and valid. This option is seldomly needed. Normaly directories are created when needed'  % BASE_INFO.get('erp_server_data_path', BASE_PATH)
+        help = 'create local directories for site %s. option -n must be set and valid. This option is seldomly needed. Normaly directories are created when needed'  % BASE_INFO.get('erp_server_data_path', BASE_PATH),
+        need_name = True        
     )
     parser_manage.add_argument(
         "--DELETELOCAL",
@@ -29,32 +32,38 @@ def add_options_create(parser):
         - ~/projecty/Proj_Name folder\n
         - virtualenv Proj_Name\n
         - database Proj_Name
-        """
+        """,
+        need_name = True        
     )
     parser_manage.add_argument(
         "-lo", "--listownmodules",
         action="store_true", dest="listownmodules", default=False,
-        help = 'list installable modules from sites.py sites description. Name must be provided'
+        help = 'list installable modules from sites.py sites description. Name must be provided',
+        need_name = True        
     )
     parser_manage.add_argument(
         "-io", "--installown",
         action="store_true", dest="installown", default=False,
-        help = 'install all modules listed as addons'
+        help = 'install all modules listed as addons',
+        need_name = True        
     )
     parser_manage.add_argument(
         "-uo", "--updateown",
         action="store", dest="updateown", default='',
-        help = 'update modules listed as addons, pass a comma separated list (no spaces) or all'
+        help = 'update modules listed as addons, pass a comma separated list (no spaces) or all',
+        need_name = True
     )
     parser_manage.add_argument(
         "-ro", "--removeown",
         action="store", dest="removeown", default='',
-        help = 'remove modules listed as addons, pass a comma separated list (no spaces) or all'
+        help = 'remove modules listed as addons, pass a comma separated list (no spaces) or all',
+        need_name = True
     )
     parser_manage.add_argument(
         "-I", "--installodoomodules",
         action="store_true", dest="installodoomodules", default=False,
-        help = 'install modules listed as odoo addons'
+        help = 'install modules listed as odoo addons',
+        need_name = True
     )
     parser_manage.add_argument(
         "-ls", "--list",
@@ -83,17 +92,20 @@ def add_options_create(parser):
              dump database data into the servers dump folder. does not use docker. \n
              You can use the option -ipt (ip-target) to dump the site to a remote server.\n
              Using the option -NTS (new-target-site) you can define to what target site the data is dumped.
-        """
+        """,
+        need_name = True
     )
     parser_manage.add_argument(
         "-M", "--module-update",
         action="store", dest="module_update",
-        help = 'Pull modules listed for a site from the repository. Provide comma separated list, no spaces. Name must be provided'
+        help = 'Pull modules listed for a site from the repository. Provide comma separated list, no spaces. Name must be provided',
+        need_name = True
     )
     parser_manage.add_argument(
         "-m", "--modules-update",
         action="store_true", dest="modules_update", default=False,
-        help = 'Pull all modules listed for a site from the repository. Name must be provided'
+        help = 'Pull all modules listed for a site from the repository. Name must be provided',
+        need_name = True
     )
     parser_manage.add_argument(
         "-b", "--use-branch",
@@ -114,5 +126,6 @@ def add_options_create(parser):
            
            If you want to copy a local site to an other local site do it like this:
            bin/c -dump SOURCE -NTS TARGET -ipt localhost
-        """
+        """,
+        need_name = True
     )

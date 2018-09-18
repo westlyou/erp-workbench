@@ -324,11 +324,6 @@ class InitHandler(RPC_Mixin):
         # collect info on what parser and what options are selected
         parsername, selected, options = collect_options(opts)
         self.selections = selected
-        #if not self.site_name and self.name_needed():
-            #result = self._complete_selection(parsername, list(self.sites.keys(
-            #)) + ['all'], results_only=True, prompt='sitename ?')
-            #if result:
-                #self.site_names = [result]
         if not selected:
             # when testing we migth start without a name
             if not opts.__dict__.get('skip_name'):
@@ -337,7 +332,6 @@ class InitHandler(RPC_Mixin):
             # check again if selected
             parsername, selected, options = collect_options(opts)
         self.parsername = parsername
-        self.selections = selected
         self.login_info = {}
         # now we can really check whether name is given and valid
         # while converting to workbench: I think wemake all options check 
@@ -358,6 +352,7 @@ class InitHandler(RPC_Mixin):
 
         # construct path to datafolder erp_server_data_path
         if self.need_login_info:
+            # this will just return when there is no site name
             self._create_login_info(self.login_info)
         #             # the following three values will be overruled by the docker registry
         # created using docker_handler.update_container_info
@@ -787,9 +782,13 @@ class InitHandler(RPC_Mixin):
         check if name is in any of the sites listed in list_sites
         or needed at all
         @opts otion namespace
-        @no_completion: flag whether a vlid name should be selected for a
+        @no_completion: flag whether a valid name should be selected for a
                         selection list
         """
+        try:
+            import wingdbstub
+        except:
+            pass
         opts = self.opts
         name = self.site_name
         if name:
