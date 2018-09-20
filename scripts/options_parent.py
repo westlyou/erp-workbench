@@ -18,19 +18,19 @@ def add_options_parent(parser, result_dic = {}):
         action="store", dest="name", default=False,
         help='name of the site to create'
     )
-    
+
     parent_parser.add_argument(
         "-F", "--force",
         action="store_true", dest="force", default=False,
         help="""force. this parameter is used to force setting of new keys into the configuration
             or when copying sitedata without disturbing a running odoo"""
     )
-    
+
     parent_parser.add_argument(
         "-q", "--quiet",
         action="store_true", dest="quiet", default=False,
         help="be quiet")
-    
+
     parent_parser.add_argument(
         "-v", "--verbose",
         action="store_true", dest="verbose", default=False,
@@ -65,4 +65,4 @@ def add_options_parent(parser, result_dic = {}):
         "-ipt", "--use-ip-target",
         action="store", dest="use_ip_target",
         help='use the ip provided to write the TARGET instead of localhost'
-    )    
+    )

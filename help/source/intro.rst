@@ -5,9 +5,27 @@ Introduction and first steps
 ERP Workbench is a set of tools that are used to create and maintain local and remote
 erp (odoo, flectra, ..) sites.
 
+First steps to work trough
+**************************
+
+Please start with working trough these documents.
+They will give you a basic understanding what the aims of erp-workbench are.
+
+    - Install.txt_
+    - `Quick Walk Trough`_
+    - `some more`_
+    
+    .. _Install.txt: ../../../INSTALL.txt
+    .. _Quick Walk Trough: walktrough/index
+    .. _some more: https://www.redo2oo.ch
+
+
+Locations where we maintain objects
+***********************************
+
 Objects that are maintained by erp-workbench are at three different locations:
 
-    If you have installed it as proposed in the INSTALL.txt these locations are as follows:
+    If you have installed erp-workbench as proposed in the INSTALL.txt these locations are as follows:
 
     - ~/erp_workbench  ($WB in this documentation)
         that is where ERPW is installed and site-descriptions are maintained
@@ -22,10 +40,18 @@ Command categories:
 -------------------
 Commands are grouped in several categories:
 
-    - create / update
+    - create / update 
+        These are commands that create or update objects
+        like projects or folder structures on the local host.
     - docker
+        These commands handle docker object like images and containers
+        and objects running in a container like an erp site
     - support
+        These are commands to add and remove erp-workbench projects
+        and servers to which erp sites are deployed
     - remote
+        These are commands that tipically are run on the remote servers
+        like maintaining the Nginx/Apache virtual sites and their certificates.
 
 Create objects:
 ***************

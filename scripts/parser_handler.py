@@ -1,4 +1,14 @@
-class ParserHandler(object):
+"""extend argparse to allow extra elements in is add option
+
+
+"""
+
+import argparse
+class ParserHandler(argparse.ArgumentParser):
+    """extend argparse to allow extra elements in is add option
+    
+    """
+
     def __init__(self, parser, info_dic):
         """simple class to allow defining extra properties (booleans actually)
         when adding arguments to the parser
@@ -24,6 +34,7 @@ class ParserHandler(object):
                 if dest:
                     k_vals.append(dest)
                 kwargs.pop(kwarg)
+        #super().add_argument(*args, **kwargs)
         self.parser.add_argument(*args, **kwargs)
                 
 
