@@ -99,7 +99,7 @@ class TestSupport(unittest.TestCase):
                     if n not in keys:
                         os.unlink('%s/%s' % (temp_path, file_name))
 
-    def test_support_add_site(self):
+    def test_support_add_drop_site(self):
         """ run the create -c command 
         """
         new_name = 'new_site'
@@ -110,6 +110,13 @@ class TestSupport(unittest.TestCase):
         reload(sites_list.sites_global)
         from sites_list.sites_global import SITES_G
         self.assertTrue(new_name in SITES_G.keys())
+        # now delete the site again
+        result = self.handler.drop_site()
+        reload(sites_list.sites_global)
+        from sites_list.sites_global import SITES_G
+        self.assertFalse(new_name in SITES_G.keys())
+
+
         
 
 if __name__ == '__main__':

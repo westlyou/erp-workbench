@@ -14,7 +14,8 @@ from config import BASE_INFO
 from config import ACT_USER
 from config.config_data.servers_info import REMOTE_SERVERS
 from scripts.messages import *
-from scripts import bcolors
+from scripts.bcolors import bcolors
+from importlib import reload
 
 class UpdateError(subprocess.CalledProcessError):
     """Specific class for errors occurring during updates of existing repos.
@@ -144,7 +145,6 @@ class SitesHandler(object):
             from sites_list import SITES_G, SITES_L
             #from sites_list.sites_local import SITES_L
         except ImportError:
-            from scripts.bcolors import bcolors
             print(bcolors.FAIL)
             print('*' * 80)
             print('could not import sites list')
@@ -201,7 +201,14 @@ class SitesHandler(object):
         return SITES, SITES_L
     
     def drop_site(self, template_name):
-        SITES, SITES_L = self.get_sites()
+        # when dropping sites, it could be that we are in a testing environment
+        # that did not restart since creating the sit
+        # so we force a reload
+        import sites_list
+        reload(sites_list.sites_global)
+        reload(sites_list.sites_local)
+        from sites_list.sites_global import SITES_G
+        from sites_list.sites_local import SITES_L
         sites_list_path = self.sites_list_path
         if template_name in list(SITES_L.keys()):
             try:
@@ -210,7 +217,7 @@ class SitesHandler(object):
             except:
                 pass
             return True
-        elif template_name in list(SITES.keys()):
+        elif template_name in list(SITES_G.keys()):
             try:
                 os.unlink('%s/sites_global/%s.py' % (sites_list_path, template_name))
                 os.unlink('%s/sites_global/%s.pyc' % (sites_list_path, template_name))

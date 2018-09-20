@@ -115,12 +115,14 @@ def main(opts, parsername, need_names_dic):
     else:
         handler = SiteCreator(opts, SITES)
 
+
+    # ckeck whether the used option needs a name to work
+    handler.check_name(need_names_dic=need_names_dic)
+
     # ----------------------
     # create commands
     # ----------------------
     if parsername == 'create':
-
-        handler.check_name(need_names_dic=need_names_dic)
 
         # create
         # ------
