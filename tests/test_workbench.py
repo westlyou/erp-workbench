@@ -5,7 +5,6 @@ from argparse import Namespace
 from importlib import reload
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import sites_list
 
 """
 run it with:
@@ -70,11 +69,8 @@ class TestSupport(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
-        from config.config_data.handlers import SupportHandler
-        import sites_list
-        self.sites_list_path = os.path.dirname(sites_list.__file__)
-        self.SITES_G = sites_list.SITES_G
-        self.SITES_L = sites_list.SITES_L
+        self._get_sites()
+        from config.handlers import SupportHandler
         args = MyNamespace()
         args.name = ''
         args.subparser_name = 'support'
@@ -82,6 +78,34 @@ class TestSupport(unittest.TestCase):
         args.quiet = True
         self.args = args
         self.handler = SupportHandler(args, {})
+        
+    def _get_sites(self):
+        old_exit = sys.exit
+        # monkey patch sys.exit not 
+        def exit(arg=0):
+            print('monkey patched sys exit executed')
+        sys.exit = exit
+        try:
+            # if the sites_list does not exist yet
+            # the following import will create it
+            # but call exit afterwards, which we have monkeypatched
+            from config import sites_list
+            self.sites_list_path = os.path.dirname(sites_list.__file__)
+            self.SITES_G = sites_list.SITES_G
+            self.SITES_L = sites_list.SITES_L
+        except:
+            # 
+            try:
+                from config import BASE_INFO
+                sys.path.append(os.path.dirname(BASE_INFO.get('sitesinfo_path')))
+                import sites_list
+                self.sites_list_path = os.path.dirname(sites_list.__file__)
+                self.SITES_G = sites_list.SITES_G
+                self.SITES_L = sites_list.SITES_L
+            except:
+                raise
+        finally:
+            sys.exit = old_exit
         
     def tearDown(self):
         super().tearDown()
@@ -102,6 +126,7 @@ class TestSupport(unittest.TestCase):
     def test_support_add_drop_site(self):
         """ run the create -c command 
         """
+        import sites_list
         new_name = 'new_site'
         self.handler.site_names = [new_name]
         self.handler.name = new_name

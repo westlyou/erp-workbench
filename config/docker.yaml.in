@@ -20,14 +20,14 @@ DOCKER_DEFAULTS:
     dockerdbuser: 'odoo'
     # dockerdbpw is the dockerdbuser's password
     dockerdbpw: 'odoo'
-    # dockerrpcuser is the user with which we want to login to the odoo site running in the container
+    # dockerrpcuser is the user with which we want to login to the erp site running in the container
     dockerrpcuser: 'admin'
     # dockerrpcuserpw dockerrpcuser's password
     # this is in most cases NOT 'admin'
     # you can overrule it with -ddbpw
     dockerrpcuserpw: 'admin'
     # dumper_image:
-    # when dumping a container based odoo site to its backup structure
+    # when dumping a container based erp site site to its backup structure
     # a docker container is used that has access to databse container
     # where the sites data is maintained (normally this continer is named db)
     # to create a this dumper container we need an image which uses pgdump

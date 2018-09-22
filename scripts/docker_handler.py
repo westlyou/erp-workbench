@@ -187,7 +187,7 @@ class DockerHandler(InitHandler, DBUpdater):
         """
         name = self.site_name
         site_info = self.sites[name]
-        server_type  = site_info.get('server_type')
+        erp_type  = site_info.get('erp_type')
         docker = site_info.get('docker')
         if not docker or not docker.get('container_name'):
             print('the site description for %s has no docker description or no container_name' % opts.name)
@@ -337,7 +337,7 @@ class DockerHandler(InitHandler, DBUpdater):
             and not self.default_values['docker_registry'].get(container_name) or (container_name == 'db'):
             if container_name != 'db':
                 from templates.docker_templates import docker_template, flectra_docker_template
-                if site.get('server_type', 'odoo') == 'flectra':
+                if site.get('erp_type', 'odoo') == 'flectra':
                     docker_template = flectra_docker_template
                 self._create_container(docker_template, info_dic)
             else:
@@ -352,7 +352,7 @@ class DockerHandler(InitHandler, DBUpdater):
                     sys.exit()
                 
                 # here we need to decide , whether we run flectra or odoo
-                if site.get('server_type') == 'flectra':
+                if site.get('erp_type') == 'flectra':
                     from templates.docker_templates import flectra_docker_template
                 else:
                     from templates.docker_templates import docker_db_template

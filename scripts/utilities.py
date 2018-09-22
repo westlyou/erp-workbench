@@ -182,8 +182,8 @@ def create_server_config(handler):
     if not name:
         # we need a site name to create a server config
         return
-    server_type = handler.site.get('server_type', 'odoo')
-    config_name = CONFIG_NAME[server_type]['config']
+    erp_type = handler.site.get('erp_type', 'odoo')
+    config_name = CONFIG_NAME[erp_type]['config']
     erp_admin_pw = handler.site.get('erp_admin_pw', '')
     p = os.path.normpath('%s/%s' % (BASE_INFO['erp_server_data_path'], name))
     collect_addon_paths(handler)
@@ -201,7 +201,7 @@ def create_server_config(handler):
             'site_settings', {}).get('server_config', {})
         def_dic = {}
         def_dic.update(handler.default_values)
-        def_dic.update(CONFIG_NAME[server_type]['val_dic'])
+        def_dic.update(CONFIG_NAME[erp_type]['val_dic'])
         for k, v in list(CONFIG_DEFAULTS.items()):
             vv = server_config.get(k, v)
             if isinstance(vv, str):

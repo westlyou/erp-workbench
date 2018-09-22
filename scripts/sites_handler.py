@@ -16,6 +16,7 @@ from config.config_data.servers_info import REMOTE_SERVERS
 from scripts.messages import *
 from scripts.bcolors import bcolors
 from importlib import reload
+from config import PROJECT_DEFAULTS, DOCKER_DEFAULTS
 
 class UpdateError(subprocess.CalledProcessError):
     """Specific class for errors occurring during updates of existing repos.
@@ -80,12 +81,17 @@ class SitesHandler(object):
                     'site_name' : 'demo_global', 
                     'marker' : self.marker,
                     'base_sites_home' : '/home/%s/erp_workbench' % ACT_USER,
-                    'erp_version' : '12',
+                    'erp_type' : PROJECT_DEFAULTS.get('erp_type', 'odoo'),
+                    'erp_version' : PROJECT_DEFAULTS.get('erp_version', '12'),
+                    'erp_minor' : PROJECT_DEFAULTS.get('erp_minor', '12'),
+                    'erp_nightly' : PROJECT_DEFAULTS.get('erp_nightly', '12'),
                     'base_url' : 'demo_global',
                     'local_user_mail' : 'mail@localhost.com',
                     'remote_server' : 'localhost',
                     'docker_port' : 8800,
                     'docker_long_poll_port' : 18800,
+                    'docker_hub_name' : DOCKER_DEFAULTS.get('docker_hub_name', ''),
+                    'erp_image_version' : DOCKER_DEFAULTS.get('erp_image_version', ''),
                 }                
                 # create global sites
                 os.mkdir('%s/sites_global' % p1)

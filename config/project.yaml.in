@@ -5,10 +5,10 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 PROJECT_DEFAULTS:
-    # project_type:
+    # erp_type:
     # tells erp workbench what kind of project we want o handle
     # actuall 0d00 or erp
-    project_type: odoo
+    erp_type: odoo
     # projectname:
     # what is the project name
     # normaly set when creating a site description
@@ -26,7 +26,3 @@ PROJECT_DEFAULTS:
     # again this is for odoo.
     # if the version is released, its value is identical to erp_version
     erp_nightly: 'master'
-    # flectra_version:
-    flectra_version: '1.1'
-    # flectra_minor:
-    flectra_minor: '.4'

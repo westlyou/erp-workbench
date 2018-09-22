@@ -9,7 +9,7 @@ presettest = {
         'erp_admin_pw': '',
         'erp_version': '10.0',
         # servertype is odoo or flectra
-        'server_type': 'odoo',
+        'erp_type': 'odoo',
         'db_name': 'presettest',
         # inherits tells from what other site we want to inherit values
         'inherit': '',

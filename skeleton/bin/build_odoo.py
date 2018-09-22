@@ -79,9 +79,9 @@ def main(opts):  # nosetup=False, onlysetup=False):
             #we probably have an alpha version
             pass
 
-    odoo_src = 'https://nightly.odoo.com/%%s/nightly/src/odoo_%%s%%s.latest.zip' %% (
+    erp_src = 'https://nightly.odoo.com/%%s/nightly/src/odoo_%%s%%s.latest.zip' %% (
         NIGHTLY, VERSION, ODOO_MINOR)
-    fname = os.path.split(odoo_src)[-1]
+    fname = os.path.split(erp_src)[-1]
     python_cmd = ''
 
     # delete an existing download if force is activated
@@ -94,10 +94,10 @@ def main(opts):  # nosetup=False, onlysetup=False):
     adir = os.getcwd()
     os.chdir('downloads')
     if not os.path.exists(fname):
-        cmd = ['wget', odoo_src]
+        cmd = ['wget', erp_src]
         print('*' * 80)
         print('downloading:')
-        print(odoo_src)
+        print(erp_src)
         print('to', '%%s/%%s' %% (os.getcwd(), fname))
         print()
         p = Popen(cmd, stdout=PIPE)
