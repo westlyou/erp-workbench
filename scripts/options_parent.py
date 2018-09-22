@@ -23,7 +23,7 @@ def add_options_parent(parser, result_dic = {}):
         "-F", "--force",
         action="store_true", dest="force", default=False,
         help="""force. this parameter is used to force setting of new keys into the configuration
-            or when copying sitedata without disturbing a running odoo"""
+            or when copying sitedata without disturbing a running erp site"""
     )
 
     parent_parser.add_argument(
@@ -39,7 +39,7 @@ def add_options_parent(parser, result_dic = {}):
     parent_parser.add_argument(
         "-V", "--version",
         action="store", dest="erp_version", default='12.0',
-        help="odoo version to use")
+        help="erp version to use")
 
     parent_parser.add_argument(
         "-N", "--norefresh",

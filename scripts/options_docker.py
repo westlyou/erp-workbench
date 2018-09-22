@@ -28,7 +28,7 @@ def add_options_docker(parser, result_dic):
     parser_docker.add_argument(
         "-dE", "--execute-script",
         action="store", dest="executescript",
-        help="Run a script against a running odoo site. Name must be given",
+        help="Run a script against a running erp site. Name must be given",
         need_name = True,
         name_valid = True,      
     )
@@ -37,9 +37,9 @@ def add_options_docker(parser, result_dic):
         action="store", dest="executescriptparameter",
         help="parameters to be passed to the executed script. It must be a comma separated string of key=value pairs. No spaces!")    
     parser_docker.add_argument(
-        "-dSOS", "--set-odoo-settings-docker",
-        action="store_true", dest="set_odoo_settings_docker", default=False,
-        help="set odoo settings like the mail handlers. The script tries to define for what ip",
+        "-dSOS", "--set-erp-settings-docker",
+        action="store_true", dest="set_erp_settings_docker", default=False,
+        help="set erp settings like the mail handlers. The script tries to define for what ip",
         need_name = True,
         name_valid = True,       
     )
@@ -110,27 +110,27 @@ def add_options_docker(parser, result_dic):
     parser_docker.add_argument(
         "-ddbname", "--dockerdbname",
         action="store", dest="dockerdbname", # no default, otherwise we can not get it from the site description
-        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdb_container_name'])
+        help="user to access db in a docker, if not set, it is taken form the sites erp stanza, default %s" % DOCKER_DEFAULTS['dockerdb_container_name'])
 
     parser_docker.add_argument(
         "-ddbuser", "--dockerdbuser",
         action="store", dest="dockerdbuser", # no default, otherwise we can not get it from the site description
-        help="user to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdbuser'])
+        help="user to access db in a docker, if not set, it is taken form the sites erp stanza, default %s" % DOCKER_DEFAULTS['dockerdbuser'])
 
     parser_docker.add_argument(
         "-ddbpw",
         action="store", dest="dockerdbpw", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerdbpw'])
+        help="password to access db in a docker, if not set, it is taken form the sites erp stanza, default %s" % DOCKER_DEFAULTS['dockerdbpw'])
 
     parser_docker.add_argument(
         "-drpcuser",
         action="store", dest="drpcuser", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuser'])
+        help="password to access db in a docker, if not set, it is taken form the sites erp stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuser'])
 
     parser_docker.add_argument(
         "-drpcuserpw",
         action="store", dest="drpcuserpw", # no default, otherwise we can not get it from the site description
-        help="password to access db in a docker, if not set, it is taken form the sites odoo stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuserpw'])
+        help="password to access db in a docker, if not set, it is taken form the sites erp stanza, default %s" % DOCKER_DEFAULTS['dockerrpcuserpw'])
 
     parser_docker.add_argument(
         "-dud", "--dataupdate_docker",
@@ -163,9 +163,9 @@ def add_options_docker(parser, result_dic):
         need_name = True
     )
     parser_docker.add_argument(
-        "-dI", "--dinstallodoomodules",
-        action="store_true", dest="dinstallodoomodules", default=False,
-        help = 'install modules listed as odoo addons into docker. Name must be provided',
+        "-dI", "--dinstall_erp_modules",
+        action="store_true", dest="dinstall_erp_modules", default=False,
+        help = 'install modules listed as addons into docker. Name must be provided',
         need_name = True
     )
     #parser_docker.add_argument(

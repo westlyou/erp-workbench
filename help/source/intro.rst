@@ -16,8 +16,18 @@ They will give you a basic understanding what the aims of erp-workbench are.
     - `some more`_
     
     .. _Install.txt: ../../../INSTALL.txt
-    .. _Quick Walk Trough: walktrough/index
+    .. _Quick Walk Trough: walktrough/index.html
     .. _some more: https://www.redo2oo.ch
+
+
+Do base configurations
+**********************
+
+Before erp-workspace can do anything sensible for you, you have to go trough
+its base `configuration.`_
+
+.. _configuration: configuration/index.html
+
 
 
 Locations where we maintain objects
@@ -50,7 +60,7 @@ Commands are grouped in several categories:
         These are commands to add and remove erp-workbench projects
         and servers to which erp sites are deployed
     - remote
-        These are commands that tipically are run on the remote servers
+        These are commands that typically are run on the remote servers
         like maintaining the Nginx/Apache virtual sites and their certificates.
 
 Create objects:
@@ -74,10 +84,10 @@ Create objects:
         | install all odoo modules (like CRM) as mentioned in the *project_name*'s site-descriptions
     - **-uo** [modules-list]|all *project_name* 
         | install/update own modules as found in the *project_name*'s site-descriptions
-        | [modules-list] is a comma separated list of mdule names
-        | if all is used as modules list, then all modules found in the sites descrition are installed
+        | [modules-list] is a comma separated list of module names
+        | if all is used as modules list, then all modules found in the sites description are installed
 
-    Commands normally run remotelly:
+    Commands normally run remotely:
     
     - **m**
         like -c but do not create project
@@ -86,7 +96,7 @@ Create objects:
         |   generate all aliases
 
     - **M** addons-list 
-        download or upgrade addons-list addons thei must be mentioned in the sites descriptions
+        download or upgrade addons-list addons they must be mentioned in the sites descriptions
 
 Docker handling
 ***************
@@ -100,13 +110,13 @@ Support commands
     Commands to add or remove site descriptions
 
     **--add--site** [--docker-port][--remote-server]
-        add globale site to the 
+        add global site to the 
 
 Remote commands
 ***************
     bin/r *COMMAND*
 
-    Commands that make only sense remotelly
+    Commands that make only sense remotely
 
     **--add-apache**
         build an apache entry for the site

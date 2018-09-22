@@ -26,7 +26,7 @@ class PrestHandler(object):
             sites_list/global_sites_preset/NEW_SITE_NAME
                 this files contains a block of values per included odoo module
                 each value should be set to a sensible value.
-                These Blocks are collected from skeleton/preset/ODOO_MAINE_MODULE
+                These Blocks are collected from skeleton/preset/ERP_MAIN_MODULE
 
                 to edit these values execute the following command:
                     bin/ee  NEW_SITE_NAME

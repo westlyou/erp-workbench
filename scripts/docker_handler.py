@@ -71,8 +71,8 @@ class DockerHandler(InitHandler, DBUpdater):
         # get the sites container
         # ----------------------
         container_name = docker_info['container_name']
-        self.docker_rpc_port = docker_info['odoo_port']
-        long_polling_port = docker_info.get('odoo_longpoll')
+        self.docker_rpc_port = docker_info['erp_port']
+        long_polling_port = docker_info.get('erp_longpoll')
         if not long_polling_port:
             long_polling_port = int(self.docker_rpc_port) + 10000
         self.docker_long_polling_port = long_polling_port
@@ -218,12 +218,12 @@ class DockerHandler(InitHandler, DBUpdater):
             can not handle flectra update container
         """
         docker_info = {
-            'odoo_port' : info_dic['odoo_port'],
-            'odoo_longpoll' : info_dic['odoo_longpoll'],
+            'erp_port' : info_dic['erp_port'],
+            'erp_longpoll' : info_dic['erp_longpoll'],
             'site_name' : info_dic['site_name'],
             'container_name' : info_dic['container_name'],
             'remote_data_path' : info_dic['remote_data_path'],
-            'odoo_image_version' : info_dic['odoo_image_version'],
+            'erp_image_version' : info_dic['erp_image_version'],
             'erp_server_data_path' : info_dic['erp_server_data_path'],
         }
         docker_template = docker_template % docker_info
@@ -256,12 +256,12 @@ class DockerHandler(InitHandler, DBUpdater):
             site = {
                 'docker' : {
                     'container_name' : 'db',
-                    'odoo_port' : 'db',
-                    'odoo_longpoll' : 'db',
-                    'odoo_image_version' : 'db',
+                    'erp_port' : 'db',
+                    'erp_longpoll' : 'db',
+                    'erp_image_version' : 'db',
                 }
             }
-            odoo_port = ''
+            erp_port = ''
             long_polling_port = ''
         else:
             site = self.site
@@ -272,24 +272,24 @@ class DockerHandler(InitHandler, DBUpdater):
         if not container_name:
             # get info on the docker container to use
             #'docker' : {
-                #'odoo_image_version': 'odoo:9.0',
+                #'erp_image_version': 'odoo:9.0',
                 #'container_name'    : 'afbs',
-                #'odoo_port'         : '8070',
+                #'erp_port'         : '8070',
             #},        
             container_name = docker_info['container_name']
-            odoo_port = docker_info['odoo_port']
-            if odoo_port == '??':
+            erp_port = docker_info['erp_port']
+            if erp_port == '??':
                 print(DOCKER_INVALID_PORT % (name, name))
                 return()
-            long_polling_port = docker_info.get('odoo_longpoll')
+            long_polling_port = docker_info.get('erp_longpoll')
             if long_polling_port == '??':
                 print(DOCKER_INVALID_PORT % (name, name))
                 return()
             if not long_polling_port:
-                long_polling_port = int(odoo_port) + 10000
+                long_polling_port = int(erp_port) + 10000
             
         if pull_image:
-            image = docker_info['odoo_image_version']
+            image = docker_info['erp_image_version']
             if image:
                 self.pull_image(image)
             return
@@ -321,12 +321,12 @@ class DockerHandler(InitHandler, DBUpdater):
         # if this registry does not contain a description for container_name
         # we have to create it
         info_dic = {
-            'odoo_port' : odoo_port,
-            'odoo_longpoll' : long_polling_port,
+            'erp_port' : erp_port,
+            'erp_longpoll' : long_polling_port,
             'site_name' : name,
             'container_name' : container_name,
             'remote_data_path' : self.site and self.site.get('remote_server', {}).get('remote_data_path', '') or '',
-            'odoo_image_version' : docker_info['odoo_image_version'],
+            'erp_image_version' : docker_info['erp_image_version'],
             'erp_server_data_path' : BASE_INFO['erp_server_data_path'],           
         }
         if update_container:
@@ -392,7 +392,7 @@ class DockerHandler(InitHandler, DBUpdater):
         if not site:
             raise ValueError('%s is not a known site' % name)
         docker_info = site['docker']
-        image = docker_info['odoo_image_version']
+        image = docker_info['erp_image_version']
         if image:
             images = [i['RepoTags'] for i in client.images()]
             found = False
@@ -482,7 +482,7 @@ class DockerHandler(InitHandler, DBUpdater):
         a docker image will only be buildt when the site description has a docker_hub block.
         """
         from templates.docker_templates import docker_base_file_template, docker_run_apt_template, docker_run_no_apt_template, \
-             docker_odoo_setup_requirements, docker_odoo_setup_version, docker_odoo_setup_script
+             docker_erp_setup_requirements, docker_erp_setup_version, docker_erp_setup_script
         def apt_lines(block):
             if not block:
                 return []
@@ -503,11 +503,11 @@ class DockerHandler(InitHandler, DBUpdater):
             print(DOCKER_IMAGE_CREATE_MISING_HUB_USER % self.site_name)
             return
         
-        # copy files from the official odoo docker file to the sites data directory
+        # copy files from the official erp-sites docker file to the sites data directory
         # while doing so adapt the dockerfile to pull all needed elements
         erp_version = self.site['erp_version']
         if not erp_version in list(ODOO_VERSIONS.keys()):
-            print(ODOO_VERSION_BAD % (self.site_name, self.site['erp_version']))
+            print(ERP_VERSION_BAD % (self.site_name, self.site['erp_version']))
             return
         docker_source_path = '%s/docker/docker/%s/' % (self.default_values['erp_server_data_path'], erp_version)
         # get path to where we want to write the docker file
@@ -523,7 +523,7 @@ class DockerHandler(InitHandler, DBUpdater):
         with open('%sDockerfile' % docker_target_path, 'w' ) as result:
             pref = ' ' * 8
             data_dic = {
-               'odoo_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
+               'ERP_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
                'apt_list' : '\n'.join(['%s%s \\' % (pref, a) for a in apt_list]),
             }
             if pip_list:
@@ -553,10 +553,10 @@ class DockerHandler(InitHandler, DBUpdater):
             except OSError: 
                 pass
         for f in [
-            ('VERSION', docker_odoo_setup_version % str(date.today())),
+            ('VERSION', docker_ERP_setup_version % str(date.today())),
             ('migration.yml', ''),
-            ('requirements.txt', docker_odoo_setup_requirements),
-            ('setup.py', docker_odoo_setup_script),]:
+            ('requirements.txt', docker_erp_setup_requirements),
+            ('setup.py', docker_erp_setup_script),]:
             # do not overwrite anything ..
             fp = '%s%s' % (docker_target_path, f[0])
             if not os.path.exists(fp):
@@ -585,7 +585,7 @@ class DockerHandler(InitHandler, DBUpdater):
             #else:
                 #result.write( line ) 
         print(DOCKER_IMAGE_CREATE_PLEASE_WAIT)
-        tag = docker_info['odoo_image_version']
+        tag = docker_info['erp_image_version']
         try:
             result = self.default_values['docker_client'].build(
                 docker_target_path, 

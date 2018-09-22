@@ -3,7 +3,7 @@
 # -------------------- flectra ------------------------
 # --------------------------------------------------
 docker_template = """
-docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 --restart always \
+docker run -p 127.0.0.1:%(erp_port)s:8069 -p 127.0.0.1:%(erp_longpoll)s:8072 --restart always \
     -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/odoo \
     -v %(erp_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
     -v %(erp_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
@@ -13,14 +13,14 @@ docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 -
     -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/odoo \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
-    --name %(container_name)s -d --link db:db -t %(odoo_image_version)s
+    --name %(container_name)s -d --link db:db -t %(erp_image_version)s
 """
 # for docker_template_update I changed:
 # --restart always -> --rm
 # -d -> ''
 # -> --init /etc/odoo/runodoo.sh \
 docker_template_update = """
-docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 --rm \
+docker run -p 127.0.0.1:%(erp_port)s:8069 -p 127.0.0.1:%(erp_longpoll)s:8072 --rm \
     --entrypoint /etc/odoo/runodoo.sh \
     -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/odoo \
     -v %(erp_server_data_path)s/%(site_name)s/start-entrypoint.d:/opt/odoo/start-entrypoint.d \
@@ -31,7 +31,7 @@ docker run -p 127.0.0.1:%(odoo_port)s:8069 -p 127.0.0.1:%(odoo_longpoll)s:8072 -
     -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/odoo \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
-    --name %(container_name)s_tmp --link db:db -t %(odoo_image_version)s
+    --name %(container_name)s_tmp --link db:db -t %(erp_image_version)s
 """
 
 docker_db_template = """
@@ -41,7 +41,7 @@ docker_db_template = """
 """
 
 docker_file_template = """
-FROM %(odoo_base_image)s
+FROM %(erp_base_image)s
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -68,7 +68,7 @@ RUN set -x; \\
 """
 
 docker_base_file_template = """
-FROM %(odoo_image_version)s
+FROM %(erp_image_version)s
 MAINTAINER robert@redo2oo.ch
 
 %(run_block)s
@@ -82,15 +82,15 @@ ENV MIGRATE=False
 # Set the default config file
 ENV OPENERP_SERVER /etc/odoo/openerp-server.conf
 """
-docker_odoo_setup_version = """
+docker_erp_setup_version = """
 %s.0
 """
-docker_odoo_setup_requirements = """
+docker_erp_setup_requirements = """
 # project's packages, customize for your needs:
 unidecode==0.4.14
 """
 
-docker_odoo_setup_script = """
+docker_erp_setup_script = """
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
@@ -124,7 +124,7 @@ setup(
 # -------------------- FLECTRA ---------------------
 # --------------------------------------------------
 flectra_docker_template = """
-docker run -p 127.0.0.1:%(odoo_port)s:7073 -p 127.0.0.1:%(odoo_longpoll)s:7072 --restart always \
+docker run -p 127.0.0.1:%(erp_port)s:7073 -p 127.0.0.1:%(erp_longpoll)s:7072 --restart always \
     -v %(erp_server_data_path)s/%(site_name)s/etc:/etc/flectra \
     -v %(erp_server_data_path)s/%(site_name)s/addons:/mnt/extra-addons \
     -v %(erp_server_data_path)s/%(site_name)s/dump:/mnt/dump \
@@ -133,5 +133,5 @@ docker run -p 127.0.0.1:%(odoo_port)s:7073 -p 127.0.0.1:%(odoo_longpoll)s:7072 -
     -v %(erp_server_data_path)s/%(site_name)s/log:/var/log/flectra \
     -e LOCAL_USER_ID=1000 -e DB_NAME=%(site_name)s \
     -e PYTHONIOENCODING=utf-8 \
-    --name %(container_name)s -d --link db:db -t %(odoo_image_version)s
+    --name %(container_name)s -d --link db:db -t %(erp_image_version)s
 """

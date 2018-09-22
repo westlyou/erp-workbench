@@ -60,9 +60,9 @@ def add_options_create(parser, result_dic):
         need_name=True
     )
     parser_manage.add_argument(
-        "-I", "--installodoomodules",
-        action="store_true", dest="installodoomodules", default=False,
-        help='install modules listed as odoo addons',
+        "-I", "--install_erp_modules",
+        action="store_true", dest="install_erp_modules", default=False,
+        help='install modules listed as addons',
         need_name=True
     )
     parser_manage.add_argument(

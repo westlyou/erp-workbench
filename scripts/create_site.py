@@ -39,11 +39,11 @@ from config import ACT_USER, BASE_PATH, FOLDERNAMES, \
     BASE_INFO, MARKER, LOGIN_INFO_FILE_TEMPLATE, \
     REQUIREMENTS_FILE_TEMPLATE, DOCKER_DEFAULTS
 
-from config.config_data.handlers import SiteCreator
-from config.config_data.handlers import DockerHandler
-from config.config_data.handlers import SupportHandler
-from config.config_data.handlers import RemoteHandler
-from config.config_data.handlers import MailHandler
+from config.handlers import SiteCreator
+from config.handlers import DockerHandler
+from config.handlers import SupportHandler
+from config.handlers import RemoteHandler
+from config.handlers import MailHandler
 
 # get config options
 from scripts.options_create import add_options_create
@@ -128,22 +128,22 @@ def main(opts, parsername, need_names_dic):
         # ------
         # builds or updates a server structure
         # to do so, it does a number of steps
-        #   - creates the needed folders in $ODOO_SERVER_DATA
+        #   - creates the needed folders in $ERP_SERVER_DATA
         #   - creates a build structure in $PROJECT_HOME/$SITENAME/$SITENAME
         #     where $PROJECT_HOME is read from the config file.
         #   - copies and sets up all files from skeleton directory to the build structure
         #     this is done executing create_new_project and do_copy
         #   - builds a virtualenv environment in the build structure
-        #   - prepares to builds an odoo server within the build structure by
-        #     execution  bin/build_odoo within the build structure.
-        #     Within this bild environment odoos module path will be set
-        #     that it points to the usual odoo directories within the build substructure
+        #   - prepares to builds an erp server within the build structure by
+        #     execution  bin/build_erp within the build structure.
+        #     Within this bild environment the erp's module path will be set
+        #     that it points to the usual erp-workbench directories within the build substructure
         #     and also to the directories within erp_workbench as dictated by the
         #     various modules installed from interpreting the site declaration
         #     in sites.py
         #   - add a "private" addons folder within the build structure called
-        #     $SITENAME_addons. This folder is also added to odoos addon path.
-        #   - set the data_dir to point to $ODOO_SERVER_DATA/$SITENAME/filestore
+        #     $SITENAME_addons. This folder is also added to the erp-site's addon path.
+        #   - set the data_dir to point to $ERP_SERVER_DATA/$SITENAME/filestore
         #
         # modules_update
         # -------------

@@ -25,16 +25,16 @@ def add_options_rpc(parser, result_dic):
                             help="define user to log into database default %s" % BASE_INFO['db_user'])
     parser_rpc.add_argument("-rpch", "--rpchost",
                             action="store", dest="rpc_host", default='localhost',
-                            help="define where odoo runs and can be accessed trough the rpc api. Default localhost")
+                            help="define where the erp site runs and can be accessed trough the rpc api. Default localhost")
     parser_rpc.add_argument("-rpcu", "--rpcuser",
                             action="store", dest="rpc_user", default='admin',
                             help="the user used to acces the running odo server using the rpc api. Default admin")
     parser_rpc.add_argument("-P", "--rpcpw",
                             action="store", dest="rpc_password", default='admin',
-                            help="define password for the user that accesses the running odoo server trough the rpc api. default 'admin'")
+                            help="define password for the user that accesses the running erp server trough the rpc api. default 'admin'")
     parser_rpc.add_argument("-PO", "--port",
                             action="store", dest="rpc_port", default=8069,
-                            help="define the port on which the odoo server that will be accessed using the rpc api. default 8069")
+                            help="define the port the erp server is using that will be accessed using the rpc api. default 8069")
 
 
     

@@ -79,10 +79,10 @@ BASE_INFO_TEMPLATE = """base_info = %s"""
 """
 create_new_project.py
 ---------------------
-create a new odoo project so we can easily maintain a local and a remote
+create a new erp-workbench project so we can easily maintain a local and a remote
 set of configuration files and keep them in sync.
 
-It knows enough about odoo to be able to treat some special values correctly
+It knows enough about the erp to be able to treat some special values correctly
 
 """
 
@@ -240,7 +240,7 @@ class RPC_Mixin(object):
         module_obj = odoo.env['ir.module.module']
         return module_obj
 
-    def get_odoo_modules(self):
+    def get_erp_modules(self):
         from odoorpc.error import RPCError
         modules = self.get_module_obj()
         mlist = modules.search([('application', '=', True)])
@@ -1409,7 +1409,7 @@ class InitHandler(RPC_Mixin):
                             #user = odoo.env['res.users'].sudo().with_context().create(user_data)
                             users_o.create(user_data)
         else:
-            print(ODOO_NOT_RUNNING % self.site_name, {})
+            print(ERP_NOT_RUNNING % self.site_name, {})
 
     # ----------------------------------
     # set_local_data
@@ -1418,7 +1418,7 @@ class InitHandler(RPC_Mixin):
     def set_local_data(self, use_remote_setting=False):
         odoo = self.get_odoo()
         if not odoo:
-            print(bcolors.FAIL, ODOO_NOT_RUNNING %
+            print(bcolors.FAIL, ERP_NOT_RUNNING %
                   self.site_name, bcolors.ENDC)
             return
         # run set server data
@@ -1489,13 +1489,13 @@ class InitHandler(RPC_Mixin):
                       (c_k_val, vals), bcolors.ENDC)
 
     # ----------------------------------
-    # set_odoo_settings
+    # set_erp_settings
     # set odoo settings from the site description
     # like the email settings and such
     # we try to find out what our ip is and the get the data
     # according to that ip.
     # if our ip is not in the servers list, we take 127.0.0.1
-    def set_odoo_settings(self, use_docker=False, local=True):
+    def set_erp_settings(self, use_docker=False, local=True):
         import socket
         import fcntl
         import struct
@@ -1519,7 +1519,7 @@ class InitHandler(RPC_Mixin):
                     return ipl[0]
         odoo = self.get_odoo()
         if not odoo:
-            print(ODOO_NOT_RUNNING % self.site_name)
+            print(ERP_NOT_RUNNING % self.site_name)
             return
         site = self.site
         remote_servers = site.get('remote_servers', {})
@@ -1540,12 +1540,12 @@ class InitHandler(RPC_Mixin):
         if not s_data:
             s_data = remote_servers.get(remote_servers.get('proxy'))
             proxy = remote_servers.get('proxy')
-            print(bcolors.FAIL + 'no odoo_settings for (local) id:%s found' %
+            print(bcolors.FAIL + 'no erp_settings for (local) id:%s found' %
                   my_ip + bcolors.ENDC)
             print(bcolors.WARNING + 'using proxy (%s) to calculate site settings' %
                   my_ip + bcolors.ENDC)
         if not s_data:
-            print(bcolors.WARNING + 'no odoo_settings for id:%s found' %
+            print(bcolors.WARNING + 'no erp_settings for id:%s found' %
                   my_ip + bcolors.ENDC)
             return
         # get passwords
@@ -1564,7 +1564,7 @@ class InitHandler(RPC_Mixin):
         print('incomming email')
         i_ids = i_server.search([])
         i_id = 0
-        i_data = s_data.get('odoo_settings', {}).get('mail_incomming')
+        i_data = s_data.get('erp_settings', {}).get('mail_incomming')
         # do we have a password
         if not local:
             i_data['password'] = email_pws.get('email_pw_incomming', '')
@@ -1579,7 +1579,7 @@ class InitHandler(RPC_Mixin):
         print('-' * 80)
         print('outgoing email')
         # now do the same for the outgoing server
-        o_data = s_data.get('odoo_settings', {}).get('mail_outgoing')
+        o_data = s_data.get('erp_settings', {}).get('mail_outgoing')
         if not local:
             o_data['smtp_pass'] = email_pws.get('email_pw_outgoing', '')
         o_server = odoo.env['ir.mail_server']
@@ -1629,12 +1629,12 @@ class InitHandler(RPC_Mixin):
         site = self.site
         # addons decalared in addons are the ones not available from odoo directly
         site_addons = site.get('addons')
-        # addons declared in the odoo_addons stanza are the ones we can get from odoo
-        odoo_addons = site.get('odoo_addons')
+        # addons declared in the erp_addons stanza are the ones we can get from odoo
+        erp_addons = site.get('erp_addons')
         local_install = info_dic.get('local_install', [])
         req = []
         module_obj = None
-        if not opts.installodoomodules and not opts.dinstallodoomodules:
+        if not opts.install_erp_modules and not opts.dinstall_erp_modules:
             # opts.installown or opts.updateown or opts.removeown or opts.listownmodules or quiet: # what else ??
             # collect the names of the modules declared in the addons stanza
             # idealy their names are set, if not, try to find them out
@@ -1672,43 +1672,43 @@ class InitHandler(RPC_Mixin):
             return
 
         # do we want to intall odoo modules
-        if opts.dinstallodoomodules or opts.installodoomodules:
+        if opts.dinstall_erp_modules or opts.install_erp_modules:
             from templates.install_blocks import INSTALL_BLOCKS
-            odoo_apps_info, odoo_modules_info = self.get_odoo_modules()
+            erp_apps_info, erp_modules_info = self.get_erp_modules()
 
-            odoo_apps = list(odoo_apps_info.keys())
-            odoo_apps_names = list(odoo_apps_info.values())
-            odoo_apps_map = {}
-            for k, v in list(odoo_apps_info.items()):
-                odoo_apps_map[v] = k
+            erp_apps = list(erp_apps_info.keys())
+            erp_apps_names = list(erp_apps_info.values())
+            erp_apps_map = {}
+            for k, v in list(erp_apps_info.items()):
+                erp_apps_map[v] = k
 
-            odoo_modules = list(odoo_modules_info.keys())
-            odoo_module_names = list(odoo_modules_info.values())
-            odoo_module_map = {}
-            for k, v in list(odoo_modules_info.items()):
-                odoo_module_map[v] = k
-            for o in (odoo_addons or []):
+            erp_modules = list(erp_modules_info.keys())
+            erp_module_names = list(erp_modules_info.values())
+            erp_module_map = {}
+            for k, v in list(erp_modules_info.items()):
+                erp_module_map[v] = k
+            for o in (erp_addons or []):
                 o = str(o)
-                if (o not in odoo_apps) and (o not in odoo_apps_names) \
-                   and (o not in odoo_modules) and (o not in odoo_module_names):
+                if (o not in erp_apps) and (o not in erp_apps_names) \
+                   and (o not in erp_modules) and (o not in erp_module_names):
                     print('!' * 80)
                     print('%s is not a known install block' % o)
                     print(
                         'check in templates/install_blocks.py what blocks are available')
                     print('-' * 80)
                     # sys.exit()
-                if o in odoo_apps_names:
-                    name = odoo_module_map[o]
+                if o in erp_apps_names:
+                    name = erp_module_map[o]
                     if name not in req:
                         req.append(name)
-                elif o in odoo_apps:
+                elif o in erp_apps:
                     if o not in req:
                         req.append(o)
-                elif o in odoo_module_names:
-                    name = odoo_module_map[o]
+                elif o in erp_module_names:
+                    name = erp_module_map[o]
                     if name not in req:
                         req.append(name)
-                elif o in odoo_modules:
+                elif o in erp_modules:
                     if o not in req:
                         req.append(o)
                 else:
@@ -1723,9 +1723,9 @@ class InitHandler(RPC_Mixin):
 
             module_obj = self.get_module_obj()
             if not module_obj:
-                # should not happen, means we have no contact to odoo
+                # should not happen, means we have no contact to the erp site
                 return
-            # refresh the list of updatable modules within odoo
+            # refresh the list of updatable modules within the erp site
             module_obj.update_list()
 
             cursor = self.get_cursor()

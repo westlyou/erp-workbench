@@ -18,7 +18,7 @@ I this walktrough you learn:
 
 Explanation of terms used
 -------------------------
-There are a number of terms used in erp-workbensch you should understand the meaning of:
+There are a number of terms used in erp-workbench you should understand the meaning of:
 
 - $WB
 
@@ -45,7 +45,7 @@ This is a projects home folder. Often ~/projects/$SITE/$SITE
 
 - Remote Server
 
-A remote server is a server accessible trough the internet, where site is deployed to a docker container.
+A remote server is a server accessible trough the internet, where $SITE is deployed to a docker container.
 
 
 Defining what erp type you handle by default:
@@ -59,7 +59,7 @@ For the time being (sept. 2018) there are two types of erp system erp-workbench 
 Flectra is an odoo fork that has many things with odoo in common.
 
 Selecting the default erp system only defines, what setting will be used when creating a new site. 
-By defaul odoo sites will be generated. To change this, do as follows:
+By default odoo sites will be generated. To change this, do as follows:
 
 in $WB/config/config.yaml change the line::
 

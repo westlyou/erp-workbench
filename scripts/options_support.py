@@ -81,7 +81,7 @@ def add_options_support(parser, result_dic):
     parser_support.add_argument(
         "--upgrade",
         action="store", dest="upgrade",
-        help='upgrade site to new odoo version. Please indicate the name of the new site. The the target version will be read from there',
+        help='upgrade site to a new erp version. Please indicate the name of the new site. The the target version will be read from its site description',
         need_name=True,
         name_valid=True,
     )
