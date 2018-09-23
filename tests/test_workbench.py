@@ -65,7 +65,7 @@ class TestCreate(unittest.TestCase):
         from scripts.create_site import parse_args
         parse_args()
 
-class TestSupport(unittest.TestCase):
+class TestSupportNewSites(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
@@ -123,7 +123,7 @@ class TestSupport(unittest.TestCase):
                     if n not in keys:
                         os.unlink('%s/%s' % (temp_path, file_name))
 
-    def test_support_add_drop_site(self):
+    def x_test_support_add_drop_site(self):
         """ run the create -c command 
         """
         import sites_list
@@ -142,7 +142,20 @@ class TestSupport(unittest.TestCase):
         self.assertFalse(new_name in SITES_G.keys())
 
 
-        
+class TestSupport(unittest.TestCase):
+
+    def setUp(self):
+        from config.handlers import SupportHandler
+        args = MyNamespace()
+        args.name = ''
+        args.subparser_name = 'support'
+        args.skip_name = True
+        args.quiet = True
+        self.args = args
+        self.handler = SupportHandler(args, {})
+   
+    def test_editor(self):
+        print(self.handler.editor)
 
 if __name__ == '__main__':
     unittest.main()

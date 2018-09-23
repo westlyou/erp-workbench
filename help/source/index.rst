@@ -6,6 +6,7 @@ Welcome to ERP Workbench's documentation!
     :maxdepth: 2
     :caption: Contents:
 
+    to_do/index
     intro
     aliases
     walktrough/index
