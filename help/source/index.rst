@@ -2,7 +2,7 @@
 Welcome to ERP Workbench's documentation!
 =========================================
 
-erp-workbench is a set of tools to manage odoo like erp sites douring their lifecycle
+erp-workbench is a set of tools to manage odoo like erp sites during their lifecycle
 
 .. toctree::
     :maxdepth: 2
