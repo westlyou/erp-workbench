@@ -774,7 +774,7 @@ class InitHandler(RPC_Mixin):
     # @no_completion: flag whether a vlid name should be selected for a
     #                 selection list
     # -------------------------------------------------------------------
-    def check_name(self, no_completion=False, must_match=False, need_names_dic={}):
+    def check_name(self, need_names_dic={}):
         """
         check if name is in any of the sites listed in list_sites
         or needed at all
@@ -815,22 +815,22 @@ class InitHandler(RPC_Mixin):
         if not name:
             name = ''  # make sure it is a string
         
-        if no_completion:
-            # probably called at startup
-            if must_match:
-                matches = [k for k in list(SITES.keys()) if k.startswith(name)]
-                if not matches:
-                    print(
-                        bcolors.WARNING + ('%s does not match any site name, discarded!' % name) + bcolors.ENDC)
-                    opts.name = ''
-                    return ''
-                if name:
-                    self.site_names = [name]
-                    return name
-                return ''
-            else:
-                self.site_names = [name]
-                return name
+        # if no_completion:
+        #     # probably called at startup
+        #     if must_match:
+        #         matches = [k for k in list(SITES.keys()) if k.startswith(name)]
+        #         if not matches:
+        #             print(
+        #                 bcolors.WARNING + ('%s does not match any site name, discarded!' % name) + bcolors.ENDC)
+        #             opts.name = ''
+        #             return ''
+        #         if name:
+        #             self.site_names = [name]
+        #             return name
+        #         return ''
+        #     else:
+        #         self.site_names = [name]
+        #         return name
         if not self.name_needed(need_names_dic=need_names_dic):
             return
         done = False
@@ -1073,6 +1073,12 @@ class InitHandler(RPC_Mixin):
                  if not provided check what option user has selected
         """
         opts = self.opts
+        need_name = need_names_dic['name_valid']
+        name_valid = need_names_dic['name_valid']
+        collected_opts = [item[0]
+                          for item in list(opts.__dict__.items()) if item[1]]
+        if not [opt for opt in collected_opts if opt in need_name]:
+            return
         if opts.name == 'db' and opts.docker_show:
             return False
         if not option:
@@ -1086,8 +1092,6 @@ class InitHandler(RPC_Mixin):
 
         # do we need a name
         # if an option is provide, check this one
-        need_name = need_names_dic['name_valid']
-        name_valid = need_names_dic['name_valid']
         if option:
             if option not in need_name:
                 return False
@@ -2332,22 +2336,20 @@ class SiteCreator(InitHandler, DBUpdater):
          Arguments:
              site_name {string} -- the name of the virtual env to remove
         """
-        cmd = ['/bin/bash', '-c', 'echo $(which virtualenvwrapper.sh)']
-        p = subprocess.Popen(cmd, stdout=PIPE)
-        virtualenvwrapper = p.communicate()[0].strip()
+        virtualenvwrapper = shutil.which('virtualenvwrapper.sh')
         commands = """
-        export WORKON_HOME=%(home)s/.virtualenvs
-        export PROJECT_HOME=/home/robert/Devel
-        source %(virtualenvwrapper)s
+        export WORKON_HOME=%(home)s/.virtualenvs\n
+        export PROJECT_HOME=/home/robert/Devel\n
+        source %(virtualenvwrapper)s\n
         rmvirtualenv  %(site_name)s       
         """ % {
             'home': os.path.expanduser("~"),
-            'virtualenvwrapper': virtualenvwrapper,
+            'virtualenvwrapper': str(virtualenvwrapper),
             'site_name': site_name
         }
         p = subprocess.Popen(
-            '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        out, err = p.communicate(commands)
+            '/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        out, err = p.communicate(commands.encode())
 
     def create_virtual_env(self, target, python_version='python2.7', use_workon=True):
         """

@@ -148,19 +148,24 @@ def main(opts, parsername, need_names_dic):
         # modules_update
         # -------------
         if opts.create  or opts.modules_update or opts.module_update:
+            info_dic = {
+                'project_path' : handler.default_values['inner'],
+                'erp_version' : BASE_INFO.get('erp_version'),
+                'site_name' : handler.site_name
+            }
             if opts.create:
                 existed = handler.create_or_update_site()
                 if existed:
                     if not opts.quiet:
                         print()
                         print('%s site allredy existed' % handler.site_name)
-                        print(SITE_EXISTED % (handler.default_values['inner'], handler.site_name))
+                        print(SITE_EXISTED % info_dic)
                 else:
                     if handler.site_name:
                         if not opts.quiet:
                             print()
                             print('%s site created' % handler.site_name)
-                            print(SITE_NEW % (handler.site_name, handler.site_name, handler.default_values['inner']))
+                            print(SITE_NEW % info_dic)
             # create the folder structure within the datafoler defined in the config
             # this also creates the config file used by a docker server within the
             # newly created folders
@@ -181,7 +186,44 @@ def main(opts, parsername, need_names_dic):
             did_run_a_command = True
             return
         
-        
+        # delete_site_local
+        # --------
+        # delete_site_local removes a site and all project files
+        if opts.delete_site_local:
+            handler.delete_site_local()
+            did_run_a_command = True
+            return
+
+    # ----------------------
+    # docker commands
+    # ----------------------
+    if parsername == 'docker':
+        # docker_create_container
+        # -----------------------
+        # it creates and starts a docker container
+        # the created container collects info from sites.py for $SITENAME
+        # it uses the data found with the key "docker"
+        # it collects these data:
+        # - container_name: name of the container to create.
+        #   must be unique for each remote server
+        # - odoo_image_version: name of the docker image used to build
+        #   the container
+        # - odoo_port: port on which to the running odoo server within the
+        #   container can be reached. must be unique for each remote server
+        if opts.docker_create_container:
+            # "docker -dc", "--create_container",
+            handler.check_and_create_container()
+            did_run_a_command = True
+        if opts.docker_create_update_container:
+            # "docker -dcu", "--create_update_container",
+            handler.check_and_create_container(update_container=True)
+            did_run_a_command = True
+        if opts.docker_create_db_container:
+            # "docker -dcdb", "--create_db_container",
+            handler.check_and_create_container(container_name='db')
+            did_run_a_command = True
+
+
     # ----------------------
     # support commands
     # ----------------------
@@ -211,24 +253,6 @@ def main(opts, parsername, need_names_dic):
             if opts.edit_site:
                 handler.check_name(must_match=True)
             handler.edit_site_or_server()
-            did_run_a_command = True
-            return
-
-        # show config
-        # -----------
-        # list_sites lists all existing sites both from global and local sites
-        # if we have an option that needs a name ..
-        if opts.show:
-            handler.show_config()
-            did_run_a_command = True
-            return
-    
-        # set config
-        # -----------
-        # list_sites lists all existing sites both from global and local sites
-        # if we have an option that nees a name ..
-        if opts.set_config:
-            handler.set_config()
             did_run_a_command = True
             return
 
@@ -287,7 +311,7 @@ def parse_args():
         'docker',
         help='docker provides commands to handle docker containers',
         parents=[parent_parser])
-    add_options_docker(parser_support, need_names_dic)
+    add_options_docker(parser_docker, need_names_dic)
     # -----------------------------------------------
     # manage remote server (can be localhost)
     parser_remote = subparsers.add_parser(

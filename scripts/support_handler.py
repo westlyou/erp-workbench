@@ -39,7 +39,7 @@ class SupportHandler(InitHandler):
     @property
     def editor(self):
         # firs check whether an editor is defined in BASE_INFO
-        editor = BASE_INFO.get('editor')
+        editor = BASE_INFO.get('site_editor')
         if not editor:
             editor = os.environ.get('EDITOR')
             if not editor:

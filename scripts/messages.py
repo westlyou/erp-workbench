@@ -4,22 +4,31 @@ MARKER = '# ---------------- marker ----------------'
 
 SITE_EXISTED = """------------------------------------------------
 To use the new settings (if any) execute
-cd %s
+cd %(project_path)s
 or by executing
-%sw
-and then execute the following two commands:
-bin/dosetup_odoo
-bin/buildout
+%(site_name)sw
+and then execute the following command:
+bin/build_%(erp_version)s
+
+when you later change the addon-path settings, you can execute:
+bin/dosetup_%(erp_version)s
+
+to rebuild the addon-path.
+
+run:
+bin/build_%(erp_version)s -f
+
+to see all options
 ------------------------------------------------
 """
 SITE_NEW = """------------------------------------------------
-An alias %%s has been created for you.
+An alias %%(site_name)s has been created for you.
 In a %snew%s shell you can execute
-%%sw
+%%(site_name)sw
 To create the new site execute the following commands:
-cd %%s
-bin/build_odoo.py
-bin/dosetup_odoo
+cd %%(project_path)s
+bin/build_%%(erp_version)s.py
+bin/dosetup_%%(erp_version)s
 ------------------------------------------------
 """ % (bcolors.WARNING, bcolors.ENDC)
 
@@ -263,8 +272,9 @@ alias  down="cd %(user_home)s/Downloads"
 alias  drop="cd %(user_home)s/Dropbox"
 """
 WWB = """
-# odoo
-alias  wwb="cd %s"
+# workbench
+alias wwb="cd %s"
+alias mh='(cd help; make html)'
 """
 WWLI = """
 # sites-list

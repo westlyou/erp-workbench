@@ -19,11 +19,46 @@ def add_options_docker(parser, result_dic):
     # -----------------------------------------------
     #parser_support_s = parser_support.add_subparsers(title='docker commands', dest="docker_commands")
     parser_docker.add_argument(
+        "-dbi", "--build_image",
+        action="store_true", dest="docker_build_image", default=False,
+        help='create a docker image. Name must be provided',
+        need_name=True,
+        name_valid=True,
+    )
+    parser_docker.add_argument(
+        "-dbis", "--build_image_use_sites",
+        action="store", dest="use_sites",
+        help='use sites to collect libraries to build image',
+        need_name=True
+    )
+    parser_docker.add_argument(
+        "-dbiC", "--build_image_collect_sites",
+        action="store_true", dest="use_collect_sites",
+        help='collect all libraries from sites with the same erp version, to create an image that can handle all situations'
+    )
+    parser_docker.add_argument(
         "-dc", "--create_container",
         action="store_true", dest="docker_create_container", default=False,
         help = 'create a docker container. Name must be provided',
         need_name = True,
         name_valid = True,
+    )
+    parser_docker.add_argument(
+        "-dcdb", "--create_db_container",
+        action="store_true", dest="docker_create_db_container", default=False,
+        help='create a docker database container. It will be named db.  You must also set option -dcdbPG to set postgres version',
+    )
+    parser_docker.add_argument(
+        "-dcdbPG", "--set-postgers-version",
+        action="store", dest="set_postgers_version",
+        help='define postgres version to be used. Something like 9.6 or 10.0'
+    )
+    parser_docker.add_argument(
+        "-dcu", "--create_update_container",
+        action="store_true", dest="docker_create_update_container", default=False,
+        help='create a docker container that runs the etc/runodoo.sh script at startup. Name must be provided',
+        need_name=True,
+        name_valid=True,
     )
     parser_docker.add_argument(
         "-dE", "--execute-script",
@@ -37,45 +72,21 @@ def add_options_docker(parser, result_dic):
         action="store", dest="executescriptparameter",
         help="parameters to be passed to the executed script. It must be a comma separated string of key=value pairs. No spaces!")    
     parser_docker.add_argument(
+        "-dSL", "--set-local-data-docker",
+        action="store_true", dest="set_local_data_docker", default=False,
+        help="force setting local data from the site description, when we are running in a docker")
+    parser_docker.add_argument(
         "-dSOS", "--set-erp-settings-docker",
         action="store_true", dest="set_erp_settings_docker", default=False,
         help="set erp settings like the mail handlers. The script tries to define for what ip",
         need_name = True,
         name_valid = True,       
     )
-    parser_docker.add_argument(
-        "-dbi", "--build_image",
-        action="store_true", dest="docker_build_image", default=False,
-        help = 'create a docker image. Name must be provided',
-        need_name = True,
-        name_valid = True,        
-    )
-    parser_docker.add_argument(
-        "-dbis", "--build_image_use_sites",
-        action="store", dest="use_sites",
-        help = 'use sites to collect libraries to build image',
-        need_name = True
-    )
-    parser_docker.add_argument(
-        "-dbiC", "--build_image_collect_sites",
-        action="store_true", dest="use_collect_sites",
-        help = 'collect all libraries from sites with same version'
-    )
     #parser_docker.add_argument(
         #"-dsapw", "--docker-set-admin-pw",
         #action="store_true", dest="docker_set_admin_pw", default = False,
         #help = 'Set admin password from site description in a docker conatiner. option -n must be set and valid.',
     #)
-    parser_docker.add_argument(
-        "-dcdb", "--create_db_container",
-        action="store_true", dest="docker_create_db_container", default=False,
-        help = 'create a docker database container. It will be named db.  You must also set option -dcdbPG to set postgres version'
-    )
-    parser_docker.add_argument(
-        "-dcdbPG", "--set-postgers-version",
-        action="store", dest="set_postgers_version",
-        help = 'define postgres version to be used. Something like 9.6 or 10.0'
-    )
     #parser_docker.add_argument(
         #"-ds", "--start_container",
         #action="store_true", dest="docker_start_container", default=False,

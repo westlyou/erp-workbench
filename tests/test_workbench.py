@@ -20,7 +20,7 @@ class MyNamespace(Namespace):
 class TestCreate(unittest.TestCase):
 
     def setUp(self):
-        from config.config_data.handlers import SiteCreator
+        from config.handlers import SiteCreator
         args = MyNamespace()
         args.name = ''
         args.subparser_name = 'create'
@@ -154,8 +154,26 @@ class TestSupport(unittest.TestCase):
         self.args = args
         self.handler = SupportHandler(args, {})
    
+    def x_test_editor(self):
+        from config import BASE_INFO
+        self.assertEqual(BASE_INFO.get('site_editor'), self.handler.editor)
+
+class TestDocker(unittest.TestCase):
+
+    def setUp(self):
+        from config.handlers import DockerHandler
+        args = MyNamespace()
+        args.subparser_name = 'docker'
+        args.skip_name = True
+        args.quiet = True
+        args.docker_create_container = True
+        args.name = 'demo_global'
+        #self.handler.site_names = ['demo_global']
+        self.args = args
+        self.handler = DockerHandler(args)
+   
     def test_editor(self):
-        print(self.handler.editor)
+        self.handler.check_and_create_container()
 
 if __name__ == '__main__':
     unittest.main()
