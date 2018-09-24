@@ -2,6 +2,8 @@
 Welcome to ERP Workbench's documentation!
 =========================================
 
+xxxx
+
 .. toctree::
     :maxdepth: 2
     :caption: Contents:

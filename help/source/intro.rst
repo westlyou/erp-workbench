@@ -5,8 +5,13 @@ Introduction and first steps
 ERP Workbench is a set of tools that are used to create and maintain local and remote
 erp (odoo, flectra, ..) sites.
 
-First steps to work trough
-**************************
+erp-workbench's goal is to support you trough all steps in the lifecicle of an erp-site.
+This starts from the very first steps of defining a project for a new site, to develop it,
+to deploy it, to maintain it, handle backups and upgrade to newer versions of the erp-software.
+
+
+First steps you need to work trough
+***********************************
 
 Please start with working trough these documents.
 They will give you a basic understanding what the aims of erp-workbench are.
