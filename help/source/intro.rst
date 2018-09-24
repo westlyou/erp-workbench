@@ -15,7 +15,7 @@ They will give you a basic understanding what the aims of erp-workbench are.
     - `Quick Walk Trough`_
     - `some more`_
     
-    .. _Install.txt: INSTALL.txt
+    .. _Install.txt: INSTALL.txt.html
     .. _Quick Walk Trough: walktrough/index.html
     .. _some more: https://www.redo2oo.ch
 

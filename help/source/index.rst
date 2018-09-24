@@ -8,7 +8,7 @@ Welcome to ERP Workbench's documentation!
 
     to_do/index
     intro
-    aliases
+    aliases/index
     walktrough/index
     howtos/index
     presets/index
