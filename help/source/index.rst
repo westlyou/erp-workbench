@@ -2,7 +2,7 @@
 Welcome to ERP Workbench's documentation!
 =========================================
 
-xxxx
+erp-workbensch is a set of tools to manage odoo like erp sites douring their lifecycle
 
 .. toctree::
     :maxdepth: 2
