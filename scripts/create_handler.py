@@ -360,17 +360,20 @@ class InitHandler(RPC_Mixin):
         # starting with odoo 11 we need to check what python version to use
         if self.version:
             try:
-                if self.sites[opts.name].get('erp_type') == 'flectra':
+                if self.sites[opts.name].get('erp_provider') == 'flectra':
                     self.default_values.update(FLECTRA_VERSIONS[self.version])
                 else:
                     self.default_values.update(ODOO_VERSIONS[self.version])
             except KeyError:
                 print (bcolors.FAIL)
                 print ('*' * 80)
-                print ('%s has no %s version' % (self.sites[opts.name].get('erp_type'), self.version))
+                print ('%s has no %s version' % (self.sites[opts.name].get('erp_version'), self.version))
                 print (bcolors.ENDC)
-                if not opts.edit_site:
-                    raise
+                try:
+                    if not opts.edit_site:
+                        raise
+                except:
+                    raise # for sure not opts.edit_site
                     
 
     def _create_login_info(self, login_info):
@@ -994,9 +997,9 @@ class InitHandler(RPC_Mixin):
             self.default_values['erp_nightly'] = PROJECT_DEFAULTS.get(
                 'erp_nightly', 
                 self.default_values['erp_version'])
-        if not self.default_values.get('erp_type'):
-            self.default_values['erp_type'] = PROJECT_DEFAULTS.get(
-                'erp_type', 'odoo')
+        if not self.default_values.get('erp_provider'):
+            self.default_values['erp_provider'] = PROJECT_DEFAULTS.get(
+                'erp_provider', 'odoo')
         # now make sure we have a minor version number
         if not default_values.get('erp_minor'):
             default_values['erp_minor'] = PROJECT_DEFAULTS.get('erp_minor', '')
@@ -2358,8 +2361,8 @@ class SiteCreator(InitHandler, DBUpdater):
         adir = os.getcwd()
         os.chdir(target)
         # here we have to decide whether we run flectra or odoo
-        erp_type = self.site.get('erp_type', 'odoo')
-        if 1:  # erp_type == 'flectra' or use_workon:
+        erp_provider = self.site.get('erp_provider', 'odoo')
+        if 1:  # erp_provider == 'flectra' or use_workon:
             # need to find virtualenvwrapper.sh
             cmd = ['/bin/bash', '-c', 'echo $(which virtualenvwrapper.sh)']
             p = subprocess.Popen(cmd, stdout=PIPE)
@@ -2431,7 +2434,7 @@ class SiteCreator(InitHandler, DBUpdater):
             self.do_copy(skeleton_path, outer_path, inner_path)
             # make sure virtual env exist
             python_version = 'python2.7'
-            st = self.site.get('erp_type', 'odoo')
+            st = self.site.get('erp_provider', 'odoo')
             if st == 'odoo':
                 if float(self.version) > 10:
                     python_version = 'python3'
@@ -2481,7 +2484,7 @@ class SiteCreator(InitHandler, DBUpdater):
         opts = self.opts
         # now copy files
         from skeleton.files_to_copy import FILES_TO_COPY, FILES_TO_COPY_FLECTRA, FILES_TO_COPY_ODOO
-        if self.site.get('erp_type', 'odoo') == 'flectra':
+        if self.site.get('erp_provider', 'odoo') == 'flectra':
             FILES_TO_COPY.update(FILES_TO_COPY_FLECTRA)
         elif 1:  # self.version != '9.0':
             FILES_TO_COPY.update(FILES_TO_COPY_ODOO)
@@ -2496,7 +2499,7 @@ class SiteCreator(InitHandler, DBUpdater):
                 '', outer_target, FILES_TO_COPY['project_home'])
             # now create a versions file
             from templates.versions import VERSIONS, VERSIONS_FLECTRA
-            if self.site.get('erp_type', 'odoo') == 'flectra':
+            if self.site.get('erp_provider', 'odoo') == 'flectra':
                 open('%s/versions.cfg' % outer_target,
                      'w').write(VERSIONS_FLECTRA[self.version])
             else:

@@ -81,7 +81,7 @@ class SitesHandler(object):
                     'site_name' : 'demo_global', 
                     'marker' : self.marker,
                     'base_sites_home' : '/home/%s/erp_workbench' % ACT_USER,
-                    'erp_type' : PROJECT_DEFAULTS.get('erp_type', 'odoo'),
+                    'erp_provider' : PROJECT_DEFAULTS.get('erp_provider', 'odoo'),
                     'erp_version' : PROJECT_DEFAULTS.get('erp_version', '12'),
                     'erp_minor' : PROJECT_DEFAULTS.get('erp_minor', '12'),
                     'erp_nightly' : PROJECT_DEFAULTS.get('erp_nightly', '12'),

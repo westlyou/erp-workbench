@@ -6,11 +6,11 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 BASE_DEFAULTS:
-  # erp_version:
+  # erp_provider:
   # define what erp type should be uses for a new site
   # this only affects the generation of new site descriptions
   # and can be easily changed in the generated site description
-  erp_version: 'odoo'
+  erp_provider: 'odoo'
 
   # site_editor:
   # define what editor to use when editing site description

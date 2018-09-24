@@ -10,7 +10,7 @@
         'erp_minor': '%(erp_minor)s',
         'erp_nightly': '%(erp_nightly)s', # what folder on nightly if not version like 'master'
         # servertype is odoo or flectra
-        'erp_type': '%(erp_type)s',
+        'erp_provider': '%(erp_provider)s',
         'db_name': '%(site_name)s',
         # inherits tells from what other site we want to inherit values
         'inherit': '',

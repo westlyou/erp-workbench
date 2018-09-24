@@ -5,10 +5,10 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 PROJECT_DEFAULTS:
-    # erp_type:
+    # erp_provider:
     # tells erp workbench what kind of project we want o handle
     # actuall 0d00 or erp
-    erp_type: odoo
+    erp_provider: odoo
     # projectname:
     # what is the project name
     # normaly set when creating a site description
