@@ -223,6 +223,13 @@ def main(opts, parsername, need_names_dic):
             handler.check_and_create_container(container_name='db')
             did_run_a_command = True
 
+        # build image
+        # ----------
+        # build docker image used by a site
+        if opts.docker_build_image:
+            handler.build_image()
+            did_run_a_command = True
+            return
 
     # ----------------------
     # support commands

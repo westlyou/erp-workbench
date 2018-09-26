@@ -8,7 +8,7 @@
 DOCKER_DEFAULTS:
     # docker_hub_name:
     # what is the name of the dockerhub to use
-    docker_hub_name: 'robertrottermann'
+    docker_hub_name: 'robertredcor'
     # docker_port:
     # this is the default posrt we assign to a docker container to use
     # it has to be adapted in the site description depending on what

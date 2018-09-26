@@ -172,8 +172,11 @@ class TestDocker(unittest.TestCase):
         self.args = args
         self.handler = DockerHandler(args)
    
-    def test_editor(self):
+    def x_test_check_and_create_container(self):
         self.handler.check_and_create_container()
+
+    def test_build_image(self):
+        self.handler.build_image()
 
 if __name__ == '__main__':
     unittest.main()

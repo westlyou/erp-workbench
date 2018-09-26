@@ -3,7 +3,7 @@
 
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04
 from docker import Client
-from config import SITES, BASE_INFO, DOCKER_DEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
+from config import SITES, BASE_INFO, DOCKER_DEFAULTS, ODOO_VERSIONS, PROJECT_DEFAULTS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
 #from config.handlers import InitHandler, DBUpdater
 from scripts.create_handler import InitHandler
 from scripts.update_local_db import DBUpdater
@@ -195,11 +195,11 @@ class DockerHandler(InitHandler, DBUpdater):
         # collect info on database container which allways is named 'db'
         self.update_docker_info(self.db_container_name, required=True) 
         self.update_docker_info(docker['container_name'])
-        # check whether we are a slave
-        if self.opts.transferdocker and site_info.get('slave_info'):
-            master_site = site_info.get('slave_info').get('master_site')
-            if master_site:
-                self.update_docker_info(master_site)
+        # # check whether we are a slave
+        # if self.opts.transferdocker and site_info.get('slave_info'):
+        #     master_site = site_info.get('slave_info').get('master_site')
+        #     if master_site:
+        #         self.update_docker_info(master_site)
 
     # -------------------------------
     # check_and_create_container
@@ -500,8 +500,11 @@ class DockerHandler(InitHandler, DBUpdater):
         dockerhub_user = self.site.get('docker_hub', {}).get(hub_name, {}).get('user')
         dockerhub_user_pw = self.site.get('docker_hub', {}).get(hub_name, {}).get('docker_hub_pw')
         if not dockerhub_user or not dockerhub_user_pw:
+            print(bcolors.WARNING)
+            print('*' * 80)
             print(DOCKER_IMAGE_CREATE_MISING_HUB_USER % self.site_name)
-            return
+            print('you will not be able to upload the image')
+            print(bcolors.ENDC)
         
         # copy files from the official erp-sites docker file to the sites data directory
         # while doing so adapt the dockerfile to pull all needed elements
@@ -523,7 +526,7 @@ class DockerHandler(InitHandler, DBUpdater):
         with open('%sDockerfile' % docker_target_path, 'w' ) as result:
             pref = ' ' * 8
             data_dic = {
-               'ERP_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
+               'erp_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
                'apt_list' : '\n'.join(['%s%s \\' % (pref, a) for a in apt_list]),
             }
             if pip_list:
@@ -553,7 +556,7 @@ class DockerHandler(InitHandler, DBUpdater):
             except OSError: 
                 pass
         for f in [
-            ('VERSION', docker_ERP_setup_version % str(date.today())),
+            ('VERSION', docker_erp_setup_version % str(date.today())),
             ('migration.yml', ''),
             ('requirements.txt', docker_erp_setup_requirements),
             ('setup.py', docker_erp_setup_script),]:
@@ -569,7 +572,7 @@ class DockerHandler(InitHandler, DBUpdater):
         cmd_lines = [
             'git init .',
             'git submodule init',
-            'git submodule add -b %s https://github.com/odoo/odoo.git src' % erp_version
+            'git submodule add -b %s https://github.com/odoo/odoo.git src' % PROJECT_DEFAULTS.get('erp_nightly')
         ]
         self.run_commands(cmd_lines=cmd_lines)
         #for line in open( '%sDockerfile' % docker_source_path, 'r' ):

@@ -550,7 +550,7 @@ class DBUpdater(object):
                     BASE_INFO['erp_server_data_path'], use_site_name)], 'is_builtin': True},
             ]
 
-            if self.opts.dataupdate_docker or self.opts.transferdocker:
+            if self.opts.dataupdate_docker: # or self.opts.transferdocker:
                 cmd_lines = cmd_lines_docker + cmd_lines
                 shell = True
             else:

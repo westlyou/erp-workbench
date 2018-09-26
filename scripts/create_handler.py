@@ -29,48 +29,6 @@ from scripts.utilities import collect_options, _construct_sa, bcolors, find_addo
 from scripts.messages import *
 import shutil
 
-"""
-https://breakingcode.wordpress.com/2013/03/11/an-example-dependency-resolution-algorithm-in-python/
-https://pypi.python.org/pypi/pipdeptree/0.8.0
-http://stackoverflow.com/questions/14242295/build-a-dependency-graph-in-python
-import networkx as nx
-import re
-
-regex = re.compile(r'^([A-Z]+)::Requires\s+=\s([A-Z"]+)$')
-
-G = nx.DiGraph()
-roots = set()
-for l in raw.splitlines():
-    if len(l):
-        target, prereq = regex.match(l).groups()
-        if prereq == '""':
-            roots.add(target)
-        else:
-            G.add_edge(prereq, target)
-
-Now print(the tree(s):)
-
-for s in roots:
-    print(s)
-    spacer = {s: 0}
-    for prereq, target in nx.dfs_edges(G, s):
-        spacer[target] = spacer[prereq] + 2
-        print('{spacer}+-{t}'.format()
-                                     spacer=' ' * spacer[prereq],
-                                     t=target)
-    print('')
-
-this prints:
-
-A
-+-H
-+-B
-  +-C
-
-AA
-+-BB
-  +-CC
-"""
 
 # the templatefile contains placeholder
 # that will be replaced with real values
@@ -85,7 +43,6 @@ set of configuration files and keep them in sync.
 It knows enough about the erp to be able to treat some special values correctly
 
 """
-
 
 class RPC_Mixin(object):
     _odoo = None

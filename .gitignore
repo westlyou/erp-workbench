@@ -8,6 +8,7 @@ sites_list
 tests/test_data/*
 config/*.yaml
 config/config_data/*_info.py
+docker/docker-odoo-project/
 
 
 # Byte-compiled / optimized / DLL files
