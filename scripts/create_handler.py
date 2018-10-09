@@ -358,6 +358,8 @@ class InitHandler(RPC_Mixin):
         # local
         # -----------------
         # actual user
+        if self.opts.delete_site_local or self.opts.drop_site:
+            return
         if self.site:
             p = '%s/sites_global/%s.py' % (
                 BASE_INFO['sitesinfo_path'], self.site_name)
