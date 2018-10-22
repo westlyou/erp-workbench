@@ -285,11 +285,6 @@ def parse_args():
         action="store", dest="dremoveown", default='',
         help = 'remove modules listed as addons, pass a comma separated list (no spaces) or all. Name must be provided'
     )
-    parser_docker.add_argument(
-        "-dI", "--dinstallodoomodules",
-        action="store_true", dest="dinstallodoomodules", default=False,
-        help = 'install modules listed as odoo addons into docker. Name must be provided'
-    )
 
     # !!! local_docker is added to parent_parser, not parser_docker
     parent_parser.add_argument(
