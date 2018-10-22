@@ -358,7 +358,7 @@ class InitHandler(RPC_Mixin):
         # local
         # -----------------
         # actual user
-        if self.opts.delete_site_local or self.opts.drop_site:
+        if self.opts.__dict__.get('delete_site_local') or self.opts.__dict__.get('drop_site'):
             return
         if self.site:
             p = '%s/sites_global/%s.py' % (
@@ -1582,6 +1582,8 @@ class InitHandler(RPC_Mixin):
         own modules are listed in the site description under the key addons
         """
         opts = self.opts
+        is_create = opts.subparser_name
+        is_docker = not is_create
         default_values = self.default_values
         if list_only:
             from templates.install_blocks import INSTALL_BLOCKS
@@ -1600,7 +1602,7 @@ class InitHandler(RPC_Mixin):
         local_install = info_dic.get('local_install', [])
         req = []
         module_obj = None
-        if not opts.install_erp_modules and not opts.dinstall_erp_modules:
+        if not (is_create and opts.install_erp_modules) and not (is_docker and opts.dinstall_erp_modules):
             # opts.installown or opts.updateown or opts.removeown or opts.listownmodules or quiet: # what else ??
             # collect the names of the modules declared in the addons stanza
             # idealy their names are set, if not, try to find them out
@@ -1620,7 +1622,7 @@ class InitHandler(RPC_Mixin):
                                   a.get('url', ''))
 
         # if we only want the list to install, no need to be wordy
-        if opts.dlistownmodules or opts.listownmodules or quiet == 'listownmodules':
+        if (is_docker and opts.dlistownmodules) or (is_create and opts.listownmodules) or quiet == 'listownmodules':
             if quiet:
                 return req
             sn = self.site_name
@@ -1637,8 +1639,8 @@ class InitHandler(RPC_Mixin):
             print('---------------------------------------------------')
             return
 
-        # do we want to intall odoo modules
-        if opts.dinstall_erp_modules or opts.install_erp_modules:
+        # do we want to install odoo modules
+        if (is_docker and opts.dinstall_erp_modules) or (is_create and opts.install_erp_modules):
             from templates.install_blocks import INSTALL_BLOCKS
             erp_apps_info, erp_modules_info = self.get_erp_modules()
 
@@ -1737,7 +1739,7 @@ class InitHandler(RPC_Mixin):
                 print(bcolors.OKGREEN + 'finished installing: ' +
                       bcolors.ENDC + ','.join(n_list))
                 print('*' * 80)
-            if installed and (opts.updateown or opts.removeown, opts.dupdateown or opts.dremoveown):
+            if installed and ((is_create and opts.updateown or opts.removeown), (is_docker and opts.dupdateown or opts.dremoveown)):
                 if opts.updateown or opts.dupdateown:
                     i_list = [il[0]
                               for il in installed if (il[1] not in skip_upd_list)]

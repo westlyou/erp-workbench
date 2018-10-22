@@ -185,6 +185,16 @@ def main(opts, parsername, need_names_dic):
             list_sites(SITES, opts.quiet)
             did_run_a_command = True
             return
+
+        # listownmodules
+        # --------------
+        # list the modules that are declared within the selected site
+        # installown install all modules declared in the selected site
+        # todo: why are the two following options combined here??? !!!!!!!!!!!!
+        if opts.listownmodules or opts.installodoomodules:
+            handler.install_own_modules()
+            did_run_a_command = True
+            return
         
         # delete_site_local
         # --------
@@ -258,7 +268,7 @@ def main(opts, parsername, need_names_dic):
         # description, or change the server description in LOCALDATA['sitesinfo_path']
         if opts.edit_site or opts.edit_server:
             if opts.edit_site:
-                handler.check_name(must_match=True)
+                handler.check_name()
             handler.edit_site_or_server()
             did_run_a_command = True
             return

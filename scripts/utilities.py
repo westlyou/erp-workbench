@@ -777,7 +777,7 @@ def checkout_sa(opts):
             argopts['checkremote'] = True
             return_counts = {}
             # if needed we reset the remote url
-            reset_git_to = opts.reset_git and url or ''
+            reset_git_to = opts.__dict__.get('reset_git') and url or '' # this option does not exist, robert okt 2018
             set_git_remote(gr, reset_git_to)
             action_needed = gitcheck(return_counts)
             os.chdir(cpath)
