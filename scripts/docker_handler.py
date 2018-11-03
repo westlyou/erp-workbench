@@ -187,7 +187,7 @@ class DockerHandler(InitHandler, DBUpdater):
         """
         name = self.site_name
         site_info = self.sites[name]
-        erp_type  = site_info.get('erp_type')
+        erp_provider  = site_info.get('erp_provider')
         docker = site_info.get('docker')
         if not docker or not docker.get('container_name'):
             print('the site description for %s has no docker description or no container_name' % opts.name)
@@ -195,11 +195,11 @@ class DockerHandler(InitHandler, DBUpdater):
         # collect info on database container which allways is named 'db'
         self.update_docker_info(self.db_container_name, required=True) 
         self.update_docker_info(docker['container_name'])
-        # check whether we are a slave
-        if self.opts.transferdocker and site_info.get('slave_info'):
-            master_site = site_info.get('slave_info').get('master_site')
-            if master_site:
-                self.update_docker_info(master_site)
+        # # check whether we are a slave
+        # if self.opts.transferdocker and site_info.get('slave_info'):
+        #     master_site = site_info.get('slave_info').get('master_site')
+        #     if master_site:
+        #         self.update_docker_info(master_site)
 
     # -------------------------------
     # check_and_create_container
@@ -337,7 +337,7 @@ class DockerHandler(InitHandler, DBUpdater):
             and not self.default_values['docker_registry'].get(container_name) or (container_name == 'db'):
             if container_name != 'db':
                 from templates.docker_templates import docker_template, flectra_docker_template
-                if site.get('erp_type', 'odoo') == 'flectra':
+                if site.get('erp_provider', 'odoo') == 'flectra':
                     docker_template = flectra_docker_template
                 self._create_container(docker_template, info_dic)
             else:
@@ -352,7 +352,7 @@ class DockerHandler(InitHandler, DBUpdater):
                     sys.exit()
                 
                 # here we need to decide , whether we run flectra or odoo
-                if site.get('erp_type') == 'flectra':
+                if site.get('erp_provider') == 'flectra':
                     from templates.docker_templates import flectra_docker_template
                 else:
                     from templates.docker_templates import docker_db_template
@@ -500,8 +500,11 @@ class DockerHandler(InitHandler, DBUpdater):
         dockerhub_user = self.site.get('docker_hub', {}).get(hub_name, {}).get('user')
         dockerhub_user_pw = self.site.get('docker_hub', {}).get(hub_name, {}).get('docker_hub_pw')
         if not dockerhub_user or not dockerhub_user_pw:
+            print(bcolors.WARNING)
+            print('*' * 80)
             print(DOCKER_IMAGE_CREATE_MISING_HUB_USER % self.site_name)
-            return
+            print("please edit the site description to be able to upload the image")
+            print(bcolors.ENDC)
         
         # copy files from the official erp-sites docker file to the sites data directory
         # while doing so adapt the dockerfile to pull all needed elements
@@ -523,7 +526,7 @@ class DockerHandler(InitHandler, DBUpdater):
         with open('%sDockerfile' % docker_target_path, 'w' ) as result:
             pref = ' ' * 8
             data_dic = {
-               'ERP_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
+               'erp_image_version'  : docker_info.get('base_image', 'camptocamp/odoo-project:%s-latest' % erp_version),
                'apt_list' : '\n'.join(['%s%s \\' % (pref, a) for a in apt_list]),
             }
             if pip_list:
@@ -553,7 +556,7 @@ class DockerHandler(InitHandler, DBUpdater):
             except OSError: 
                 pass
         for f in [
-            ('VERSION', docker_ERP_setup_version % str(date.today())),
+            ('VERSION', docker_erp_setup_version % str(date.today())),
             ('migration.yml', ''),
             ('requirements.txt', docker_erp_setup_requirements),
             ('setup.py', docker_erp_setup_script),]:

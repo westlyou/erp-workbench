@@ -223,6 +223,13 @@ def main(opts, parsername, need_names_dic):
             handler.check_and_create_container(container_name='db')
             did_run_a_command = True
 
+        # build image
+        # ----------
+        # build docker image used by a site
+        if opts.docker_build_image:
+            handler.build_image()
+            did_run_a_command = True
+            return
 
     # ----------------------
     # support commands
@@ -251,7 +258,7 @@ def main(opts, parsername, need_names_dic):
         # description, or change the server description in LOCALDATA['sitesinfo_path']
         if opts.edit_site or opts.edit_server:
             if opts.edit_site:
-                handler.check_name(must_match=True)
+                handler.check_name()
             handler.edit_site_or_server()
             did_run_a_command = True
             return
