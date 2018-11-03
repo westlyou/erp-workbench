@@ -29,48 +29,6 @@ from scripts.utilities import collect_options, _construct_sa, bcolors, find_addo
 from scripts.messages import *
 import shutil
 
-"""
-https://breakingcode.wordpress.com/2013/03/11/an-example-dependency-resolution-algorithm-in-python/
-https://pypi.python.org/pypi/pipdeptree/0.8.0
-http://stackoverflow.com/questions/14242295/build-a-dependency-graph-in-python
-import networkx as nx
-import re
-
-regex = re.compile(r'^([A-Z]+)::Requires\s+=\s([A-Z"]+)$')
-
-G = nx.DiGraph()
-roots = set()
-for l in raw.splitlines():
-    if len(l):
-        target, prereq = regex.match(l).groups()
-        if prereq == '""':
-            roots.add(target)
-        else:
-            G.add_edge(prereq, target)
-
-Now print(the tree(s):)
-
-for s in roots:
-    print(s)
-    spacer = {s: 0}
-    for prereq, target in nx.dfs_edges(G, s):
-        spacer[target] = spacer[prereq] + 2
-        print('{spacer}+-{t}'.format()
-                                     spacer=' ' * spacer[prereq],
-                                     t=target)
-    print('')
-
-this prints:
-
-A
-+-H
-+-B
-  +-C
-
-AA
-+-BB
-  +-CC
-"""
 
 # the templatefile contains placeholder
 # that will be replaced with real values
@@ -85,7 +43,6 @@ set of configuration files and keep them in sync.
 It knows enough about the erp to be able to treat some special values correctly
 
 """
-
 
 class RPC_Mixin(object):
     _odoo = None
@@ -401,6 +358,8 @@ class InitHandler(RPC_Mixin):
         # local
         # -----------------
         # actual user
+        if self.opts.__dict__.get('delete_site_local') or self.opts.__dict__.get('drop_site'):
+            return
         if self.site:
             p = '%s/sites_global/%s.py' % (
                 BASE_INFO['sitesinfo_path'], self.site_name)
@@ -1623,6 +1582,8 @@ class InitHandler(RPC_Mixin):
         own modules are listed in the site description under the key addons
         """
         opts = self.opts
+        is_create = opts.subparser_name
+        is_docker = not is_create
         default_values = self.default_values
         if list_only:
             from templates.install_blocks import INSTALL_BLOCKS
@@ -1641,7 +1602,7 @@ class InitHandler(RPC_Mixin):
         local_install = info_dic.get('local_install', [])
         req = []
         module_obj = None
-        if not opts.install_erp_modules and not opts.dinstall_erp_modules:
+        if not (is_create and opts.install_erp_modules) and not (is_docker and opts.dinstall_erp_modules):
             # opts.installown or opts.updateown or opts.removeown or opts.listownmodules or quiet: # what else ??
             # collect the names of the modules declared in the addons stanza
             # idealy their names are set, if not, try to find them out
@@ -1661,7 +1622,7 @@ class InitHandler(RPC_Mixin):
                                   a.get('url', ''))
 
         # if we only want the list to install, no need to be wordy
-        if opts.dlistownmodules or opts.listownmodules or quiet == 'listownmodules':
+        if (is_docker and opts.dlistownmodules) or (is_create and opts.listownmodules) or quiet == 'listownmodules':
             if quiet:
                 return req
             sn = self.site_name
@@ -1678,8 +1639,8 @@ class InitHandler(RPC_Mixin):
             print('---------------------------------------------------')
             return
 
-        # do we want to intall odoo modules
-        if opts.dinstall_erp_modules or opts.install_erp_modules:
+        # do we want to install odoo modules
+        if (is_docker and opts.dinstall_erp_modules) or (is_create and opts.install_erp_modules):
             from templates.install_blocks import INSTALL_BLOCKS
             erp_apps_info, erp_modules_info = self.get_erp_modules()
 
@@ -1778,7 +1739,7 @@ class InitHandler(RPC_Mixin):
                 print(bcolors.OKGREEN + 'finished installing: ' +
                       bcolors.ENDC + ','.join(n_list))
                 print('*' * 80)
-            if installed and (opts.updateown or opts.removeown, opts.dupdateown or opts.dremoveown):
+            if installed and ((is_create and opts.updateown or opts.removeown), (is_docker and opts.dupdateown or opts.dremoveown)):
                 if opts.updateown or opts.dupdateown:
                     i_list = [il[0]
                               for il in installed if (il[1] not in skip_upd_list)]

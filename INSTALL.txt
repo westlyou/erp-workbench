@@ -1,1 +1,1 @@
-help/source/INSTALL.txt
+help/source/INSTALL.txt.rst

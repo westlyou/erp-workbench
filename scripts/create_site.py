@@ -147,7 +147,7 @@ def main(opts, parsername, need_names_dic):
         #
         # modules_update
         # -------------
-        if opts.create  or opts.modules_update or opts.module_update:
+        if opts.create or opts.modules_update or opts.module_update:
             info_dic = {
                 'project_path' : handler.default_values['inner'],
                 'erp_version' : BASE_INFO.get('erp_version'),
@@ -185,6 +185,16 @@ def main(opts, parsername, need_names_dic):
             list_sites(SITES, opts.quiet)
             did_run_a_command = True
             return
+
+        # listownmodules
+        # --------------
+        # list the modules that are declared within the selected site
+        # installown install all erp modules declared in the selected site
+        # todo: why are the two following options combined here??? !!!!!!!!!!!!
+        if opts.listownmodules or opts.install_erp_modules:
+            handler.install_own_modules()
+            did_run_a_command = True
+            return
         
         # delete_site_local
         # --------
@@ -193,6 +203,44 @@ def main(opts, parsername, need_names_dic):
             handler.delete_site_local()
             did_run_a_command = True
             return
+
+        # installown or updateown or removeown
+        # ------------------------------------
+        # installown install all modules declared in the selected site
+        # updateown updates one or all modules declared in the selected site
+        # removeown removes one or all modules declared in the selected site
+        #
+        # to be able to execute do this, the target server has to be running.
+        # this server is accessed uding odoo's rpc_api.
+        # to do so, info on user, that should access the running server needs
+        # to be collected. the following values
+        # read from either the config data or can be set using command line options.
+        # --- database ---
+        # - db_user : the user to access the servers database
+        #   to check what modules are allready installed the servers database
+        #   has to be accessed.
+        #   option: "-dbu", "--dbuser".
+        #   default: logged in user
+        # - db_password
+        #   option: "-p", "--dbpw".
+        #   default: admin
+        # - dbhost: the host on which the database is running
+        #   option: "-dbh", "--dbhost"
+        #   default: localhost.
+        # --- user accessing the running odoo server ---
+        # - rpcuser: the login user to access the odoo server
+        #   option: "-rpcu", "--rpcuser"
+        #   default: admin.
+        # - rpcpw: the login password to access the odoo server
+        #   option: "-P", "--rpcpw"
+        #   default: admin.
+        # - rpcport: the the odoo server is running at
+        #   option: "-PO", "--port"
+        #   default: 8069.
+    
+        if opts.installown or opts.updateown or opts.removeown:
+            handler.install_own_modules()
+            did_run_a_command = True
 
     # ----------------------
     # docker commands
@@ -231,6 +279,18 @@ def main(opts, parsername, need_names_dic):
             did_run_a_command = True
             return
 
+        # installown or updateown or removeown
+        # ------------------------------------
+        # installown install all modules declared in the selected site
+        # updateown updates one or all modules declared in the selected site
+        # removeown removes one or all modules declared in the selected site
+        
+        # ----------> see create commands
+        
+        if opts.dinstallown or opts.dupdateown or opts.dremoveown or opts.dinstallodoomodules:
+            #handler = dockerHandler(opts, default_values, site_name)
+            handler.docker_install_own_modules()
+            did_run_a_command = True
     # ----------------------
     # support commands
     # ----------------------

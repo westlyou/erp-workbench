@@ -263,6 +263,9 @@ class GitRepo(BaseRepo):
                             cwd=self.target_dir,
                             callwith=check_output).strip()
         for sha, fullref in (l.split() for l in out.splitlines()):
+            # python3 ..
+            sha = sha and sha.decode()
+            fullref = fullref and fullref.decode()
             if fullref == 'refs/heads/' + ref:
                 return 'branch', sha
             elif fullref == 'refs/tags/' + ref:

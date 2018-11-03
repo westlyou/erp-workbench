@@ -141,7 +141,7 @@ def check_output(*popenargs, **kwargs):
     True
     """
 
-    if sys.version >= (2, 7):
+    if sys.version >= "2.7": #: # robert, was a tuple (2, 7):
         return subprocess.check_output(*popenargs, **kwargs)
     if 'stdout' in kwargs:
         raise ValueError('stdout argument not allowed, it will be overridden.')

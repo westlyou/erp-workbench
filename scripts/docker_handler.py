@@ -3,7 +3,7 @@
 
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04
 from docker import Client
-from config import SITES, BASE_INFO, DOCKER_DEFAULTS, ODOO_VERSIONS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
+from config import SITES, BASE_INFO, DOCKER_DEFAULTS, ODOO_VERSIONS, PROJECT_DEFAULTS, APT_COMMAND, PIP_COMMAND #,DOCKER_FILES
 #from config.handlers import InitHandler, DBUpdater
 from scripts.create_handler import InitHandler
 from scripts.update_local_db import DBUpdater
@@ -572,7 +572,7 @@ class DockerHandler(InitHandler, DBUpdater):
         cmd_lines = [
             'git init .',
             'git submodule init',
-            'git submodule add -b %s https://github.com/odoo/odoo.git src' % erp_version
+            'git submodule add -b %s https://github.com/odoo/odoo.git src' % PROJECT_DEFAULTS.get('erp_nightly')
         ]
         self.run_commands(cmd_lines=cmd_lines)
         #for line in open( '%sDockerfile' % docker_source_path, 'r' ):
