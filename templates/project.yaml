@@ -20,9 +20,9 @@ PROJECT_DEFAULTS:
     # erp_minor:
     # what is the minor version number
     # this is important for unreleased odoo versions
-    erp_minor: '.0alpha1'
+    erp_minor: '.0'
     # erp_nightly:
     # what folder in the nightly download structure to use
     # again this is for odoo.
     # if the version is released, its value is identical to erp_version
-    erp_nightly: 'master'
+    erp_nightly: ''

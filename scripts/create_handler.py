@@ -12,7 +12,7 @@ from subprocess import PIPE
 from config import FOLDERNAMES, SITES, SITES_LOCAL, BASE_PATH, BASE_INFO, \
     ACT_USER, LOGIN_INFO_FILE_TEMPLATE, REQUIREMENTS_FILE_TEMPLATE, MODULES_TO_ADD_LOCALLY, \
     NO_NEED_SERVER_IP, ODOO_VERSIONS, FLECTRA_VERSIONS, PROJECT_DEFAULTS, \
-    DOCKER_DEFAULTS, DOCKER_DEFAULTS
+    DOCKER_DEFAULTS, DOCKER_DEFAULTS, DB_PASSWORD
 from config.config_data.base_info import BASE_DEFAULTS
 from config.config_data.servers_info import REMOTE_SERVERS
 
@@ -64,7 +64,7 @@ class RPC_Mixin(object):
             db_name = self.db_name
 
         if dbpw:
-            conn_string = "dbname='%s' user=%s host='%s' password='%s'" % (
+            conn_string = "dbname='%s' user='%s' host='%s' password='%s'" % (
                 db_name, dbuser, dbhost, dbpw)
         else:
             conn_string = "dbname='%s' user=%s host='%s'" % (
@@ -312,7 +312,7 @@ class InitHandler(RPC_Mixin):
         # created using docker_handler.update_container_info
         # when we deal with a docker instance
         self._rpc_host = opts.__dict__.get('rpc_host', 'localhost')
-        self._rpc_hostport = opts.__dict__.get('rpc_port', '8069')
+        self._rpc_port = opts.__dict__.get('rpc_port', '8069')
         self._db_host = opts.__dict__.get('db_host','localhost')
         # starting with odoo 11 we need to check what python version to use
         if self.version:
@@ -326,11 +326,11 @@ class InitHandler(RPC_Mixin):
                 print ('*' * 80)
                 print ('%s has no %s version' % (self.sites[opts.name].get('erp_version'), self.version))
                 print (bcolors.ENDC)
-                try:
-                    if not opts.edit_site:
+                if opts.subparser_name == 'support':
+                    if not opts.edit_site or opts.drop_site:
                         raise
-                except:
-                    raise # for sure not opts.edit_site
+                else:
+                    raise
                     
 
     def _create_login_info(self, login_info):
@@ -633,7 +633,7 @@ class InitHandler(RPC_Mixin):
         """
 
         if self.site:
-            return self.site.get('erp_nightly', '')
+            return self.site.get('erp_nightly', '%s%s' % (self.version, self.minor))
 
     @property
     def docker_db_user(self):
@@ -659,7 +659,7 @@ class InitHandler(RPC_Mixin):
     def db_host(self):
         if self.parsername == 'docker':
             return self.docker_db_ip
-        return self.dbhost
+        return self._db_host
 
     @property
     def user(self):
@@ -954,8 +954,7 @@ class InitHandler(RPC_Mixin):
         # we need nightly to construct an url to download the software 
         if not self.default_values.get('erp_nightly'):
             self.default_values['erp_nightly'] = PROJECT_DEFAULTS.get(
-                'erp_nightly', 
-                self.default_values['erp_version'])
+                'erp_nightly') or '%s%s' % (self.default_values['erp_version'], self.default_values['erp_minor'])
         if not self.default_values.get('erp_provider'):
             self.default_values['erp_provider'] = PROJECT_DEFAULTS.get(
                 'erp_provider', 'odoo')
@@ -1700,7 +1699,7 @@ class InitHandler(RPC_Mixin):
             skiplist = self.site.get('skip', {}).get('addons', [])[
                 :]  # we do not want to change the original
             skip_upd_list = self.site.get('skip', {}).get('updates', [])
-            skip2 = opts.skipown or []
+            skip2 = opts.__dict__.get('skipown', [])
             if skip2:
                 skip2 = skip2.split(',')
             # remove elements in the local_install from the skip lists
@@ -1789,14 +1788,16 @@ class InitHandler(RPC_Mixin):
         rows = cursor.fetchall()
         all = not req
         updlist = []
-        if opts.updateown:
-            updlist = opts.updateown.split(',')
-        elif opts.removeown:
-            updlist = opts.removeown.split(',')
-        if opts.dupdateown:
-            updlist = opts.dupdateown.split(',')
-        elif opts.dremoveown:
-            updlist = opts.dremoveown.split(',')
+        if opts.subparser_name == 'create':
+            if opts.updateown:
+                updlist = opts.updateown.split(',')
+            elif opts.removeown:
+                updlist = opts.removeown.split(',')
+        if opts.subparser_name == 'docker':
+            if opts.dupdateown:
+                updlist = opts.dupdateown.split(',')
+            elif opts.dremoveown:
+                updlist = opts.dremoveown.split(',')
         if 'all' in updlist:
             updlist = all_list
         if 'dev' in updlist or 'develop' in updlist:

@@ -77,6 +77,17 @@ class SupportHandler(InitHandler):
         from config import sites_handler
         opts = self.opts
         self.default_values['marker'] = MARKER
+        # was a version option used
+        if opts.erp_version:
+            erp_version = opts.erp_version
+            parts = erp_version.split('.') + ['.0']
+            erp_version, erp_minor = parts[:2]
+            if erp_minor == '0':
+                erp_minor = '.0'
+            self.default_values['erp_version'] = erp_version
+            self.default_values['erp_minor'] = erp_minor
+            self.default_values['erp_nightly'] = '%s%s' % (erp_version, erp_minor)
+        
         # check if user wants to copy an existing site
         name = self.opts.name
         template = ''
@@ -189,7 +200,7 @@ class SupportHandler(InitHandler):
             # we add to sites local
             # we read untill we find an empty }
             # before we can construct a site description we need a a file with site values
-            if opts.use_preset:
+            if opts.__dict__.get('use_preset'):
                 pvals = {}  # dict to get link to the preset-vals-file
                 preset_values = self.preset_handler.get_preset_values(pvals, is_local=True)
                 result = sites_handler.add_site_local(

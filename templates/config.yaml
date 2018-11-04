@@ -6,11 +6,17 @@
 # %(USER_HOME)s the home folder of the logged in user
 
 BASE_DEFAULTS:
-  # erp_provider:
-  # define what erp type should be uses for a new site
+  # erp_version:
+  # define what erp version should be uses for a new site
   # this only affects the generation of new site descriptions
   # and can be easily changed in the generated site description
-  erp_provider: 'odoo'
+  erp_version: '11'
+
+  # erp_minor:
+  # define what erp minor version should be uses for a new site
+  # this only affects the generation of new site descriptions
+  # and can be easily changed in the generated site description
+  erp_minor: '.0'
 
   # site_editor:
   # define what editor to use when editing site description
@@ -52,6 +58,14 @@ BASE_DEFAULTS:
   # however if you create many site, this can quickly become confusing
   erp_server_data_path: '%(BASE_PATH)s'
 
+  # docker_dumper_image:
+  # erp-workkbench lets you dump a site running in a docker container
+  # into a dump folder within the sites folder structure
+  # erp-workbench needs to know what the name of the image is
+  # that is used to construct the folder
+  # to learn more about this, read the dumper description in the erp-workbench help
+  docker_dumper_image: 'robertredcor/dumper'
+
   # local_user_mail:
   # sometimes you want to avoid sending mails to real user
   # when you have copied a life server to your local environment
@@ -61,7 +75,7 @@ BASE_DEFAULTS:
   # db_user:
   # this is the default data base user, if no db user is defined in the
   # server description file from the sites.yaml file
-  db_user: 'admin'
+  db_user: '%(DB_USER)s'
 
   # db_password:
   # this is the default password, if it not is defined in the

@@ -308,7 +308,7 @@ class SitesHandler(object):
             if not handler.default_values['site_name']:
                 handler.default_values['site_name'] = handler.site_name
             with open('%s/templates/newsite.py' % handler.sites_home, 'r') as f:
-                template = exec.read() % handler.default_values
+                template = f.read() % handler.default_values
             template = template.replace('xx.xx.xx.xx', 'localhost')
         return self._add_site('L', template, False)
 
