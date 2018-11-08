@@ -293,7 +293,7 @@ ALIAS = """
 alias  %(sname)s="cd %(ppath)s/%(lname)s/%(lname)s"
 alias  %(sname)sw="workon %(lname)s"
 alias  %(sname)shome="cd %(ppath)s/%(lname)s/"
-alias  %(sname)sa="cd_function %(ppath)s/%(lname)s/%(lname)s/%(sname)s_addons %(sname)s"
+alias  %(sname)sa="cd_function_w %(ppath)s/%(lname)s/%(lname)s/%(sname)s_addons %(sname)s"
 alias  %(sname)sc="cd %(dpath)s/%(lname)s/addons; do_checkit"
 """
 ALIASC = """
@@ -313,7 +313,7 @@ ABLOCK = """%(aliasmarker_start)s
 ALIAS_LENGTH = 4
 
 ALIAS_HEADER = """
-cd_function() {
+cd_function()_w {
     if [ $2 ]; then
         if [ $3 ]; then
             if [[ -d %(pp)s/$2/addons/$3 ]]; then
